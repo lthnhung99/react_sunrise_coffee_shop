@@ -24,7 +24,7 @@ function CustomTabPanel(props) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
-      style={{ height: "calc(100vh - 155px)" }}
+      style={{ height: "calc(100vh - 155px)", backgroundColor: "rgb(243 243 244)", borderRadius: "8px", overflow: "scroll" }}
     >
       {value === index && (
         <Box
@@ -37,11 +37,6 @@ function CustomTabPanel(props) {
           }}
         >
           <MultiActionAreaCard />
-          {/* <MultiActionAreaCard />
-          <MultiActionAreaCard />
-          <MultiActionAreaCard />
-          <MultiActionAreaCard />
-          <MultiActionAreaCard /> */}
         </Box>
       )}
     </div>
@@ -72,7 +67,6 @@ export default function BasicTabs(props) {
       <Box
         sx={{
           width: "100%",
-          overflowY: "scroll",
           height: "100%",
         }}
       >

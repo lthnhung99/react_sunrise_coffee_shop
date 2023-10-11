@@ -5,6 +5,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import Notification from './Notification';
+import Profile from "./Profile";
 function MyDropdown() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [setSelectedOption] = useState("");
@@ -53,17 +54,10 @@ function MyDropdown() {
         >
           <LocalPrintshopIcon />
         </IconButton>
-        <span>Username</span>
-        <IconButton
-          aria-controls="dropdown-menu"
-          aria-haspopup="true"
-          onClick={handleIconClick}
-        >
-          <FormatAlignJustifyIcon style={{ top: "0px" }} />
-        </IconButton>
+        <Profile />
       </Box>
 
-      <Menu
+      {/* <Menu
         id="dropdown-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -78,7 +72,7 @@ function MyDropdown() {
         <MenuItem onClick={() => handleMenuItemClick("option3")}>
           Doanh thu
         </MenuItem>
-      </Menu>
+      </Menu> */}
     </Box>
   );
 }
