@@ -27,7 +27,7 @@ export default function MultiActionAreaCard() {
   }, []);
 
   return (
-    <Grid container spacing={3} sx={{ maxWidth: "50%" }}>
+    <Grid container spacing={3}>
       {product &&
         product.length > 0 &&
         product.map((item) => (
