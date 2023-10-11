@@ -4,6 +4,7 @@ import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+import Notification from './Notification';
 function MyDropdown() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [setSelectedOption] = useState("");
@@ -31,9 +32,27 @@ function MyDropdown() {
       }}
     >
       <Box style={{ display: "flex", alignItems: "center" }}>
-        <VolumeUpIcon style={{ marginRight: "20px" }} />
-        <NotificationsIcon style={{ marginRight: "20px" }} />
-        <LocalPrintshopIcon style={{ marginRight: "20px" }} />
+        <IconButton
+          href="https://github.com/codedthemes/mantis-free-react-admin-template"
+          target="_blank"
+          disableRipple
+          color="secondary"
+          title="Download Free Version"
+          sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "-2px" }}
+        >
+          <VolumeUpIcon />
+        </IconButton>
+        <Notification />
+        <IconButton
+          href="https://github.com/codedthemes/mantis-free-react-admin-template"
+          target="_blank"
+          disableRipple
+          color="secondary"
+          title="Download Free Version"
+          sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "4px" }}
+        >
+          <LocalPrintshopIcon />
+        </IconButton>
         <span>Username</span>
         <IconButton
           aria-controls="dropdown-menu"

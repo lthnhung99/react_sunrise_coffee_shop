@@ -10,6 +10,9 @@ import MultiActionAreaCard from "./MultiActionAreaCard";
 import { BackupTable, MenuBook, TableRestaurant } from "@mui/icons-material";
 import { IconButton, InputBase, Paper } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import Search from "./Search";
+import { GithubOutlined } from '@ant-design/icons';
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ss, ...other } = props;
@@ -134,32 +137,28 @@ export default function BasicTabs(props) {
               alignItems: "center",
             }}
           >
-            <Paper
-              component="form"
-              sx={{
-                padding: "2px 4px",
-                display: "flex",
-                alignItems: "center",
-                width: 400,
-                borderRadius: "20px",
-              }}
+            <Search />
+            <IconButton
+              href="https://github.com/codedthemes/mantis-free-react-admin-template"
+              target="_blank"
+              disableRipple
+              color="secondary"
+              title="Download Free Version"
+              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "10px" }}
             >
-              <InputBase
-                sx={{
-                  ml: 1,
-                  flex: 1,
-                }}
-                placeholder="Search..."
-              />
-              <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
-                <SearchIcon />
-              </IconButton>
-            </Paper>
-            <BoltIcon
-              className="rounded-icon"
-              sx={{ marginLeft: "10px", marginRight: "10px" }}
-            />
-            <AddIcon className="rounded-icon" sx={{ marginRight: "10px" }} />
+              <BoltIcon />
+            </IconButton>
+
+            <IconButton
+              href="https://github.com/codedthemes/mantis-free-react-admin-template"
+              target="_blank"
+              disableRipple
+              color="secondary"
+              title="Download Free Version"
+              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: '10px' }}
+            >
+              <AddIcon />
+            </IconButton>
           </Box>
         </Box>
         <CustomTabPanel value={value} index={0}></CustomTabPanel>
