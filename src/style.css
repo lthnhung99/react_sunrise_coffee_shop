@@ -1,0 +1,19 @@
+.rounded-icon {
+  font-size: 2rem;
+  border-radius: 50%;
+  border: 1px solid black;
+}
+.Mui-selected {
+  background-color: aquamarine !important;
+}
+.background-app {
+  background-color: white;
+}
+.background-container {
+  background-color: #003a7f;
+  padding: 16px !important;
+}
+.custom-mui-grid-container {
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+}
