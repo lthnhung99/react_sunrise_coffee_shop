@@ -7,7 +7,6 @@ import { Box, CardActions, Collapse, Divider, IconButton, Tooltip } from '@mui/m
 // third-party
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import reactElementToJSXString from 'react-element-to-jsx-string';
-
 // project import
 import SyntaxHighlight from '../../utils/SyntaxHighlight';
 
