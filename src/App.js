@@ -65,14 +65,14 @@ function App() {
                 </Box>
                 <div
                   container
-                  spacing={2}
-                  style={{
-                    justifyContent: "center",
-                    display: "flex",
-                    padding: "10px",
-                  }}
                 >
-                  <Grid>
+                  <Grid spacing={6}
+                    style={{
+                      justifyContent: "center",
+                      display: "flex",
+                      padding: "10px",
+                      width: "100%"
+                    }}>
                     <Button
                       size="large"
                       variant="contained"
@@ -80,7 +80,7 @@ function App() {
                       disableElevation
                       style={{
                         backgroundColor: "green",
-                        width: "380px",
+                        width: "45%",
                         margin: "5px",
                         borderRadius: "10px",
                         padding: "20px",
@@ -94,7 +94,7 @@ function App() {
                       startIcon={<CircleNotifications />}
                       disableElevation
                       style={{
-                        width: "380px",
+                        width: "45%",
                         borderRadius: "10px",
                         margin: "5px",
                         padding: "20px",
@@ -118,7 +118,7 @@ function App() {
           }}
           item
         >
-          Hỗ trợ:19006522 | Chi nhánh trung tâm: Thừa Thiên Huế | NKL-2023
+          Hỗ trợ:19006522 | Chi nhánh trung tâm: Thừa Thiên Huế | NKLQ-2023
         </Grid>
       </Box>
     </>

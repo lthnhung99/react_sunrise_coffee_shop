@@ -10,9 +10,11 @@ import MultiActionAreaCard from "./MultiActionAreaCard";
 import { BackupTable, MenuBook, TableRestaurant } from "@mui/icons-material";
 import { IconButton, InputBase, Paper } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { Link, Route, Routes } from "react-router-dom";
+import TableOrder from "./TableOrder";
 
 function CustomTabPanel(props) {
-  const { children, value, index, ss, ...other } = props;
+  const { children, value, index, ss, search, ...other } = props;
 
   return (
     <div
@@ -29,16 +31,31 @@ function CustomTabPanel(props) {
             p: 3,
             display: "flex",
             flexWrap: "wrap",
-            gap: "10px",
+            gap: "15px",
             justifyContent: "space-between",
+            overflowY: "scroll",
+            height: "96%",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#888888 #f3f3f3",
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "#f3f3f3",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "#888888",
+              borderRadius: "4px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": {
+              background: "#555555",
+            },
           }}
         >
-          <MultiActionAreaCard />
-          {/* <MultiActionAreaCard />
-          <MultiActionAreaCard />
-          <MultiActionAreaCard />
-          <MultiActionAreaCard />
-          <MultiActionAreaCard /> */}
+          <Routes>
+            <Route path="/products/list" element={<MultiActionAreaCard search={search} />} />
+            <Route path="/tableOrders/list" element={<TableOrder search={search} />} />
+          </Routes>
         </Box>
       )}
     </div>
@@ -60,17 +77,31 @@ function a11yProps(index) {
 
 export default function BasicTabs(props) {
   const [value, setValue] = React.useState(0);
+  const [search, setSearch] = React.useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const value = e.target.value;
+    setSearch(value);
+    console.log(value);
+  };
+
+  const handleInput = (e) => {
+    e.preventDefault();
+    const value = e.target.value;
+    setSearch(value);
+    console.log(value);
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   return (
     <>
       <Box
         sx={{
           width: "100%",
-          overflowY: "scroll",
-          height: "100%",
         }}
       >
         <Box
@@ -101,6 +132,8 @@ export default function BasicTabs(props) {
               }}
             />
             <Tab
+              component={Link}
+              to='/tableOrders/list'
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -114,6 +147,8 @@ export default function BasicTabs(props) {
               }}
             />
             <Tab
+              component={Link}
+              to="/products/list"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -143,6 +178,7 @@ export default function BasicTabs(props) {
                 width: 400,
                 borderRadius: "20px",
               }}
+              onSubmit={handleSearch}
             >
               <InputBase
                 sx={{
@@ -150,8 +186,10 @@ export default function BasicTabs(props) {
                   flex: 1,
                 }}
                 placeholder="Search..."
+                value={search}
+                onChange={(e) => handleInput(e)}
               />
-              <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+              <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
                 <SearchIcon />
               </IconButton>
             </Paper>
@@ -163,13 +201,14 @@ export default function BasicTabs(props) {
           </Box>
         </Box>
         <CustomTabPanel value={value} index={0}></CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
+        <CustomTabPanel value={value} index={1} search={search}>
           Bàn
         </CustomTabPanel>
-        <CustomTabPanel value={value} index={2}>
+        <CustomTabPanel value={value} index={2} search={search}>
           Thực đơn
         </CustomTabPanel>
       </Box>
     </>
   );
 }
+
