@@ -14,8 +14,8 @@ export default function MultiActionAreaCard({ search }) {
       {product &&
         product.length > 0 &&
         product.map((item) => (
-          <Grid item xs={6} sm={6} md={2} key={item.id} >
-            <Card>
+          <Grid item xs={6} sm={6} md={3} key={item.id} >
+            <Card style={{ height: "250px" }}>
               <CardActionArea>
                 <CardMedia
                   component="img"
