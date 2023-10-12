@@ -42,7 +42,7 @@ function CustomTabPanel(props) {
             gap: "15px",
             justifyContent: "space-between",
             overflowY: "scroll",
-            height: "96%",
+            height: "100%",
             scrollbarWidth: "thin",
             scrollbarColor: "#888888 #f3f3f3",
             "&::-webkit-scrollbar": {
