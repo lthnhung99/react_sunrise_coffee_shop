@@ -9,15 +9,13 @@ import useProducts from "../hooks/useProducts";
 export default function MultiActionAreaCard({ search }) {
   const { product } = useProducts(search);
 
-
   return (
     <Grid container spacing={4} sx={{ maxWidth: "100%", margin: "5px 10px 0 0" }}>
-
       {product &&
         product.length > 0 &&
         product.map((item) => (
-          <Grid item xs={6} sm={6} md={2} key={item.id} >
-            <Card>
+          <Grid item xs={6} sm={6} md={3} key={item.id} >
+            <Card style={{ height: "250px" }}>
               <CardActionArea>
                 <CardMedia
                   component="img"
