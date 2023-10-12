@@ -15,7 +15,6 @@ import TableOrder from "./TableOrder";
 import Search from "./Search";
 import { GithubOutlined } from "@ant-design/icons";
 
-
 function CustomTabPanel(props) {
   const { children, value, index, ss, search, ...other } = props;
 
@@ -26,7 +25,12 @@ function CustomTabPanel(props) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
-      style={{ height: "calc(100vh - 155px)", backgroundColor: "rgb(243 243 244)", borderRadius: "8px", overflow: "scroll" }}
+      style={{
+        height: "calc(100vh - 135px)",
+        backgroundColor: "rgb(243 243 244)",
+        borderRadius: "8px",
+        overflow: "scroll",
+      }}
     >
       {value === index && (
         <Box
@@ -56,8 +60,14 @@ function CustomTabPanel(props) {
           }}
         >
           <Routes>
-            <Route path="/products/list" element={<MultiActionAreaCard search={search} />} />
-            <Route path="/tableOrders/list" element={<TableOrder search={search} />} />
+            <Route
+              path="/products/list"
+              element={<MultiActionAreaCard search={search} />}
+            />
+            <Route
+              path="/tableOrders/list"
+              element={<TableOrder search={search} />}
+            />
           </Routes>
         </Box>
       )}
@@ -94,7 +104,7 @@ export default function BasicTabs(props) {
     const value = e.target.value;
     setSearch(value);
     console.log(value);
-  }
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -137,7 +147,7 @@ export default function BasicTabs(props) {
             />
             <Tab
               component={Link}
-              to='/tableOrders/list'
+              to="/tableOrders/list"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -210,7 +220,11 @@ export default function BasicTabs(props) {
               disableRipple
               color="secondary"
               title="Download Free Version"
-              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "10px" }}
+              sx={{
+                color: "text.primary",
+                bgcolor: "grey.100",
+                marginRight: "10px",
+              }}
             >
               <BoltIcon />
             </IconButton>
@@ -221,12 +235,16 @@ export default function BasicTabs(props) {
               disableRipple
               color="secondary"
               title="Download Free Version"
-              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: '10px' }}
+              sx={{
+                color: "text.primary",
+                bgcolor: "grey.100",
+                marginRight: "10px",
+              }}
             >
               <AddIcon />
             </IconButton>
-          </Box >
-        </Box >
+          </Box>
+        </Box>
         <CustomTabPanel value={value} index={0}></CustomTabPanel>
         <CustomTabPanel value={value} index={1} search={search}>
           Bàn
@@ -234,8 +252,7 @@ export default function BasicTabs(props) {
         <CustomTabPanel value={value} index={2} search={search}>
           Thực đơn
         </CustomTabPanel>
-      </Box >
+      </Box>
     </>
   );
 }
-
