@@ -12,6 +12,7 @@ const useTableOrders = (search) => {
                         setTableOrders(data);
                     } else {
                         console.error("API request failed with status:", response.status);
+                        setTableOrders([]);
                     }
                 }
                 getTableOrder();
