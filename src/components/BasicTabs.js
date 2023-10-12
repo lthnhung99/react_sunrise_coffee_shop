@@ -12,6 +12,9 @@ import { IconButton, InputBase, Paper } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link, Route, Routes } from "react-router-dom";
 import TableOrder from "./TableOrder";
+import Search from "./Search";
+import { GithubOutlined } from "@ant-design/icons";
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ss, search, ...other } = props;
@@ -23,7 +26,7 @@ function CustomTabPanel(props) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
-      style={{ height: "calc(100vh - 155px)" }}
+      style={{ height: "calc(100vh - 155px)", backgroundColor: "rgb(243 243 244)", borderRadius: "8px", overflow: "scroll" }}
     >
       {value === index && (
         <Box
@@ -102,6 +105,7 @@ export default function BasicTabs(props) {
       <Box
         sx={{
           width: "100%",
+          height: "100%",
         }}
       >
         <Box
@@ -169,7 +173,7 @@ export default function BasicTabs(props) {
               alignItems: "center",
             }}
           >
-            <Paper
+            {/* <Paper
               component="form"
               sx={{
                 padding: "2px 4px",
@@ -197,9 +201,32 @@ export default function BasicTabs(props) {
               className="rounded-icon"
               sx={{ marginLeft: "10px", marginRight: "10px" }}
             />
-            <AddIcon className="rounded-icon" sx={{ marginRight: "10px" }} />
-          </Box>
-        </Box>
+            <AddIcon className="rounded-icon" sx={{ marginRight: "10px" }} /> */}
+
+            <Search />
+            <IconButton
+              href="https://github.com/codedthemes/mantis-free-react-admin-template"
+              target="_blank"
+              disableRipple
+              color="secondary"
+              title="Download Free Version"
+              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "10px" }}
+            >
+              <BoltIcon />
+            </IconButton>
+
+            <IconButton
+              href="https://github.com/codedthemes/mantis-free-react-admin-template"
+              target="_blank"
+              disableRipple
+              color="secondary"
+              title="Download Free Version"
+              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: '10px' }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Box >
+        </Box >
         <CustomTabPanel value={value} index={0}></CustomTabPanel>
         <CustomTabPanel value={value} index={1} search={search}>
           Bàn
@@ -207,7 +234,7 @@ export default function BasicTabs(props) {
         <CustomTabPanel value={value} index={2} search={search}>
           Thực đơn
         </CustomTabPanel>
-      </Box>
+      </Box >
     </>
   );
 }

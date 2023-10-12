@@ -12,6 +12,7 @@ export default function MultiActionAreaCard({ search }) {
 
   return (
     <Grid container spacing={4} sx={{ maxWidth: "100%", margin: "5px 10px 0 0" }}>
+
       {product &&
         product.length > 0 &&
         product.map((item) => (
