@@ -4,6 +4,9 @@ import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+import Notification from "./Notification";
+import Profile from "./Profile";
+
 function MyDropdown() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [setSelectedOption] = useState("");
@@ -31,20 +34,40 @@ function MyDropdown() {
       }}
     >
       <Box style={{ display: "flex", alignItems: "center" }}>
-        <VolumeUpIcon style={{ marginRight: "20px" }} />
-        <NotificationsIcon style={{ marginRight: "20px" }} />
-        <LocalPrintshopIcon style={{ marginRight: "20px" }} />
-        <span>Username</span>
         <IconButton
-          aria-controls="dropdown-menu"
-          aria-haspopup="true"
-          onClick={handleIconClick}
+          href="https://github.com/codedthemes/mantis-free-react-admin-template"
+          target="_blank"
+          disableRipple
+          color="secondary"
+          title="Download Free Version"
+          sx={{
+            color: "text.primary",
+            bgcolor: "grey.100",
+            marginRight: "-2px",
+          }}
         >
-          <FormatAlignJustifyIcon style={{ top: "0px" }} />
+          <VolumeUpIcon />
         </IconButton>
+        <Notification />
+        <IconButton
+          href="https://github.com/codedthemes/mantis-free-react-admin-template"
+          target="_blank"
+          disableRipple
+          color="secondary"
+          title="Download Free Version"
+          sx={{
+            color: "text.primary",
+            bgcolor: "grey.100",
+            marginRight: "4px",
+          }}
+        >
+          <LocalPrintshopIcon />
+        </IconButton>
+
+        <Profile />
       </Box>
 
-      <Menu
+      {/* <Menu
         id="dropdown-menu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -59,7 +82,7 @@ function MyDropdown() {
         <MenuItem onClick={() => handleMenuItemClick("option3")}>
           Doanh thu
         </MenuItem>
-      </Menu>
+      </Menu> */}
     </Box>
   );
 }

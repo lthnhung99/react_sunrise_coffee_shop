@@ -4,39 +4,24 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { CardActionArea, Grid } from "@mui/material";
-import { useState } from "react";
-import { useEffect } from "react";
+import useProducts from "../hooks/useProducts";
 
-export default function MultiActionAreaCard() {
-  const [product, setProduct] = useState([]);
-  useEffect(() => {
-    try {
-      async function getPost() {
-        let response = await fetch("http://localhost:9000/api/products");
-        if (response.ok) {
-          let data = await response.json();
-          setProduct(data);
-        } else {
-          console.error("API request failed with status:", response.status);
-        }
-      }
-      getPost();
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
-  }, []);
+export default function MultiActionAreaCard({ search }) {
+  const { product } = useProducts(search);
+
 
   return (
-    <Grid container spacing={3} sx={{ maxWidth: "50%" }}>
+    <Grid container spacing={4} sx={{ maxWidth: "100%", margin: "5px 10px 0 0" }}>
+
       {product &&
         product.length > 0 &&
         product.map((item) => (
-          <Grid item xs={12} sm={6} md={4} key={item.id}>
+          <Grid item xs={6} sm={6} md={2} key={item.id} >
             <Card>
               <CardActionArea>
                 <CardMedia
                   component="img"
-                  height="200"
+                  height="150"
                   src={item.productAvatar.fileUrl}
                   alt="green iguana"
                 />
