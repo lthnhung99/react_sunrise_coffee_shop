@@ -7,18 +7,17 @@ const TableOrder = ({ search }) => {
     const { tableOrders } = useTableOrders(search);
     return (
         <Grid container spacing={4} sx={{ maxWidth: "100%", margin: "5px 10px 0 0" }}>
-            {tableOrders &&
-                tableOrders.length > 0 &&
+            {tableOrders && tableOrders.length > 0 ? (
                 tableOrders.map((item) => (
-                    <Grid item xs={6} sm={6} md={2} key={item.id} >
+                    <Grid item xs={6} sm={6} md={2} key={item.id}>
                         <Card>
                             <CardActionArea>
                                 {/* <CardMedia
-                  component="img"
-                  height="200"
-                  src={item.productAvatar.fileUrl}
-                  alt="green iguana"
-                /> */}
+                component="img"
+                height="200"
+                src={item.productAvatar.fileUrl}
+                alt="green iguana"
+              /> */}
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
                                         {item.title}
@@ -30,7 +29,12 @@ const TableOrder = ({ search }) => {
                             </CardActionArea>
                         </Card>
                     </Grid>
-                ))}
+                ))
+            ) : (
+                <Typography variant="body1" sx={{ margin: '20px' }}>
+                    Không có dữ liệu.
+                </Typography>
+            )}
         </Grid>
     );
 };

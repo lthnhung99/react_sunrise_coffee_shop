@@ -7,14 +7,14 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import AddIcon from "@mui/icons-material/Add";
 import "../style.css";
 import MultiActionAreaCard from "./MultiActionAreaCard";
-import { BackupTable, MenuBook, TableRestaurant } from "@mui/icons-material";
-import { IconButton, InputBase, Paper } from "@mui/material";
+import { BackupTable, MenuBook, SearchOutlined, TableRestaurant } from "@mui/icons-material";
+import { FormControl, IconButton, InputAdornment, InputBase, OutlinedInput, Paper } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Link, Route, Routes } from "react-router-dom";
 import TableOrder from "./TableOrder";
 import Search from "./Search";
 import { GithubOutlined } from "@ant-design/icons";
-
+import CloseIcon from '@mui/icons-material/Close';
 
 function CustomTabPanel(props) {
   const { children, value, index, ss, search, ...other } = props;
@@ -26,7 +26,12 @@ function CustomTabPanel(props) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
-      style={{ height: "calc(100vh - 155px)", backgroundColor: "rgb(243 243 244)", borderRadius: "8px", overflow: "scroll" }}
+      style={{
+        height: "calc(100vh - 135px)",
+        backgroundColor: "rgb(243 243 244)",
+        borderRadius: "8px",
+        overflow: "scroll",
+      }}
     >
       {value === index && (
         <Box
@@ -56,8 +61,14 @@ function CustomTabPanel(props) {
           }}
         >
           <Routes>
-            <Route path="/products/list" element={<MultiActionAreaCard search={search} />} />
-            <Route path="/tableOrders/list" element={<TableOrder search={search} />} />
+            <Route
+              path="/products/list"
+              element={<MultiActionAreaCard search={search} />}
+            />
+            <Route
+              path="/table-orders/list"
+              element={<TableOrder search={search} />}
+            />
           </Routes>
         </Box>
       )}
@@ -84,16 +95,17 @@ export default function BasicTabs(props) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const value = e.target.value;
-    setSearch(value);
-    console.log(value);
   };
 
   const handleInput = (e) => {
     e.preventDefault();
     const value = e.target.value;
     setSearch(value);
-    console.log(value);
+  };
+
+  const removeInput = (e) => {
+    e.preventDefault();
+    setSearch("");
   }
 
   const handleChange = (event, newValue) => {
@@ -137,7 +149,7 @@ export default function BasicTabs(props) {
             />
             <Tab
               component={Link}
-              to='/tableOrders/list'
+              to="/table-orders/list"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -173,44 +185,46 @@ export default function BasicTabs(props) {
               alignItems: "center",
             }}
           >
-            {/* <Paper
-              component="form"
-              sx={{
-                padding: "2px 4px",
-                display: "flex",
-                alignItems: "center",
-                width: 400,
-                borderRadius: "20px",
-              }}
-              onSubmit={handleSearch}
-            >
-              <InputBase
-                sx={{
-                  ml: 1,
-                  flex: 1,
-                }}
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => handleInput(e)}
-              />
-              <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-                <SearchIcon />
-              </IconButton>
-            </Paper>
-            <BoltIcon
-              className="rounded-icon"
-              sx={{ marginLeft: "10px", marginRight: "10px" }}
-            />
-            <AddIcon className="rounded-icon" sx={{ marginRight: "10px" }} /> */}
+            <Box sx={{ width: '100%', marginRight: "10px", ml: { xs: 0, md: 1 } }} component="form" onSubmit={handleSearch}>
+              <FormControl sx={{ width: { xs: '100%', md: 224 } }}>
+                <OutlinedInput
+                  size="small"
+                  id="header-search"
+                  startAdornment={
+                    <InputAdornment position="start" sx={{ mr: -0.5 }}>
+                      <SearchOutlined />
+                    </InputAdornment>
+                  }
+                  endAdornment={
+                    <InputAdornment position="start" sx={{ mr: -0.5 }}>
+                      <IconButton disableRipple onClick={removeInput}>
+                        {search && <CloseIcon fontSize={"medium"} />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  aria-describedby="header-search-text"
+                  inputProps={{
+                    'aria-label': 'weight'
+                  }}
+                  placeholder="Search..."
+                  value={search}
+                  onChange={e => handleInput(e)}
+                />
+              </FormControl>
+            </Box>
 
-            <Search />
+            {/* <Search /> */}
             <IconButton
               href="https://github.com/codedthemes/mantis-free-react-admin-template"
               target="_blank"
               disableRipple
               color="secondary"
               title="Download Free Version"
-              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "10px" }}
+              sx={{
+                color: "text.primary",
+                bgcolor: "grey.100",
+                marginRight: "10px",
+              }}
             >
               <BoltIcon />
             </IconButton>
@@ -221,12 +235,16 @@ export default function BasicTabs(props) {
               disableRipple
               color="secondary"
               title="Download Free Version"
-              sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: '10px' }}
+              sx={{
+                color: "text.primary",
+                bgcolor: "grey.100",
+                marginRight: "10px",
+              }}
             >
               <AddIcon />
             </IconButton>
-          </Box >
-        </Box >
+          </Box>
+        </Box>
         <CustomTabPanel value={value} index={0}></CustomTabPanel>
         <CustomTabPanel value={value} index={1} search={search}>
           Bàn
@@ -234,8 +252,7 @@ export default function BasicTabs(props) {
         <CustomTabPanel value={value} index={2} search={search}>
           Thực đơn
         </CustomTabPanel>
-      </Box >
+      </Box>
     </>
   );
 }
-

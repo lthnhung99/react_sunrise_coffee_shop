@@ -4,8 +4,9 @@ import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
-import Notification from './Notification';
+import Notification from "./Notification";
 import Profile from "./Profile";
+
 function MyDropdown() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [setSelectedOption] = useState("");
@@ -39,7 +40,11 @@ function MyDropdown() {
           disableRipple
           color="secondary"
           title="Download Free Version"
-          sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "-2px" }}
+          sx={{
+            color: "text.primary",
+            bgcolor: "grey.100",
+            marginRight: "-2px",
+          }}
         >
           <VolumeUpIcon />
         </IconButton>
@@ -50,10 +55,15 @@ function MyDropdown() {
           disableRipple
           color="secondary"
           title="Download Free Version"
-          sx={{ color: 'text.primary', bgcolor: 'grey.100', marginRight: "4px" }}
+          sx={{
+            color: "text.primary",
+            bgcolor: "grey.100",
+            marginRight: "4px",
+          }}
         >
           <LocalPrintshopIcon />
         </IconButton>
+
         <Profile />
       </Box>
 
