@@ -1,7 +1,8 @@
 import React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, Grid } from "@mui/material";
-import CustomNumberInput from "./CustomNumberInput";
+
+import QuantityInput from "./QuantityInput";
 
 const Order = () => {
   return (
@@ -25,7 +26,7 @@ const Order = () => {
       <Grid item>Trà sữa</Grid>
       <Grid item>
         <Button>
-          <CustomNumberInput />
+          <QuantityInput />
         </Button>
       </Grid>
       <Grid item>
