@@ -21,8 +21,8 @@ import {
 } from '@mui/material';
 
 // project import
-import MainCard from './MainCard';
-import Transitions from './@extended/Transitions';
+import MainCard from '../MainCard';
+import Transitions from '../@extended/Transitions';
 
 // assets
 import { BellOutlined, CloseOutlined, GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
@@ -83,12 +83,12 @@ const Notification = () => {
                 </Badge>
             </IconButton>
             <Popper
+                sx={{ position: "fixed", zIndex: "1" }}
                 placement={matchesXs ? 'bottom' : 'bottom-end'}
                 open={open}
                 anchorEl={anchorRef.current}
                 role={undefined}
                 transition
-                disablePortal
                 popperOptions={{
                     modifiers: [
                         {

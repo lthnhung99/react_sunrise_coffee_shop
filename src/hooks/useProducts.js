@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 const useProducts = (search) => {
     const [product, setProduct] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -11,6 +12,7 @@ const useProducts = (search) => {
                     if (response.ok) {
                         let data = await response.json();
                         setProduct(data);
+                        setIsLoading(false);
                     } else {
                         console.error("API request failed with status:", response.status);
                         setProduct([]);
@@ -24,7 +26,7 @@ const useProducts = (search) => {
         return () => clearTimeout(timeout);
     }, [search]);
 
-    return { product, setProduct };
+    return { product, setProduct, isLoading };
 };
 
 export default useProducts;
