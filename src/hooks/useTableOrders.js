@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const useTableOrders = (search) => {
     const [tableOrders, setTableOrders] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
         const timeout = setTimeout(() => {
             try {
@@ -10,6 +11,7 @@ const useTableOrders = (search) => {
                     if (response.ok) {
                         let data = await response.json();
                         setTableOrders(data);
+                        setIsLoading(false);
                     } else {
                         console.error("API request failed with status:", response.status);
                         setTableOrders([]);
@@ -22,7 +24,7 @@ const useTableOrders = (search) => {
         }, 1000)
         return () => clearTimeout(timeout);
     }, [search]);
-    return { tableOrders, setTableOrders }
+    return { tableOrders, setTableOrders, isLoading }
 };
 
 export default useTableOrders;
