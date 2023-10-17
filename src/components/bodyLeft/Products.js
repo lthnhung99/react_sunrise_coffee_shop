@@ -6,10 +6,14 @@ import Typography from "@mui/material/Typography";
 import { Box, Button, ButtonGroup, CardActionArea, FormControl, Grid } from "@mui/material";
 import useProducts from "../../hooks/useProducts";
 import Loading from "../loading/Loading";
+import { useState } from "react";
+import ProductModal from "./ProductModal";
 
 export default function Products({ search }) {
   const { product, isLoading } = useProducts(search);
   const [selectedCate, setSelectedCate] = React.useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const cateTitle = [...new Set(product.map(item => item.category.title))]
 
@@ -17,6 +21,15 @@ export default function Products({ search }) {
     ? product.filter(item => item.category.title === selectedCate).sort((a, b) => a.title.localeCompare(b.title))
     : product.sort((a, b) => a.title.localeCompare(b.title));
 
+  const openModal = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedProduct(null);
+    setIsModalOpen(false);
+  };
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
 
@@ -65,7 +78,8 @@ export default function Products({ search }) {
           {filteredProduct.length > 0 ? (
             filteredProduct.map((item) => (
               <Grid item xs={6} sm={6} md={3} key={item.id}>
-                <Card style={{ height: "250px" }}>
+                <Card style={{ height: "250px" }}
+                  onClick={() => openModal(item)}>
                   <CardActionArea>
                     <CardMedia
                       component="img"
@@ -77,8 +91,11 @@ export default function Products({ search }) {
                       <Typography gutterBottom variant="h5" component="div">
                         {item.title}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {item.price}
+                      <Typography variant="body2">
+                        {item.price} đ
+                      </Typography>
+                      <Typography variant="body2">
+                        {item.unit.title}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
@@ -90,6 +107,15 @@ export default function Products({ search }) {
           )}
         </Grid>
       )}
+      {selectedProduct && (
+        <ProductModal
+          open={isModalOpen}
+          onClose={closeModal}
+          product={selectedProduct}
+        />
+      )}
     </Box>
+
+
   );
 }
