@@ -20,13 +20,13 @@ import {
 } from '@mui/material';
 
 // project import
-import MainCard from '../MainCard';
-import Transitions from '../@extended/Transitions';
+import MainCard from '../../MainCard';
+import Transitions from '../../@extended/Transitions';
 import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 
 // assets
-import avatar1 from '../../assets/images/users/avatar-1.png';
+import avatar1 from '../../../assets/images/users/avatar-1.png';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
 // tab panel wrapper
@@ -102,12 +102,12 @@ const Profile = () => {
         </Stack>
       </ButtonBase>
       <Popper
+        sx={{ position: "fixed", zIndex: "1" }}
         placement="bottom-end"
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
         transition
-        disablePortal
         popperOptions={{
           modifiers: [
             {
