@@ -18,13 +18,13 @@ const Search = (prop) => {
                     size="small"
                     id="header-search"
                     startAdornment={
-                        <InputAdornment position="start" sx={{ mr: -0.5, color: "darkBlue" }}>
+                        <InputAdornment position="start" sx={{ mr: -0.5, color: "#1677ff" }}>
                             <SearchOutlined />
                         </InputAdornment>
                     }
                     endAdornment={
                         <InputAdornment position="start" sx={{ mr: -0.5 }}>
-                            <IconButton disableRipple onClick={removeInput} sx={{ color: "darkBlue" }}>
+                            <IconButton disableRipple onClick={removeInput} sx={{ color: "#1677ff" }}>
                                 {search && <CloseIcon fontSize={"medium"} />}
                             </IconButton>
                         </InputAdornment>
@@ -37,14 +37,9 @@ const Search = (prop) => {
                     value={search}
                     onChange={e => handleInput(e)}
                     sx={{
-                        color: "darkBlue",
+                        color: "#1677ff",
                         "&::placeholder": {
-                            color: "darkBlue"
-                        },
-                        "&:focus": {
-                            color: "darkBlue",
-                            borderColor: "darkBlue",
-                            boxShadow: (theme) => `0 0 0 1px ${theme.palette.warning.main} !important`
+                            color: "#1677ff"
                         }
                     }}
                 />

@@ -6,6 +6,7 @@ import { Box } from '@mui/material';
 import PropTypes from "prop-types";
 
 const TabPanel = ({ value, index, search }) => {
+
     return (
         <div
             role="tabpanel"
@@ -57,7 +58,7 @@ const TabPanel = ({ value, index, search }) => {
 TabPanel.propTypes = {
     value: PropTypes.number.isRequired,
     index: PropTypes.number.isRequired,
-    search: PropTypes.string.isRequired,
+    search: PropTypes.string.isRequired
 };
 
 export default TabPanel;

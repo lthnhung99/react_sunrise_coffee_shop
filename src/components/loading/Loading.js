@@ -1,10 +1,17 @@
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import React from 'react';
 import PropTypes from 'prop-types';
 
 const Loading = (props) => {
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{
+            position: "absolute",
+            top: "50%",
+            right: "65%",
+            width: "100px",
+            height: "100px",
+            transform: "translate(-50%, -50%)",
+        }}>
             <CircularProgress />
         </Box>
     );
