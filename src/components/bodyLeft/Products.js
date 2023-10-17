@@ -91,11 +91,13 @@ export default function Products({ search }) {
                       <Typography gutterBottom variant="h5" component="div">
                         {item.title}
                       </Typography>
-                      <Typography variant="body2">
-                        {item.price} đ
-                      </Typography>
-                      <Typography variant="body2">
-                        {item.unit.title}
+                      <Typography sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Typography variant="body2">
+                          {item.price} đ
+                        </Typography>
+                        <Typography variant="body2">
+                          {item.unit.title}
+                        </Typography>
                       </Typography>
                     </CardContent>
                   </CardActionArea>
