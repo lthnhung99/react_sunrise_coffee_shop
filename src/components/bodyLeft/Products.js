@@ -52,9 +52,8 @@ export default function Products({ search }) {
                       <Typography gutterBottom variant="h5" component="div">
                         {item.title}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {item.price} đ
-                      </Typography>
+                      <Typography variant="body2">{item.price} đ</Typography>
+                      <Typography variant="body2">{item.unit.title}</Typography>
                     </CardContent>
                   </CardActionArea>
                 </Card>
