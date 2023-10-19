@@ -16,7 +16,7 @@ const MainContents = () => {
 
     const mainFilters = useSelector((state) => state.main.filters);
     useEffect(() => {
-        dispatch(loadProduct({ page: mainFilters.page, size: mainFilters.size, search: mainFilters.search }));
+        dispatch(loadProduct({ page: mainFilters.page, size: mainFilters.size, search: mainFilters.search, totalPages: mainFilters.totalPages }));
         const onProductSelect = async (productId) => {
             console.log("Selected product ID:", productId);
             try {
