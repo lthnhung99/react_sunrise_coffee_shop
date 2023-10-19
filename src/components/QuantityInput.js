@@ -5,58 +5,58 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 
 const CustomNumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
-    return (
-        <NumberInput
-            slots={{
-                root: StyledInputRoot,
-                input: StyledInput,
-                incrementButton: StyledButton,
-                decrementButton: StyledButton,
-            }}
-            slotProps={{
-                incrementButton: {
-                    children: <AddIcon />,
-                    className: 'increment',
-                },
-                decrementButton: {
-                    children: <RemoveIcon />,
-                },
-            }}
-            {...props}
-            ref={ref}
-        />
-    );
+  return (
+    <NumberInput
+      slots={{
+        root: StyledInputRoot,
+        input: StyledInput,
+        incrementButton: StyledButton,
+        decrementButton: StyledButton,
+      }}
+      slotProps={{
+        incrementButton: {
+          children: <AddIcon />,
+          className: 'increment',
+        },
+        decrementButton: {
+          children: <RemoveIcon />,
+        },
+      }}
+      {...props}
+      ref={ref}
+    />
+  );
 });
 
 export default function QuantityInput() {
-    return <CustomNumberInput aria-label="Quantity Input" min={1} max={99} />;
+  return <CustomNumberInput aria-label="Quantity Input" min={1} max={99} />;
 }
 
 const blue = {
-    100: '#daecff',
-    200: '#b6daff',
-    300: '#66b2ff',
-    400: '#3399ff',
-    500: '#007fff',
-    600: '#0072e5',
-    800: '#004c99',
+  100: '#daecff',
+  200: '#b6daff',
+  300: '#66b2ff',
+  400: '#3399ff',
+  500: '#007fff',
+  600: '#0072e5',
+  800: '#004c99',
 };
 
 const grey = {
-    50: '#f6f8fa',
-    100: '#eaeef2',
-    200: '#d0d7de',
-    300: '#afb8c1',
-    400: '#8c959f',
-    500: '#6e7781',
-    600: '#57606a',
-    700: '#424a53',
-    800: '#32383f',
-    900: '#24292f',
+  50: '#f6f8fa',
+  100: '#eaeef2',
+  200: '#d0d7de',
+  300: '#afb8c1',
+  400: '#8c959f',
+  500: '#6e7781',
+  600: '#57606a',
+  700: '#424a53',
+  800: '#32383f',
+  900: '#24292f',
 };
 
 const StyledInputRoot = styled('div')(
-    ({ theme }) => `
+  ({ theme }) => `
   font-family: IBM Plex Sans, sans-serif;
   font-weight: 400;
   color: ${theme.palette.mode === 'dark' ? grey[300] : grey[500]};
@@ -68,7 +68,7 @@ const StyledInputRoot = styled('div')(
 );
 
 const StyledInput = styled('input')(
-    ({ theme }) => `
+  ({ theme }) => `
   font-size: 0.875rem;
   font-family: inherit;
   font-weight: 400;
@@ -100,7 +100,7 @@ const StyledInput = styled('input')(
 );
 
 const StyledButton = styled('button')(
-    ({ theme }) => `
+  ({ theme }) => `
   font-family: IBM Plex Sans, sans-serif;
   font-size: 0.875rem;
   box-sizing: border-box;
