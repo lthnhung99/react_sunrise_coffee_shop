@@ -7,18 +7,15 @@ export const loadProduct = createAsyncThunk(
         try {
             console.log("Search API", data);
             const response = await axios.get(`http://localhost:9000/api/products?page=${data.page}&size=${data.size}&search=${data.search}`);
+
+            console.log("response", response);
             return {
                 request: data,
-                data: response.data.content
+                data: response.data
             }
-            return response.data.content;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
-            // return rejectWithValue({ error: error.message });
-            return {
-                request: data,
-                data: []
-            };
+            return rejectWithValue({ error: error.message });
         }
     }
 );
@@ -29,7 +26,8 @@ export default createSlice({
         filters: {
             search: '',
             page: 0,
-            size: 10,
+            size: 4,
+            totalPages: 0,
             table: {
                 floor: '',
                 status: ''
@@ -58,12 +56,24 @@ export default createSlice({
                     state.loading = true;
                 })
                 .addCase(loadProduct.fulfilled, (state, action) => {
-                    state.data.products = action.payload.data;
+                    if (action.payload != null && action.payload.data != "") {
+                        state.data.products = action.payload.data.content;
+                        state.filters.totalPages = action.payload.data.totalPages;
+                    } else {
+                        state.data.products = [];
+                    }
                     state.loading = false;
                     state.filters.search = action.payload.request.search;
-                    state.filters.page = action.payload.request.page;
                     state.filters.size = action.payload.request.size;
-                    return state;
+                    state.filters.page = action.payload.request.page;
+                })
+                .addCase(loadProduct.rejected, (state, action) => {
+                    state.data.products = [];
+                    state.filters.totalPages = 0;
+                    state.loading = true;
+                    state.filters.search = '';
+                    state.filters.page = '';
+                    state.filters.size = 4
                 })
 
         },
