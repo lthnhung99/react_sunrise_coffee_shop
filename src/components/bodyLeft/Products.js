@@ -8,26 +8,28 @@ import useProducts from "../../hooks/useProducts";
 import Loading from "../loading/Loading";
 import { useState } from "react";
 import ProductModal from "./ProductModal";
+import Pageable from "../pageable/Pageable";
+import MenuOrderContext from "../MenuOrderContext";
 
 export default function Products({ search }) {
-  const { product, isLoading } = useProducts(search);
+  const [page, setPage] = useState(0);
+  const { product, isLoading, totalPage } = useProducts(page, search);
   const [selectedCate, setSelectedCate] = React.useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { selectedProduct, setSelectedProduct } = React.useContext(MenuOrderContext);
 
-  const cateTitle = [...new Set(product.map(item => item.category.title))]
+  const cateTitle = [...new Set(product?.map(item => item.category.title))]
 
   const filteredProduct = selectedCate
     ? product.filter(item => item.category.title === selectedCate).sort((a, b) => a.title.localeCompare(b.title))
     : product.sort((a, b) => a.title.localeCompare(b.title));
 
   const openModal = (product) => {
-    setSelectedProduct(product);
+    setSelectedProduct(product)
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedProduct(null);
     setIsModalOpen(false);
   };
   return (
@@ -58,7 +60,7 @@ export default function Products({ search }) {
               </Button>
             )}
 
-            {cateTitle.sort().map((title) => (
+            {cateTitle.sort()?.map((title) => (
               <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
                 key={title}
                 onClick={() => setSelectedCate(title)}
@@ -76,7 +78,7 @@ export default function Products({ search }) {
       ) : (
         <Grid container spacing={4} sx={{ maxWidth: "100%", margin: "5px 10px 0 0" }}>
           {filteredProduct.length > 0 ? (
-            filteredProduct.map((item) => (
+            filteredProduct?.map((item) => (
               <Grid item xs={6} sm={6} md={3} key={item.id}>
                 <Card style={{ height: "250px" }}
                   onClick={() => openModal(item)}>
@@ -107,17 +109,15 @@ export default function Products({ search }) {
           ) : (
             <Typography variant="body2">Không có sản phẩm phù hợp.</Typography>
           )}
+          <Pageable page={page} setPage={setPage} totalPage={totalPage} />
         </Grid>
       )}
       {selectedProduct && (
         <ProductModal
           open={isModalOpen}
           onClose={closeModal}
-          product={selectedProduct}
         />
       )}
     </Box>
-
-
   );
 }
