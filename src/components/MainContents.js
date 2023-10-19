@@ -4,12 +4,19 @@ import MenuOrder from './bodyLeft/MenuOrder';
 import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
 import MenuOrderContext from './MenuOrderContext';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { loadProduct } from './reducers/mainSlice';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
     const [listOrderItem, setListOrderItem] = useState([]);
 
+    const dispatch = useDispatch();
+
+    const mainFilters = useSelector((state) => state.main.filters);
     useEffect(() => {
+        dispatch(loadProduct({ page: mainFilters.page, size: mainFilters.size, search: mainFilters.search }));
         const onProductSelect = async (productId) => {
             console.log("Selected product ID:", productId);
             try {

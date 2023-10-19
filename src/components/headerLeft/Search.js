@@ -11,6 +11,7 @@ import { SearchOutlined } from '@ant-design/icons';
 const Search = (prop) => {
     const { handleSearch, handleInput, removeInput, search } = prop;
 
+
     return (
         <Box sx={{ marginRight: "10px", ml: { xs: 0, md: 1 } }} component="form" onSubmit={handleSearch}>
             <FormControl sx={{ width: { xs: '100%', md: 224 } }}>
