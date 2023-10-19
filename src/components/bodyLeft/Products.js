@@ -10,6 +10,7 @@ import { useState } from "react";
 import ProductModal from "./ProductModal";
 import Pageable from "../pageable/Pageable";
 import MenuOrderContext from "../MenuOrderContext";
+import { useSelector } from "react-redux";
 
 export default function Products({ search }) {
   const [page, setPage] = useState(0);
@@ -18,12 +19,16 @@ export default function Products({ search }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { selectedProduct, setSelectedProduct } = React.useContext(MenuOrderContext);
 
-  const cateTitle = [...new Set(product?.map(item => item.category.title))]
+  const productS = useSelector((state) => state.main.data.products);
 
+  const cateTitle = [...new Set(productS?.map(item => item.category.title))]
+
+  const arrProductS = [...productS];
   const filteredProduct = selectedCate
-    ? product.filter(item => item.category.title === selectedCate).sort((a, b) => a.title.localeCompare(b.title))
-    : product.sort((a, b) => a.title.localeCompare(b.title));
+    ? arrProductS?.filter(item => item.category.title === selectedCate).sort((a, b) => a.title.localeCompare(b.title))
+    : arrProductS?.sort((a, b) => a.title.localeCompare(b.title));
 
+  console.log("productsS", productS);
   const openModal = (product) => {
     setSelectedProduct(product)
     setIsModalOpen(true);
