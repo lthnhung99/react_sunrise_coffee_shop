@@ -6,7 +6,6 @@ import { Box } from '@mui/material';
 import PropTypes from "prop-types";
 
 const TabPanel = ({ value, index, search }) => {
-
     return (
         <div
             role="tabpanel"
