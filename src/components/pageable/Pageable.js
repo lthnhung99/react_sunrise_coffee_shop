@@ -1,9 +1,12 @@
 import { Pagination } from '@mui/material';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const Pageable = ({ page, setPage, totalPage }) => {
+
+    const mainFilters = useSelector((state) => state.main.filters);
     const onPageChange = (event, pageChange) => {
-        if (pageChange < 0 || pageChange > totalPage) {
+        if (pageChange < 0 || pageChange > mainFilters.totalPages) {
             return;
         }
         setPage(pageChange - 1);
@@ -16,16 +19,17 @@ const Pageable = ({ page, setPage, totalPage }) => {
     };
 
     const handleLastPage = () => {
-        if (page !== totalPage - 1) {
-            setPage(totalPage - 1);
+        if (page !== mainFilters.totalPages - 1) {
+            setPage(mainFilters.totalPages - 1);
         }
     };
 
     return (
         <div style={{ position: "absolute", bottom: "8%", left: "20%" }}>
+            {console.log("mainPage", mainFilters.page)}
             <Pagination
-                count={totalPage}
-                defaultPage={1}
+                count={mainFilters.totalPages}
+                page={page}
                 onChange={onPageChange}
                 boundaryCount={1}
                 showFirstButton

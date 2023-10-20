@@ -3,24 +3,46 @@ import Search from "../headerLeft/Search";
 import { Box } from '@mui/material';
 import CustomTabs from '../headerLeft/CustomTabs';
 import TabPanel from '../headerLeft/TabPanel';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadProduct } from '../reducers/mainSlice';
 
 const MenuOrder = () => {
     const [value, setValue] = React.useState(0);
     const [search, setSearch] = React.useState("");
 
+    const mainFilters = useSelector((state) => state.main.filters);
+
+
+    const dispatch = useDispatch();
+
     const handleSearch = (e) => {
         e.preventDefault();
+        dispatch(loadProduct({
+            size: mainFilters.size,
+            page: mainFilters.page,
+            search: search,
+        }))
     };
 
     const handleInput = (e) => {
         e.preventDefault();
         const value = e.target.value;
         setSearch(value);
+        dispatch(loadProduct({
+            size: mainFilters.size,
+            page: mainFilters.page,
+            search: value,
+        }))
     };
 
     const removeInput = (e) => {
         e.preventDefault();
         setSearch("");
+        dispatch(loadProduct({
+            size: mainFilters.size,
+            page: mainFilters.page,
+            search: "",
+        }))
     }
 
     const handleTabChange = (event, newValue) => {
