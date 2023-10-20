@@ -19,7 +19,7 @@ const MenuOrder = () => {
         e.preventDefault();
         dispatch(loadProduct({
             size: mainFilters.size,
-            page: mainFilters.page,
+            page: 0,
             search: search,
         }))
     };
@@ -30,7 +30,7 @@ const MenuOrder = () => {
         setSearch(value);
         dispatch(loadProduct({
             size: mainFilters.size,
-            page: mainFilters.page,
+            page: 0,
             search: value,
         }))
     };
@@ -40,7 +40,7 @@ const MenuOrder = () => {
         setSearch("");
         dispatch(loadProduct({
             size: mainFilters.size,
-            page: mainFilters.page,
+            page: 0,
             search: "",
         }))
     }
