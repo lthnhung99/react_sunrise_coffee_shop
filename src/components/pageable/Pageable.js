@@ -2,7 +2,6 @@ import { Pagination } from '@mui/material';
 import React from 'react';
 
 const Pageable = ({ page, setPage, totalPage }) => {
-
     const onPageChange = (event, pageChange) => {
         if (pageChange < 0 || pageChange > totalPage) {
             return;

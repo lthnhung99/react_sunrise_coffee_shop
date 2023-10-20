@@ -9,7 +9,15 @@ import LiquorIcon from '@mui/icons-material/Liquor';
 
 const ItemOrder = () => {
   const { listOrderItem, setListOrderItem } = useContext(MenuOrderContext);
-  const totalPrice = listOrderItem.reduce((acc, item) => acc + item.price, 0);
+  const totalPrice = () => {
+    if (listOrderItem.length === 0) {
+      return 0;
+    }
+
+    const totalPrice = listOrderItem.reduce((acc, item) => acc + item.price, 0);
+    return totalPrice;
+  };
+
 
   const CustomTypography = styled(Typography)(({ theme }) => ({
     "& .MuiSvgIcon-root": {
@@ -79,7 +87,9 @@ const ItemOrder = () => {
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{item.title}</TableCell>
                     <TableCell>{item.price}</TableCell>
-                    {/* <QuantityInput /> */}
+                    {/* <TableCell>
+                      <QuantityCounter value={1} />
+                    </TableCell> */}
                     <TableCell>{item.price}</TableCell>
                     <TableCell>
                       <Button
@@ -98,7 +108,7 @@ const ItemOrder = () => {
               </TableBody>
             </Table>
             <Box sx={{ position: "absolute", bottom: "15%", right: "5%", background: "red" }}>
-              <Typography variant="h3">Tổng tiền: {totalPrice}</Typography>
+              <Typography variant="h3">Tổng tiền: {totalPrice()}</Typography>
             </Box>
           </TableContainer>
 
