@@ -6,11 +6,9 @@ import { Link, useLocation } from 'react-router-dom';
 const CustomTabs = () => {
     const location = useLocation();
 
-
     const tabs = [
-        // { label: "Phòng", icon: <BackupTable />, to: "/" },
-        { label: "Bàn", icon: <TableRestaurant />, to: "/table-orders/list" },
-        { label: "Thực đơn", icon: <MenuBook />, to: "/products/list" },
+        { label: "Bàn", icon: <TableRestaurant />, to: "/" },
+        { label: "Thực đơn", icon: <MenuBook />, to: "/products" },
     ]
     return (
         <Tabs value={location.pathname} aria-label="basic tabs example">

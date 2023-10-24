@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Grid } from "@mui/material";
 import MenuOrder from './bodyLeft/MenuOrder';
@@ -5,18 +6,47 @@ import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
 import MenuOrderContext from './MenuOrderContext';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { loadProduct } from './reducers/mainSlice';
+import { loadProduct, loadTableOrder, createOrder, updateOrder, changeWaiting } from './reducers/mainSlice';
+import { useLocation } from 'react-router-dom';
+import mainSlice from './reducers/mainSlice';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
-    const [listOrderItem, setListOrderItem] = useState([]);
-
+    const [previousSelectedProductId, setPreviousSelectedProductId] = useState(null);
     const dispatch = useDispatch();
-
+    const location = useLocation();
     const mainFilters = useSelector((state) => state.main.filters);
+    const quantity = mainFilters.products.quantity;
+    const note = mainFilters.products.note;
+
+    const listOrderItem = useSelector(state => state.main.data.order.orderItems);
+
+    if (location.pathname === "/") {
+        dispatch(mainSlice.actions.tabChanged('table'));
+    } else if (location.pathname === "/products") {
+        dispatch(mainSlice.actions.tabChanged('product'));
+    }
+
     useEffect(() => {
-        dispatch(loadProduct({ page: mainFilters.page, size: mainFilters.size, search: mainFilters.search, totalPages: mainFilters.totalPages }));
+        if (location.pathname === '/') {
+            dispatch(loadTableOrder({
+                search: mainFilters.search,
+                page: mainFilters.tableOrders.page,
+                size: mainFilters.tableOrders.size,
+                totalPages: mainFilters.tableOrders.totalPages,
+            }));
+        }
+        if (location.pathname === '/products') {
+            dispatch(loadProduct({
+                search: mainFilters.search,
+                page: mainFilters.products.page,
+                size: mainFilters.products.size,
+                totalPages: mainFilters.products.totalPages
+            }));
+        }
+    }, [dispatch, location.pathname]);
+
+    useEffect(() => {
         const onProductSelect = async (productId) => {
             console.log("Selected product ID:", productId);
             try {
@@ -32,22 +62,47 @@ const MainContents = () => {
             }
         };
 
-        if (selectedProduct.id) {
+        if (selectedProduct.id && selectedProduct.id !== previousSelectedProductId) {
             onProductSelect(selectedProduct.id);
+            setPreviousSelectedProductId(selectedProduct.id);
         }
-    }, [selectedProduct.id]);
+    }, [selectedProduct.id, previousSelectedProductId]);
 
     const handleAddProduct = (product) => {
-        if (product && product.id) {
-            setListOrderItem([...listOrderItem, product])
+        if (listOrderItem === "") {
+            if (product && product.id) {
+                dispatch(createOrder({
+                    tableId: mainFilters.tableSelected,
+                    productId: product.id,
+                    quantity: quantity,
+                    note: note
+                }));
+            }
         }
+        else {
+            if (product && product.id) {
+                dispatch(updateOrder({
+                    tableId: mainFilters.tableSelected,
+                    productId: product.id,
+                    quantity: quantity,
+                    note: note,
+                    status: "NEW"
+                }));
+            }
+        }
+
     }
+
+    const handleStatusChange = () => {
+        dispatch(changeWaiting(mainFilters.tableSelected))
+    }
+
     const menuOrderData = {
         selectedProduct,
         setSelectedProduct,
         handleAddProduct,
         listOrderItem,
-        setListOrderItem
+        // setListOrderItem
     };
     return (
         <div>
@@ -116,8 +171,11 @@ const MainContents = () => {
                                                     width: "100%",
                                                     borderRadius: "10px",
                                                     margin: "5px",
-                                                    padding: "15px 0"
+                                                    padding: "15px 0",
+                                                    backgroundColor: (listOrderItem.length === 0 || listOrderItem.status === "NEW") ? "#69b1ff" : "#1677ff"
                                                 }}
+                                                disabled={listOrderItem.length === 0 || listOrderItem.status === "NEW"}
+                                                onClick={handleStatusChange}
                                             >
                                                 Thông báo
                                             </Button>

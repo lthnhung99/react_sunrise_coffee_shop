@@ -1,22 +1,31 @@
 import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from "@mui/material";
 import React, { useState } from "react";
-import useTableOrders from "../../hooks/useTableOrders";
 import Loading from "../loading/Loading";
 import { useNavigate } from 'react-router-dom';
 import Pageable from "../pageable/Pageable";
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
-
+import { useDispatch, useSelector } from "react-redux";
+import { getListOrderDetailByTableId, loadTableOrder } from "../reducers/mainSlice";
+import mainSlice from '../reducers/mainSlice';
 
 const TableOrder = ({ search }) => {
-    const [page, setPage] = useState(0);
-    const { tableOrders, isLoading, totalPage } = useTableOrders(page, search);
+    const dispatch = useDispatch();
+    const setPage = (page) => {
+        dispatch(loadTableOrder({
+            page: page, size: mainFilters.size,
+            search: mainFilters.search, totalPages: mainFilters.totalPages
+        }))
+    }
+    const tableOrders = useSelector((state) => state.main.data.tables) || [];
+    const mainFilters = useSelector((state) => state.main.filters);
+    const isLoading = useSelector((state) => state.main.loading);
     const [selectedFloor, setSelectedFloor] = useState("");
     const [selectedStatus, setSelectedStatus] = useState('');
 
     const navigate = useNavigate();
 
-    const zoneTitles = [...new Set(tableOrders.map((item) => item.zone.title))];
-    const tableOrderStatus = [...new Set(tableOrders.map((item) => item.status))];
+    const zoneTitles = [...new Set(tableOrders?.map((item) => item.zone.title))];
+    const tableOrderStatus = [...new Set(tableOrders?.map((item) => item.status))];
 
     const countTableOrderByStatusAndZone = (status, zone) => {
         if (zone === "") {
@@ -58,9 +67,10 @@ const TableOrder = ({ search }) => {
                 return a.zone.title.localeCompare(b.zone.title);
             });
 
-    const handleTableOrderClick = (tableOrder) => {
-        console.log(tableOrder);
-        navigate('/products/list')
+    const handleTableOrderClick = (tableOrderId) => {
+        dispatch(mainSlice.actions.setTableSelected(tableOrderId));
+        dispatch(getListOrderDetailByTableId(tableOrderId));
+        navigate('/products');
     }
 
     return (
@@ -124,7 +134,7 @@ const TableOrder = ({ search }) => {
                                 }}
                             />
                         )}
-                        {tableOrderStatus.map((status) => {
+                        {tableOrderStatus?.map((status) => {
                             const count = countTableOrderByStatusAndZone(status, selectedFloor);
                             const label = `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()} (${count})`;
 
@@ -149,7 +159,7 @@ const TableOrder = ({ search }) => {
                         filteredTableOrders.map((item) => (
                             <Grid item xs={6} sm={6} md={3} key={item.id}>
                                 <Card sx={{ backgroundColor: item.status === "BUSY" ? "lightBlue" : "inherit", textAlign: "center", borderRadius: "25%" }}>
-                                    <CardActionArea onClick={() => handleTableOrderClick(item.title)}>
+                                    <CardActionArea onClick={() => handleTableOrderClick(item.id)}>
                                         <CardContent>
                                             <LocalCafeIcon sx={{ fontSize: "40px" }} />
                                             <Typography gutterBottom variant="h5" component="div">
@@ -168,7 +178,7 @@ const TableOrder = ({ search }) => {
                             Không tìm thấy bàn này!
                         </Typography>
                     )}
-                    <Pageable page={page} setPage={setPage} totalPage={totalPage} />
+                    <Pageable page={mainFilters.page + 1} setPage={setPage} totalPage={mainFilters.totalPage} />
                 </Grid>
             }
         </Box>
