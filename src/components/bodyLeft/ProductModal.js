@@ -7,10 +7,33 @@ import { DialogContentText, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import MenuOrderContext from "../MenuOrderContext";
+import { useDispatch, useSelector } from "react-redux";
+import mainSlice from '../reducers/mainSlice';
 
 export default function ProductModal({ open, onClose }) {
   const { selectedProduct, handleAddProduct } = React.useContext(MenuOrderContext);
-  console.log(selectedProduct);
+  const mainFilters = useSelector((state) => state.main.filters);
+  const dispatch = useDispatch();
+
+  const quantity = mainFilters.products.quantity;
+  const note = mainFilters.products.note;
+
+  const handleQuantityChange = (event) => {
+    dispatch(mainSlice.actions.setQuantity(event.target.value));
+  };
+
+  const handleNoteChange = (event) => {
+    dispatch(mainSlice.actions.setNote(event.target.value));
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    handleAddProduct(selectedProduct);
+    dispatch(mainSlice.actions.setQuantity(1));
+    dispatch(mainSlice.actions.setNote(""));
+    onClose();
+  };
+
   return (
     <Dialog
       open={open}
@@ -63,7 +86,9 @@ export default function ProductModal({ open, onClose }) {
             type="number"
             fullWidth
             variant="standard"
-            defaultValue={1}
+            defaultValue={quantity}
+            // value={quantity}
+            onChange={handleQuantityChange}
             inputProps={{
               min: 1,
               max: 99
@@ -79,6 +104,8 @@ export default function ProductModal({ open, onClose }) {
             variant="standard"
             multiline
             rows={3}
+            defaultValue={note}
+            onChange={handleNoteChange}
           />
         </div>
       </DialogContent>
@@ -89,11 +116,7 @@ export default function ProductModal({ open, onClose }) {
           startIcon={<AddIcon />}
           variant="contained"
           color="primary"
-          onClick={(e) => {
-            e.preventDefault();
-            handleAddProduct(selectedProduct);
-            onClose();
-          }}
+          onClick={handleSubmit}
         >
           Thêm món
         </Button>

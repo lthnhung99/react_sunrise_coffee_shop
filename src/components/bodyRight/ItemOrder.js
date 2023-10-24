@@ -1,15 +1,26 @@
-import React, { useContext } from "react";
-import { Box, Tab, IconButton, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled } from "@mui/material";
+import React from "react";
+import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyDropdown from "../headerRight/MyDropdown";
-import { Add } from "@mui/icons-material";
-import MenuOrderContext from "../MenuOrderContext";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LiquorIcon from '@mui/icons-material/Liquor';
+import { deleteOrderItem } from "../reducers/mainSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const ItemOrder = () => {
-  const { listOrderItem, setListOrderItem } = useContext(MenuOrderContext);
-  const totalPrice = listOrderItem.reduce((acc, item) => acc + item.price, 0);
+  const dispatch = useDispatch();
+  const listOrderItem = useSelector((state) => state.main.data.order.orderItems);
+  const mainFilters = useSelector((state) => state.main.filters);
+
+  const totalPrice = () => {
+    if (listOrderItem.length === 0) {
+      return 0;
+    }
+
+    const totalPrice = listOrderItem.reduce((acc, item) => acc + item?.amount, 0);
+    return totalPrice;
+  };
+
 
   const CustomTypography = styled(Typography)(({ theme }) => ({
     "& .MuiSvgIcon-root": {
@@ -18,10 +29,10 @@ const ItemOrder = () => {
     },
   }));
 
-  const handleDeleteItem = (index) => {
-    const updatedList = [...listOrderItem];
-    updatedList.splice(index, 1);
-    setListOrderItem(updatedList);
+  const handleDeleteItem = (orderDetailId) => {
+    if (window.confirm("Bạn chắc chắn muốn xóa?")) {
+      dispatch(deleteOrderItem(orderDetailId));
+    }
   };
 
   return (
@@ -30,46 +41,33 @@ const ItemOrder = () => {
         <TabContext>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList aria-label="lab API tabs example">
-              <Tab label="Phòng" value="1" />
-              <Tab label="Item Three" value="3" />
-
               <Tab
-                icon={
-                  <IconButton
-                    href="https://github.com/codedthemes/mantis-free-react-admin-template"
-                    target="_blank"
-                    disableRipple
-                    color="secondary"
-                    title="Download Free Version"
-                    sx={{
-                      color: "text.primary",
-                      bgcolor: "grey.100",
-                      marginRight: "-2px",
-                    }}
-                  >
-                    <Add />
-                  </IconButton>
+                label={
+                  <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '20px' }}>
+                    Bàn <span>{mainFilters.tableSelected}</span>
+                  </Typography>
                 }
+                value="1"
               />
               <MyDropdown />
             </TabList>
           </Box>
-          <TabPanel value="1">Phòng</TabPanel>
-          <TabPanel value="3">Item Three</TabPanel>
-          <TabPanel value="2"></TabPanel>
+          <TabPanel value="1"></TabPanel>
         </TabContext>
       </Box>
       <Box sx={{ flexGrow: "1" }}>
         {listOrderItem && listOrderItem.length > 0 ? (
           <TableContainer>
-            <Table sx={{ textAlign: "center" }}>
+            <Table sx={{ textAlignLast: "center" }}>
               <TableHead>
                 <TableRow>
                   <TableCell></TableCell>
                   <TableCell>Tên</TableCell>
                   <TableCell>Giá</TableCell>
-                  {/* <TableCell>Số lượng</TableCell> */}
+                  <TableCell>Số lượng</TableCell>
+                  <TableCell>Ghi chú</TableCell>
                   <TableCell>Tổng tiền</TableCell>
+                  <TableCell>Trạng thái</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
@@ -77,10 +75,12 @@ const ItemOrder = () => {
                 {listOrderItem?.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item.title}</TableCell>
-                    <TableCell>{item.price}</TableCell>
-                    {/* <QuantityInput /> */}
-                    <TableCell>{item.price}</TableCell>
+                    <TableCell>{item?.title}</TableCell>
+                    <TableCell>{item?.price}</TableCell>
+                    <TableCell>{item?.quantity}</TableCell>
+                    <TableCell>{item?.note}</TableCell>
+                    <TableCell>{item?.amount}</TableCell>
+                    <TableCell>{item?.status}</TableCell>
                     <TableCell>
                       <Button
                         startIcon={
@@ -90,7 +90,7 @@ const ItemOrder = () => {
                             }}
                           />
                         }
-                        onClick={() => handleDeleteItem(index)}
+                        onClick={() => handleDeleteItem(item?.orderDetailId)}
                       ></Button>
                     </TableCell>
                   </TableRow>
@@ -98,7 +98,7 @@ const ItemOrder = () => {
               </TableBody>
             </Table>
             <Box sx={{ position: "absolute", bottom: "15%", right: "5%", background: "red" }}>
-              <Typography variant="h3">Tổng tiền: {totalPrice}</Typography>
+              <Typography variant="h3">Tổng tiền: {totalPrice()}</Typography>
             </Box>
           </TableContainer>
 

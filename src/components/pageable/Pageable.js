@@ -3,6 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 const Pageable = ({ page, setPage, totalPage }) => {
+
     const mainFilters = useSelector((state) => state.main.filters);
     const onPageChange = (event, pageChange) => {
         if (pageChange < 0 || pageChange > mainFilters.totalPages) {
