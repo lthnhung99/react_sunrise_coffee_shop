@@ -101,7 +101,7 @@ export const changeWaiting = createAsyncThunk(
             console.log(tableId);
             const response = await axios.post(API_URL + `orders/change-status-waiting`, tableId, { headers });
             console.log(response);
-            return { tableId };
+            return response;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
             return rejectWithValue({ error: error.message });
@@ -116,9 +116,10 @@ export default createSlice({
             search: '',
             tableOrders: {
                 floor: '',
+                title: '',
                 status: '',
                 page: 0,
-                size: 4,
+                size: 12,
                 totalPages: 0,
             },
             products: {
@@ -126,8 +127,7 @@ export default createSlice({
                 size: 8,
                 totalPages: 0,
                 quantity: 1,
-                note: '',
-                status: "NEW"
+                note: ''
             },
             tab: 'table',
             tableSelected: '',
@@ -157,14 +157,17 @@ export default createSlice({
         setTableSelected: (state, action) => {
             state.filters.tableSelected = action.payload;
         },
+        setTableTitle: (state, action) => {
+            state.filters.tableOrders.title = action.payload;
+        },
+        setZoneTitle: (state, action) => {
+            state.filters.tableOrders.floor = action.payload;
+        },
         setQuantity: (state, action) => {
             state.filters.products.quantity = action.payload;
         },
         setNote: (state, action) => {
             state.filters.products.note = action.payload;
-        },
-        setStatus: (state, action) => {
-            state.filters.products.status = action.payload;
         }
     },
     extraReducers:
@@ -273,7 +276,9 @@ export default createSlice({
                     state.loading = true;
                 })
                 .addCase(changeWaiting.fulfilled, (state, action) => {
-                    state.data.order.orderItems = [...state.data.order.orderItems];
+                    console.log(state);
+                    console.log(action);
+                    state.data.order.orderItems = action.payload.data.orderDetails;
                     state.loading = false;
                 })
                 .addCase(changeWaiting.rejected, (state, action) => {

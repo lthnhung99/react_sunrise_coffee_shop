@@ -6,7 +6,7 @@ import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
 import MenuOrderContext from './MenuOrderContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadProduct, loadTableOrder, createOrder, updateOrder, changeWaiting } from './reducers/mainSlice';
+import { createOrder, updateOrder, changeWaiting } from './reducers/mainSlice';
 import { useLocation } from 'react-router-dom';
 import mainSlice from './reducers/mainSlice';
 
@@ -26,25 +26,6 @@ const MainContents = () => {
     } else if (location.pathname === "/products") {
         dispatch(mainSlice.actions.tabChanged('product'));
     }
-
-    useEffect(() => {
-        if (location.pathname === '/') {
-            dispatch(loadTableOrder({
-                search: mainFilters.search,
-                page: mainFilters.tableOrders.page,
-                size: mainFilters.tableOrders.size,
-                totalPages: mainFilters.tableOrders.totalPages,
-            }));
-        }
-        if (location.pathname === '/products') {
-            dispatch(loadProduct({
-                search: mainFilters.search,
-                page: mainFilters.products.page,
-                size: mainFilters.products.size,
-                totalPages: mainFilters.products.totalPages
-            }));
-        }
-    }, [dispatch, location.pathname]);
 
     useEffect(() => {
         const onProductSelect = async (productId) => {
@@ -101,9 +82,9 @@ const MainContents = () => {
         selectedProduct,
         setSelectedProduct,
         handleAddProduct,
-        listOrderItem,
-        // setListOrderItem
+        listOrderItem
     };
+
     return (
         <div>
             <MenuOrderContext.Provider value={menuOrderData}>
@@ -172,9 +153,9 @@ const MainContents = () => {
                                                     borderRadius: "10px",
                                                     margin: "5px",
                                                     padding: "15px 0",
-                                                    backgroundColor: (listOrderItem.length === 0 || listOrderItem.status === "NEW") ? "#69b1ff" : "#1677ff"
+                                                    backgroundColor: !listOrderItem.find(e => e.status === 'NEW') ? "#69b1ff" : "#1677ff"
                                                 }}
-                                                disabled={listOrderItem.length === 0 || listOrderItem.status === "NEW"}
+                                                disabled={!listOrderItem.find(e => e.status === 'NEW')}
                                                 onClick={handleStatusChange}
                                             >
                                                 Thông báo

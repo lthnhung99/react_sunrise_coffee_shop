@@ -1,10 +1,12 @@
-import React from "react";
-import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled, IconButton } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyDropdown from "../headerRight/MyDropdown";
 import DeleteIcon from "@mui/icons-material/Delete";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from '@mui/icons-material/Add';
 import LiquorIcon from '@mui/icons-material/Liquor';
-import { deleteOrderItem } from "../reducers/mainSlice";
+import mainSlice, { deleteOrderItem } from "../reducers/mainSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const ItemOrder = () => {
@@ -35,6 +37,16 @@ const ItemOrder = () => {
     }
   };
 
+  const quantities = mainFilters.products.quantity;
+
+  const handleQuantityChange = (orderDetailId, newQuantity) => {
+    if (newQuantity === 0) {
+      handleDeleteItem(orderDetailId);
+    } else {
+      dispatch(mainSlice.actions.setQuantity(newQuantity))
+    }
+  };
+
   return (
     <div>
       <Box sx={{ width: "100%", typography: "body1" }}>
@@ -44,7 +56,7 @@ const ItemOrder = () => {
               <Tab
                 label={
                   <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '20px' }}>
-                    Bàn <span>{mainFilters.tableSelected}</span>
+                    {mainFilters.tableOrders.title + " / " + mainFilters.tableOrders.floor}
                   </Typography>
                 }
                 value="1"
@@ -77,9 +89,39 @@ const ItemOrder = () => {
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{item?.title}</TableCell>
                     <TableCell>{item?.price}</TableCell>
-                    <TableCell>{item?.quantity}</TableCell>
+                    <TableCell>
+                      {item?.status === "NEW" ? (
+                        <>
+                          <IconButton
+                            onClick={() =>
+                              handleQuantityChange(
+                                item?.orderDetailId,
+                                (quantities || item?.quantity) - 1
+                              )
+                            }
+                          >
+                            <RemoveIcon />
+                          </IconButton>
+                          {quantities || item?.quantity}
+                          <IconButton
+                            onClick={() =>
+                              handleQuantityChange(
+                                item?.orderDetailId,
+                                (quantities || item?.quantity) + 1
+                              )
+                            }
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        </>
+                      ) : (
+                        item?.quantity
+                      )}
+                    </TableCell>
                     <TableCell>{item?.note}</TableCell>
-                    <TableCell>{item?.amount}</TableCell>
+                    <TableCell>
+                      {item?.status === "NEW" ? item?.amount * quantities : item?.amount}
+                    </TableCell>
                     <TableCell>{item?.status}</TableCell>
                     <TableCell>
                       <Button
@@ -97,7 +139,7 @@ const ItemOrder = () => {
                 ))}
               </TableBody>
             </Table>
-            <Box sx={{ position: "absolute", bottom: "15%", right: "5%", background: "red" }}>
+            <Box sx={{ position: "absolute", bottom: "15%", right: "5%" }}>
               <Typography variant="h3">Tổng tiền: {totalPrice()}</Typography>
             </Box>
           </TableContainer>
