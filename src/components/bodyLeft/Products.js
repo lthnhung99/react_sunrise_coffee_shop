@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -42,7 +43,7 @@ export default function Products({ search }) {
 
   const openModal = (product) => {
     if (mainFilters.tableSelected === "") {
-      navigate('/');
+      navigate('/tables');
       alert("vui lòng chọn bàn")
     } else {
       setSelectedProduct(product)
@@ -53,6 +54,16 @@ export default function Products({ search }) {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  React.useEffect(() => {
+    dispatch(loadProduct({
+      search: mainFilters.search,
+      page: mainFilters.products.page,
+      size: mainFilters.products.size,
+      totalPages: mainFilters.products.totalPages
+    }));
+  }, [])
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
 

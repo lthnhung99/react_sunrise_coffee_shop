@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, FormControl, FormControlLabel, Grid, Radio, RadioGroup, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Loading from "../loading/Loading";
 import { useNavigate } from 'react-router-dom';
 import Pageable from "../pageable/Pageable";
@@ -67,11 +68,22 @@ const TableOrder = ({ search }) => {
                 return a.zone.title.localeCompare(b.zone.title);
             });
 
-    const handleTableOrderClick = (tableOrderId) => {
-        dispatch(mainSlice.actions.setTableSelected(tableOrderId));
-        dispatch(getListOrderDetailByTableId(tableOrderId));
+    const handleTableOrderClick = (tableOrder) => {
+        dispatch(mainSlice.actions.setTableSelected(tableOrder.id));
+        dispatch(mainSlice.actions.setTableTitle(tableOrder.title));
+        dispatch(mainSlice.actions.setZoneTitle(tableOrder.zone.title));
+        dispatch(getListOrderDetailByTableId(tableOrder.id));
         navigate('/products');
     }
+
+    useEffect(() => {
+        dispatch(loadTableOrder({
+            search: mainFilters.search,
+            page: mainFilters.tableOrders.page,
+            size: mainFilters.tableOrders.size,
+            totalPages: mainFilters.tableOrders.totalPages,
+        }));
+    }, [])
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
@@ -157,9 +169,9 @@ const TableOrder = ({ search }) => {
                 <Grid container spacing={2} sx={{ maxWidth: "100%", margin: "0 5px" }}>
                     {filteredTableOrders.length > 0 ? (
                         filteredTableOrders.map((item) => (
-                            <Grid item xs={6} sm={6} md={3} key={item.id}>
+                            <Grid item xs={6} sm={6} md={2} key={item.id}>
                                 <Card sx={{ backgroundColor: item.status === "BUSY" ? "lightBlue" : "inherit", textAlign: "center", borderRadius: "25%" }}>
-                                    <CardActionArea onClick={() => handleTableOrderClick(item.id)}>
+                                    <CardActionArea onClick={() => handleTableOrderClick(item)}>
                                         <CardContent>
                                             <LocalCafeIcon sx={{ fontSize: "40px" }} />
                                             <Typography gutterBottom variant="h5" component="div">
