@@ -1,5 +1,7 @@
 import { Box, Grid } from '@mui/material';
 import React from 'react';
+import WaitingProcessing from './bodyLeft/WaitingProcessing';
+import WaitingSupply from './bodyRight/WaitingSupply';
 
 const Kitchen = () => {
     return (
@@ -20,7 +22,7 @@ const Kitchen = () => {
                     <Grid item xs={6} md={7} paddingRight={'8px'} style={{ margin: "1% 0" }}>
                         <Box sx={{ backgroundColor: 'white', height: "100%", padding: '6px', borderRadius: '10px' }}>
                             <Box style={{ backgroundColor: "white" }}>
-
+                                <WaitingProcessing />
                             </Box>
                         </Box>
                     </Grid>
@@ -29,9 +31,10 @@ const Kitchen = () => {
                             <Box
                                 style={{
                                     backgroundColor: "white",
-                                    height: "100%"
+                                    height: "92%"
                                 }}
                             >
+                                <WaitingSupply />
                             </Box>
                             <Box
                                 sx={{

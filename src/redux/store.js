@@ -2,10 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk';
 import mainSlice from '../components/reducers/mainSlice';
+import kitchenSlice from '../components/reducers/kitchenSlice';
+import Kitchen from './../components/Kitchen';
 
 const store = configureStore({
     reducer: {
-        main: mainSlice.reducer
+        main: mainSlice.reducer,
+        kitchen: kitchenSlice.reducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });
