@@ -25,7 +25,7 @@ const Search = (prop) => {
                     }
                     endAdornment={
                         <InputAdornment position="start" sx={{ mr: -0.5 }}>
-                            <IconButton disableRipple onClick={removeInput} sx={{ color: "#1677ff" }}>
+                            <IconButton disableRipple disabled={!search} onClick={removeInput} sx={{ color: "#1677ff" }}>
                                 {search && <CloseIcon fontSize={"medium"} />}
                             </IconButton>
                         </InputAdornment>

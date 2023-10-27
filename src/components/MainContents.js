@@ -19,7 +19,7 @@ const MainContents = () => {
     const quantity = mainFilters.products.quantity;
     const note = mainFilters.products.note;
 
-    const listOrderItem = useSelector(state => state.main.data.order.orderItems);
+    const listOrderItem = useSelector(state => state.main.data.order.orderItems || []);
 
     if (location.pathname === "/") {
         dispatch(mainSlice.actions.tabChanged('table'));
@@ -50,7 +50,7 @@ const MainContents = () => {
     }, [selectedProduct.id, previousSelectedProductId]);
 
     const handleAddProduct = (product) => {
-        if (listOrderItem === "") {
+        if (listOrderItem.length === 0) {
             if (product && product.id) {
                 dispatch(createOrder({
                     tableId: mainFilters.tableSelected,
@@ -75,7 +75,8 @@ const MainContents = () => {
     }
 
     const handleStatusChange = () => {
-        dispatch(changeWaiting(mainFilters.tableSelected))
+        dispatch(changeWaiting(mainFilters.tableSelected));
+        dispatch(mainSlice.actions.setListOrderDetail(listOrderItem));
     }
 
     const menuOrderData = {
@@ -153,9 +154,9 @@ const MainContents = () => {
                                                     borderRadius: "10px",
                                                     margin: "5px",
                                                     padding: "15px 0",
-                                                    backgroundColor: !listOrderItem.find(e => e.status === 'NEW') ? "#69b1ff" : "#1677ff"
+                                                    backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') ? "#69b1ff" : "#1677ff"
                                                 }}
-                                                disabled={!listOrderItem.find(e => e.status === 'NEW')}
+                                                disabled={!listOrderItem?.find(e => e.status === 'NEW')}
                                                 onClick={handleStatusChange}
                                             >
                                                 Thông báo

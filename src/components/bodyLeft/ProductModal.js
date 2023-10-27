@@ -9,6 +9,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import MenuOrderContext from "../MenuOrderContext";
 import { useDispatch, useSelector } from "react-redux";
 import mainSlice from '../reducers/mainSlice';
+import formatPrice from "../bodyRight/FormatPrice";
 
 export default function ProductModal({ open, onClose }) {
   const { selectedProduct, handleAddProduct } = React.useContext(MenuOrderContext);
@@ -75,7 +76,7 @@ export default function ProductModal({ open, onClose }) {
 
           <p style={{ fontSize: "20px" }}>
             Giá:{" "}
-            {selectedProduct && selectedProduct.price ? selectedProduct.price : "Price Not Available"} đ
+            {selectedProduct && selectedProduct.price ? formatPrice(selectedProduct.price) : "Price Not Available"}
           </p>
 
           <TextField

@@ -169,7 +169,7 @@ const TableOrder = ({ search }) => {
                 <Grid container spacing={2} sx={{ maxWidth: "100%", margin: "0 5px" }}>
                     {filteredTableOrders.length > 0 ? (
                         filteredTableOrders.map((item) => (
-                            <Grid item xs={6} sm={6} md={2} key={item.id}>
+                            <Grid item xs={6} sm={3} md={2.3} mb={2} key={item.id}>
                                 <Card sx={{ backgroundColor: item.status === "BUSY" ? "lightBlue" : "inherit", textAlign: "center", borderRadius: "25%" }}>
                                     <CardActionArea onClick={() => handleTableOrderClick(item)}>
                                         <CardContent>

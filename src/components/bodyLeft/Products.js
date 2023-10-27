@@ -13,7 +13,7 @@ import MenuOrderContext from "../MenuOrderContext";
 import { useDispatch, useSelector } from "react-redux";
 import { loadProduct } from '../reducers/mainSlice';
 import { useNavigate } from 'react-router-dom';
-
+import formatPrice from "../bodyRight/FormatPrice";
 
 export default function Products({ search }) {
 
@@ -43,7 +43,7 @@ export default function Products({ search }) {
 
   const openModal = (product) => {
     if (mainFilters.tableSelected === "") {
-      navigate('/tables');
+      navigate('/');
       alert("vui lòng chọn bàn")
     } else {
       setSelectedProduct(product)
@@ -110,7 +110,7 @@ export default function Products({ search }) {
         <Grid container spacing={4} sx={{ maxWidth: "100%", margin: "5px 10px 0 0" }}>
           {filteredProduct.length > 0 ? (
             filteredProduct?.map((item) => (
-              <Grid item xs={6} sm={6} md={3} key={item.id}>
+              <Grid item xs={12} sm={6} md={3} key={item.id}>
                 <Card style={{ height: "250px" }}
                   onClick={() => openModal(item)}>
                   <CardActionArea>
@@ -126,7 +126,7 @@ export default function Products({ search }) {
                       </Typography>
                       <Typography sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Typography variant="body2">
-                          {item.price} đ
+                          {formatPrice(item.price)}
                         </Typography>
                         <Typography variant="body2">
                           {item.unit.title}

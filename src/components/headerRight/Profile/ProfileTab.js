@@ -7,6 +7,8 @@ import { List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 
 // assets
 import { EditOutlined, ProfileOutlined, LogoutOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import BlenderIcon from '@mui/icons-material/Blender';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
@@ -41,9 +43,13 @@ const ProfileTab = ({ handleLogout }) => {
       </ListItemButton>
       <ListItemButton selected={selectedIndex === 4} onClick={(event) => handleListItemClick(event, 4)}>
         <ListItemIcon>
-          <WalletOutlined />
+          {/* <WalletOutlined /> */}
+          <BlenderIcon />
         </ListItemIcon>
-        <ListItemText primary="Billing" />
+        <Link to={"/kitchen"}>
+          <ListItemText primary="Kitchen" />
+        </Link>
+
       </ListItemButton>
       <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
         <ListItemIcon>

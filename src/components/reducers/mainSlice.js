@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 
 const API_URL = "http://localhost:9000/api/";
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraG9hM0BnbWFpbC5jb20iLCJpYXQiOjE2OTgwNzY0NDIsImV4cCI6MTcwMDY2ODQ0Mn0.UBshzSZdtwHJINyKsTEyjEVGpBKeXhot3sEQXh0-IgI"
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraG9hM0BnbWFpbC5jb20iLCJpYXQiOjE2OTgyMDMyMDgsImV4cCI6MTcwMDc5NTIwOH0.eGXHBMMhdtNtzi29p2EQEmqG-cp959bCXF6ECQyIu9A"
 const headers = {
     Authorization: token,
     "Content-Type": "application/json"
@@ -119,7 +119,7 @@ export default createSlice({
                 title: '',
                 status: '',
                 page: 0,
-                size: 12,
+                size: 15,
                 totalPages: 0,
             },
             products: {
@@ -127,13 +127,14 @@ export default createSlice({
                 size: 8,
                 totalPages: 0,
                 quantity: 1,
+                // quantityItem: 1,
                 note: ''
             },
             tab: 'table',
             tableSelected: '',
             menu: {
                 category: '',
-            }
+            },
         },
         data: {
             tables: [],
@@ -143,11 +144,12 @@ export default createSlice({
                 phoneNumber: '',
                 orderItems: [],
                 tableOrderTitle: ''
-            }
-
+            },
+            listOrderWaiting: []
         },
         loading: false,
-        error: ''
+        error: '',
+        deletedNotice: false
 
     },
     reducers: {
@@ -166,8 +168,17 @@ export default createSlice({
         setQuantity: (state, action) => {
             state.filters.products.quantity = action.payload;
         },
+        setQuantityItem: (state, action) => {
+            state.data.order.orderItems = action.payload;
+        },
         setNote: (state, action) => {
             state.filters.products.note = action.payload;
+        },
+        setDeletedNotice: (state, action) => {
+            state.deletedNotice = action.payload;
+        },
+        setListOrderDetail: (state, action) => {
+            state.data.listOrderWaiting = action.payload;
         }
     },
     extraReducers:
@@ -270,6 +281,7 @@ export default createSlice({
                 })
                 .addCase(deleteOrderItem.rejected, (state, action) => {
                     state.loading = false;
+                    console.log(action.payload.error);
                     state.error = action.payload.error;
                 })
                 .addCase(changeWaiting.pending, (state, action) => {
