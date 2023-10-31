@@ -6,15 +6,22 @@ import { CssBaseline, StyledEngineProvider } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // project import
-import Palette from './palette';
 import Typography from './typography';
 import CustomShadows from './shadows';
 import componentsOverride from './overrides';
+import { purple } from '@mui/material/colors';
 
 // ==============================|| DEFAULT THEME - MAIN  ||============================== //
 
 export default function ThemeCustomization({ children }) {
-  const theme = Palette('light', 'default');
+  // const theme = Palette('light', 'default');
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: purple[400]
+      }
+    },
+  });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const themeTypography = Typography(`'Public Sans', sans-serif`);

@@ -1,32 +1,49 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react';
-import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, styled } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled } from "@mui/material";
+
 import LiquorIcon from '@mui/icons-material/Liquor';
 import SendIcon from '@mui/icons-material/Send';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeStatusFromCookingToWaiterOfProduct, getAll } from './reducers/kitchenSlice';
 
-const Waiting = () => {
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+
+
+export default function WaitingSupply() {
     const dispatch = useDispatch();
+    const orderItemsSupply = useSelector((state) => state.kitchen.orderItemsWaiting);
 
     useEffect(() => {
-        dispatch(getAll())
-    }, [])
+        const connectToWebSocket = async () => {
+            const socket = new SockJS('http://localhost:9000/ws'); // Thay đổi URL thành URL của Spring Boot endpoint
+            const stompClient = Stomp.over(socket);
 
-    const listOrderWaiting = useSelector((state) => state.kitchen.listOrderItem);
-    console.log(listOrderWaiting);
-    // const tableTitle = useSelector((state) => state.main.filters.tableOrders.title);
+            stompClient.connect({}, (frame) => {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/notification', (message) => {
+                    console.log('Received: ' + message.body);
+                });
+            }, (error) => {
+                console.log('Error: ' + error);
+                // Xử lý các trường hợp lỗi kết nối ở đây
+            });
+
+            return () => {
+                stompClient.disconnect();
+            };
+        };
+
+        connectToWebSocket();
+    }, []);
+
+
     const CustomTypography = styled(Typography)(({ theme }) => ({
         "& .MuiSvgIcon-root": {
             fontSize: "10rem",
             color: "#69b1ff70"
         },
     }));
-
-    const handleStatusChange = async (orderDetailId) => {
-        await dispatch(changeStatusFromCookingToWaiterOfProduct(orderDetailId));
-
-        dispatch(getAll());
-    };
 
     return (
         <Box
@@ -56,7 +73,7 @@ const Waiting = () => {
             }}
         >
             <Box sx={{ flexGrow: "1" }}>
-                {listOrderWaiting && listOrderWaiting.length > 0 ? (
+                {orderItemsSupply && orderItemsSupply.length > 0 ? (
                     <TableContainer>
                         <Table sx={{ textAlignLast: "center" }}>
                             <TableHead>
@@ -71,7 +88,7 @@ const Waiting = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {listOrderWaiting?.map((item, index) => (
+                                {orderItemsSupply?.map((item, index) => (
                                     <TableRow key={index}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell>{item?.productTitle}</TableCell>
@@ -83,7 +100,7 @@ const Waiting = () => {
                                             <Button variant="outlined"
                                                 endIcon={<SendIcon />}
                                                 sx={{ borderRadius: "20px", padding: "8px 15px" }}
-                                                onClick={() => handleStatusChange(item.orderDetailId)}
+                                            // onClick={() => handleStatusChange(item.orderDetailId)}
                                             >
                                             </Button>
                                         </TableCell>
@@ -94,15 +111,12 @@ const Waiting = () => {
                     </TableContainer>
 
                 ) : (
-                    <CustomTypography variant="body2" sx={{ marginTop: "25%", textAlign: "center" }}>
+                    <CustomTypography variant="body2" sx={{ marginTop: "35%", textAlign: "center" }}>
                         <LiquorIcon />
                         <Typography variant="h3">Chưa có món nào</Typography>
-                        <Typography variant="h5" color="darkgray">Vui lòng chọn món trong thực đơn</Typography>
                     </CustomTypography>
                 )}
             </Box>
         </Box>
-    );
-};
-
-export default Waiting;
+    )
+}

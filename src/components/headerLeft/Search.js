@@ -3,6 +3,7 @@ import { Box, FormControl, IconButton, InputAdornment, OutlinedInput } from '@mu
 import CloseIcon from '@mui/icons-material/Close';
 // assets
 import { SearchOutlined } from '@ant-design/icons';
+import { purple } from '@mui/material/colors';
 
 // ==============================|| HEADER CONTENT - SEARCH ||============================== //
 
@@ -19,13 +20,13 @@ const Search = (prop) => {
                     size="small"
                     id="header-search"
                     startAdornment={
-                        <InputAdornment position="start" sx={{ mr: -0.5, color: "#1677ff" }}>
+                        <InputAdornment position="start" sx={{ mr: -0.5, color: purple[400] }}>
                             <SearchOutlined />
                         </InputAdornment>
                     }
                     endAdornment={
                         <InputAdornment position="start" sx={{ mr: -0.5 }}>
-                            <IconButton disableRipple disabled={!search} onClick={removeInput} sx={{ color: "#1677ff" }}>
+                            <IconButton disableRipple disabled={!search} onClick={removeInput} sx={{ color: purple[400] }}>
                                 {search && <CloseIcon fontSize={"medium"} />}
                             </IconButton>
                         </InputAdornment>
@@ -38,9 +39,9 @@ const Search = (prop) => {
                     value={search}
                     onChange={e => handleInput(e)}
                     sx={{
-                        color: "#1677ff",
+                        color: purple[400],
                         "&::placeholder": {
-                            color: "#1677ff"
+                            color: purple[400]
                         }
                     }}
                 />

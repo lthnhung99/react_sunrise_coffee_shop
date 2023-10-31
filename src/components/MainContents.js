@@ -6,9 +6,10 @@ import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
 import MenuOrderContext from './MenuOrderContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { createOrder, updateOrder, changeWaiting } from './reducers/mainSlice';
+import { createOrder, updateOrder, changeStatusCooking } from './reducers/mainSlice';
 import { useLocation } from 'react-router-dom';
 import mainSlice from './reducers/mainSlice';
+import { blue, purple } from '@mui/material/colors';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
@@ -75,9 +76,8 @@ const MainContents = () => {
     }
 
     const handleStatusChange = () => {
-        dispatch(changeWaiting(mainFilters.tableSelected));
-        dispatch(mainSlice.actions.setListOrderDetail(listOrderItem));
-    }
+        dispatch(changeStatusCooking(mainFilters.tableSelected));
+    };
 
     const menuOrderData = {
         selectedProduct,
@@ -89,7 +89,7 @@ const MainContents = () => {
     return (
         <div>
             <MenuOrderContext.Provider value={menuOrderData}>
-                <Box sx={{ backgroundColor: "darkBlue" }}
+                <Box sx={{ backgroundColor: purple[500] }}
                     className="background-container"
                 >
                     <Grid
@@ -133,7 +133,7 @@ const MainContents = () => {
                                                 startIcon={<MonetizationOn />}
                                                 disableElevation
                                                 style={{
-                                                    backgroundColor: "green",
+                                                    backgroundColor: blue["A400"],
                                                     width: "100%",
                                                     margin: "5px",
                                                     borderRadius: "10px",
@@ -154,7 +154,7 @@ const MainContents = () => {
                                                     borderRadius: "10px",
                                                     margin: "5px",
                                                     padding: "15px 0",
-                                                    backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') ? "#69b1ff" : "#1677ff"
+                                                    backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') ? purple[200] : purple[500]
                                                 }}
                                                 disabled={!listOrderItem?.find(e => e.status === 'NEW')}
                                                 onClick={handleStatusChange}

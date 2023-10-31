@@ -88,7 +88,6 @@ export default function ProductModal({ open, onClose }) {
             fullWidth
             variant="standard"
             defaultValue={quantity}
-            // value={quantity}
             onChange={handleQuantityChange}
             inputProps={{
               min: 1,

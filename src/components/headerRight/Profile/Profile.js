@@ -23,11 +23,10 @@ import {
 import MainCard from '../../MainCard';
 import Transitions from '../../@extended/Transitions';
 import ProfileTab from './ProfileTab';
-import SettingTab from './SettingTab';
 
 // assets
 import avatar1 from '../../../assets/images/users/avatar-1.png';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -125,9 +124,9 @@ const Profile = () => {
               <Paper
                 sx={{
                   boxShadow: theme.customShadows.z1,
-                  width: 290,
-                  minWidth: 240,
-                  maxWidth: 290,
+                  width: 230,
+                  minWidth: 200,
+                  maxWidth: 250,
                   [theme.breakpoints.down('md')]: {
                     maxWidth: 250
                   }
@@ -171,25 +170,10 @@ const Profile = () => {
                               label="Profile"
                               {...a11yProps(0)}
                             />
-                            <Tab
-                              sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                textTransform: 'capitalize'
-                              }}
-                              icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
-                              label="Setting"
-                              {...a11yProps(1)}
-                            />
                           </Tabs>
                         </Box>
                         <TabPanel value={value} index={0} dir={theme.direction}>
                           <ProfileTab handleLogout={handleLogout} />
-                        </TabPanel>
-                        <TabPanel value={value} index={1} dir={theme.direction}>
-                          <SettingTab />
                         </TabPanel>
                       </>
                     )}
