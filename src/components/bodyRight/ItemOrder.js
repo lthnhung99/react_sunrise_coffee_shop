@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled, IconButton } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyDropdown from "../headerRight/MyDropdown";
@@ -8,21 +8,22 @@ import AddIcon from '@mui/icons-material/Add';
 import LiquorIcon from '@mui/icons-material/Liquor';
 import mainSlice, { deleteOrderItem } from "../reducers/mainSlice";
 import { useDispatch, useSelector } from "react-redux";
+import formatPrice from "./FormatPrice";
+import DeletedNotice from "../notice/DeletedNotice";
 
 const ItemOrder = () => {
   const dispatch = useDispatch();
   const listOrderItem = useSelector((state) => state.main.data.order.orderItems);
   const mainFilters = useSelector((state) => state.main.filters);
+  const deleteSuccess = useSelector(state => state.main.deletedNotice);
 
   const totalPrice = () => {
     if (listOrderItem.length === 0) {
       return 0;
     }
-
     const totalPrice = listOrderItem.reduce((acc, item) => acc + item?.amount, 0);
     return totalPrice;
   };
-
 
   const CustomTypography = styled(Typography)(({ theme }) => ({
     "& .MuiSvgIcon-root": {
@@ -31,24 +32,35 @@ const ItemOrder = () => {
     },
   }));
 
-  const handleDeleteItem = (orderDetailId) => {
+  const handleDeleteItem = async (orderDetailId) => {
     if (window.confirm("Bạn chắc chắn muốn xóa?")) {
-      dispatch(deleteOrderItem(orderDetailId));
+      await dispatch(deleteOrderItem(orderDetailId));
+      dispatch(mainSlice.actions.setDeletedNotice(true));
     }
   };
 
-  const quantities = mainFilters.products.quantity;
-
-  const handleQuantityChange = (orderDetailId, newQuantity) => {
+  const handleQuantityChange = (orderDetailId, quantity) => {
+    const quantities = listOrderItem.find(e => e.orderDetailId === orderDetailId).quantity;
+    const data = JSON.parse(JSON.stringify(listOrderItem));
+    let i = data.findIndex(e => e.orderDetailId === orderDetailId);
+    data[i].quantity += quantity;
+    const newQuantity = quantities + quantity;
     if (newQuantity === 0) {
       handleDeleteItem(orderDetailId);
-    } else {
-      dispatch(mainSlice.actions.setQuantity(newQuantity))
+      return;
     }
+    dispatch(mainSlice.actions.setQuantityItem(data))
   };
+
+  function getQuantity(orderDetailId) {
+    return listOrderItem.find(e => e.orderDetailId === orderDetailId).quantity || 1;
+  }
 
   return (
     <div>
+      {deleteSuccess && (
+        <DeletedNotice />
+      )}
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -56,7 +68,7 @@ const ItemOrder = () => {
               <Tab
                 label={
                   <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '20px' }}>
-                    {mainFilters.tableOrders.title + " / " + mainFilters.tableOrders.floor}
+                    {mainFilters.tableOrders.title && mainFilters.tableOrders.title + " / " + mainFilters.tableOrders.floor}
                   </Typography>
                 }
                 value="1"
@@ -88,27 +100,19 @@ const ItemOrder = () => {
                   <TableRow key={index}>
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>{item?.title}</TableCell>
-                    <TableCell>{item?.price}</TableCell>
+                    <TableCell>{formatPrice(item?.price)}</TableCell>
                     <TableCell>
                       {item?.status === "NEW" ? (
                         <>
                           <IconButton
-                            onClick={() =>
-                              handleQuantityChange(
-                                item?.orderDetailId,
-                                (quantities || item?.quantity) - 1
-                              )
+                            onClick={() => handleQuantityChange(item?.orderDetailId, - 1)
                             }
                           >
                             <RemoveIcon />
                           </IconButton>
-                          {quantities || item?.quantity}
+                          {item?.quantity}
                           <IconButton
-                            onClick={() =>
-                              handleQuantityChange(
-                                item?.orderDetailId,
-                                (quantities || item?.quantity) + 1
-                              )
+                            onClick={() => handleQuantityChange(item?.orderDetailId, 1)
                             }
                           >
                             <AddIcon />
@@ -120,7 +124,7 @@ const ItemOrder = () => {
                     </TableCell>
                     <TableCell>{item?.note}</TableCell>
                     <TableCell>
-                      {item?.status === "NEW" ? item?.amount * quantities : item?.amount}
+                      {item?.status === "NEW" ? formatPrice(item?.price * getQuantity(item.orderDetailId)) : formatPrice(item?.amount)}
                     </TableCell>
                     <TableCell>{item?.status}</TableCell>
                     <TableCell>
@@ -140,7 +144,7 @@ const ItemOrder = () => {
               </TableBody>
             </Table>
             <Box sx={{ position: "absolute", bottom: "15%", right: "5%" }}>
-              <Typography variant="h3">Tổng tiền: {totalPrice()}</Typography>
+              <Typography variant="h3">Tổng tiền: {formatPrice(totalPrice())}</Typography>
             </Box>
           </TableContainer>
 

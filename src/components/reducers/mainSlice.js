@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
+import API_URL from "../constURL/URLMain";
+import API_URL_ORDER from "../constURL/URLOrder";
 
-const API_URL = "http://localhost:9000/api/";
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraG9hM0BnbWFpbC5jb20iLCJpYXQiOjE2OTgwNzY0NDIsImV4cCI6MTcwMDY2ODQ0Mn0.UBshzSZdtwHJINyKsTEyjEVGpBKeXhot3sEQXh0-IgI"
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraG9hM0BnbWFpbC5jb20iLCJpYXQiOjE2OTg3MjkwNDAsImV4cCI6MTcwMTMyMTA0MH0.-UmuStd8pG5fumNgXQfGNKUbkRbua80Ab0TJJ51KaLc";
 const headers = {
     Authorization: token,
     "Content-Type": "application/json"
@@ -43,7 +44,7 @@ export const getListOrderDetailByTableId = createAsyncThunk(
     'main/getListOrderDetailByTableId',
     async (data, { rejectWithValue }) => {
         try {
-            const response = await axios.get(API_URL + `orders/list-order-details/${data}`, { headers });
+            const response = await axios.get(API_URL_ORDER + `list-order-details/${data}`, { headers });
             return {
                 request: data,
                 data: response.data
@@ -59,7 +60,7 @@ export const createOrder = createAsyncThunk(
     'main/createOrder',
     async (data, { rejectWithValue }) => {
         try {
-            const response = await axios.post(API_URL + `orders/create`, data, { headers });
+            const response = await axios.post(API_URL_ORDER + `create`, data, { headers });
             return { order: response.data };
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -72,7 +73,7 @@ export const updateOrder = createAsyncThunk(
     'main/updateOrder',
     async (data, { rejectWithValue }) => {
         try {
-            const response = await axios.patch(API_URL + `orders/update`, data, { headers });
+            const response = await axios.patch(API_URL_ORDER + `update`, data, { headers });
             return { order: response.data.products };
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -85,7 +86,7 @@ export const deleteOrderItem = createAsyncThunk(
     'main/deleteOrderItem',
     async (orderItemId, { rejectWithValue }) => {
         try {
-            await axios.delete(API_URL + `orders/delete/${orderItemId}`, { headers });
+            await axios.delete(API_URL_ORDER + `delete/${orderItemId}`, { headers });
             return { orderItemId };
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -94,13 +95,11 @@ export const deleteOrderItem = createAsyncThunk(
     }
 );
 
-export const changeWaiting = createAsyncThunk(
-    'main/changeWaiting',
+export const changeStatusCooking = createAsyncThunk(
+    'main/changeStatusCooking',
     async (tableId, { rejectWithValue }) => {
         try {
-            console.log(tableId);
-            const response = await axios.post(API_URL + `orders/change-status-waiting`, tableId, { headers });
-            console.log(response);
+            const response = await axios.post(API_URL_ORDER + `change-status-cooking`, tableId, { headers });
             return response;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -119,7 +118,7 @@ export default createSlice({
                 title: '',
                 status: '',
                 page: 0,
-                size: 12,
+                size: 15,
                 totalPages: 0,
             },
             products: {
@@ -127,13 +126,14 @@ export default createSlice({
                 size: 8,
                 totalPages: 0,
                 quantity: 1,
+                // quantityItem: 1,
                 note: ''
             },
             tab: 'table',
             tableSelected: '',
             menu: {
                 category: '',
-            }
+            },
         },
         data: {
             tables: [],
@@ -143,11 +143,12 @@ export default createSlice({
                 phoneNumber: '',
                 orderItems: [],
                 tableOrderTitle: ''
-            }
-
+            },
+            listOrderWaiting: []
         },
         loading: false,
-        error: ''
+        error: '',
+        deletedNotice: false
 
     },
     reducers: {
@@ -166,13 +167,22 @@ export default createSlice({
         setQuantity: (state, action) => {
             state.filters.products.quantity = action.payload;
         },
+        setQuantityItem: (state, action) => {
+            state.data.order.orderItems = action.payload;
+        },
         setNote: (state, action) => {
             state.filters.products.note = action.payload;
+        },
+        setDeletedNotice: (state, action) => {
+            state.deletedNotice = action.payload;
+        },
+        setListOrderDetail: (state, action) => {
+            state.data.listOrderWaiting = action.payload;
         }
     },
     extraReducers:
         (builder) => {
-            builder
+            builder //show product
                 .addCase(loadProduct.pending, (state) => {
                     state.loading = true;
                 })
@@ -196,6 +206,7 @@ export default createSlice({
                     state.filters.page = action.meta.arg.page;
                     state.filters.size = action.meta.arg.size;
                 })
+            builder //show table
                 .addCase(loadTableOrder.pending, (state) => {
                     state.loading = true;
                 })
@@ -219,6 +230,7 @@ export default createSlice({
                     state.filters.page = action.meta.arg.page;
                     state.filters.size = action.meta.arg.size;
                 })
+            builder //show listOrder
                 .addCase(getListOrderDetailByTableId.pending, (state, action) => {
                     state.loading = true;
                 })
@@ -229,6 +241,7 @@ export default createSlice({
                 .addCase(getListOrderDetailByTableId.rejected, (state, action) => {
 
                 })
+            builder
                 // .addCase(createOrder.pending, (state, action) => {
                 //     state.loading = true;
                 // })
@@ -241,6 +254,7 @@ export default createSlice({
                     state.loading = false;
                     state.error = action.payload.error;
                 })
+            builder
                 // .addCase(updateOrder.pending, (state, action) => {
                 //     state.loading = true;
                 // })
@@ -253,6 +267,7 @@ export default createSlice({
                     state.loading = false;
                     state.error = action.payload.error;
                 })
+            builder
                 .addCase(deleteOrderItem.pending, (state, action) => {
                     state.loading = true;
                 })
@@ -270,18 +285,18 @@ export default createSlice({
                 })
                 .addCase(deleteOrderItem.rejected, (state, action) => {
                     state.loading = false;
+                    console.log(action.payload.error);
                     state.error = action.payload.error;
                 })
-                .addCase(changeWaiting.pending, (state, action) => {
+            builder
+                .addCase(changeStatusCooking.pending, (state, action) => {
                     state.loading = true;
                 })
-                .addCase(changeWaiting.fulfilled, (state, action) => {
-                    console.log(state);
-                    console.log(action);
+                .addCase(changeStatusCooking.fulfilled, (state, action) => {
                     state.data.order.orderItems = action.payload.data.orderDetails;
                     state.loading = false;
                 })
-                .addCase(changeWaiting.rejected, (state, action) => {
+                .addCase(changeStatusCooking.rejected, (state, action) => {
                     state.loading = false;
                     state.error = action.payload.error;
                 })

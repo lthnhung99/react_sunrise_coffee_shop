@@ -6,9 +6,10 @@ import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
 import MenuOrderContext from './MenuOrderContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { createOrder, updateOrder, changeWaiting } from './reducers/mainSlice';
+import { createOrder, updateOrder, changeStatusCooking } from './reducers/mainSlice';
 import { useLocation } from 'react-router-dom';
 import mainSlice from './reducers/mainSlice';
+import { blue, purple } from '@mui/material/colors';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
@@ -19,7 +20,7 @@ const MainContents = () => {
     const quantity = mainFilters.products.quantity;
     const note = mainFilters.products.note;
 
-    const listOrderItem = useSelector(state => state.main.data.order.orderItems);
+    const listOrderItem = useSelector(state => state.main.data.order.orderItems || []);
 
     if (location.pathname === "/") {
         dispatch(mainSlice.actions.tabChanged('table'));
@@ -50,7 +51,7 @@ const MainContents = () => {
     }, [selectedProduct.id, previousSelectedProductId]);
 
     const handleAddProduct = (product) => {
-        if (listOrderItem === "") {
+        if (listOrderItem.length === 0) {
             if (product && product.id) {
                 dispatch(createOrder({
                     tableId: mainFilters.tableSelected,
@@ -75,8 +76,8 @@ const MainContents = () => {
     }
 
     const handleStatusChange = () => {
-        dispatch(changeWaiting(mainFilters.tableSelected))
-    }
+        dispatch(changeStatusCooking(mainFilters.tableSelected));
+    };
 
     const menuOrderData = {
         selectedProduct,
@@ -88,7 +89,7 @@ const MainContents = () => {
     return (
         <div>
             <MenuOrderContext.Provider value={menuOrderData}>
-                <Box sx={{ backgroundColor: "darkBlue" }}
+                <Box sx={{ backgroundColor: purple[500] }}
                     className="background-container"
                 >
                     <Grid
@@ -132,7 +133,7 @@ const MainContents = () => {
                                                 startIcon={<MonetizationOn />}
                                                 disableElevation
                                                 style={{
-                                                    backgroundColor: "green",
+                                                    backgroundColor: blue["A400"],
                                                     width: "100%",
                                                     margin: "5px",
                                                     borderRadius: "10px",
@@ -153,9 +154,9 @@ const MainContents = () => {
                                                     borderRadius: "10px",
                                                     margin: "5px",
                                                     padding: "15px 0",
-                                                    backgroundColor: !listOrderItem.find(e => e.status === 'NEW') ? "#69b1ff" : "#1677ff"
+                                                    backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') ? purple[200] : purple[500]
                                                 }}
-                                                disabled={!listOrderItem.find(e => e.status === 'NEW')}
+                                                disabled={!listOrderItem?.find(e => e.status === 'NEW')}
                                                 onClick={handleStatusChange}
                                             >
                                                 Thông báo

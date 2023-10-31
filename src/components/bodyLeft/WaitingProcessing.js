@@ -1,7 +1,6 @@
 import { Box } from '@mui/material'
 import React from 'react'
 import CustomTabs from '../headerLeft/CustomTabs'
-import { TabPanel } from '@mui/lab'
 
 export default function WaitingProcessing() {
     return (

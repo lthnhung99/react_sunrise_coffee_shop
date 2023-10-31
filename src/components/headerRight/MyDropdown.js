@@ -11,7 +11,7 @@ function MyDropdown() {
     <Box
       style={{
         position: "absolute",
-        right: "10px",
+        right: "15px",
 
         alignItems: "space-between",
       }}

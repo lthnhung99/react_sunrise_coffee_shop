@@ -3,7 +3,6 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk';
 import mainSlice from '../components/reducers/mainSlice';
 import kitchenSlice from '../components/reducers/kitchenSlice';
-import Kitchen from './../components/Kitchen';
 
 const store = configureStore({
     reducer: {

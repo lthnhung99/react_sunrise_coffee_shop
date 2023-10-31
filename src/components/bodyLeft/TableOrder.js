@@ -8,6 +8,7 @@ import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import { useDispatch, useSelector } from "react-redux";
 import { getListOrderDetailByTableId, loadTableOrder } from "../reducers/mainSlice";
 import mainSlice from '../reducers/mainSlice';
+import { purple } from "@mui/material/colors";
 
 const TableOrder = ({ search }) => {
     const dispatch = useDispatch();
@@ -142,7 +143,7 @@ const TableOrder = ({ search }) => {
                                 control={<Radio />}
                                 label={`Tất cả (${totalCount})`}
                                 sx={{
-                                    color: selectedStatus === "" ? "#1677ff" : "inherit"
+                                    color: selectedStatus === "" ? "darkViolet" : "inherit"
                                 }}
                             />
                         )}
@@ -157,7 +158,7 @@ const TableOrder = ({ search }) => {
                                     control={<Radio />}
                                     label={label}
                                     sx={{
-                                        color: selectedStatus === status ? "#1677ff" : "inherit"
+                                        color: selectedStatus === status ? "darkViolet" : "inherit"
                                     }}
                                 />
                             );
@@ -169,8 +170,8 @@ const TableOrder = ({ search }) => {
                 <Grid container spacing={2} sx={{ maxWidth: "100%", margin: "0 5px" }}>
                     {filteredTableOrders.length > 0 ? (
                         filteredTableOrders.map((item) => (
-                            <Grid item xs={6} sm={6} md={2} key={item.id}>
-                                <Card sx={{ backgroundColor: item.status === "BUSY" ? "lightBlue" : "inherit", textAlign: "center", borderRadius: "25%" }}>
+                            <Grid item xs={6} sm={3} md={2.3} mb={2} key={item.id}>
+                                <Card sx={{ backgroundColor: item.status === "BUSY" ? purple[100] : "inherit", textAlign: "center", borderRadius: "25%" }}>
                                     <CardActionArea onClick={() => handleTableOrderClick(item)}>
                                         <CardContent>
                                             <LocalCafeIcon sx={{ fontSize: "40px" }} />
