@@ -28,9 +28,11 @@
     "react-scripts": "5.0.1",
     "react-stomp": "^5.1.0",
     "react-syntax-highlighter": "^15.5.0",
+    "react-to-print": "^2.14.15",
     "redux": "^4.2.1",
     "socket.io-client": "^4.7.2",
     "sockjs-client": "^1.6.1",
+    "sweetalert": "^2.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

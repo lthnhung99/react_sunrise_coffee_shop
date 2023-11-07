@@ -1,45 +1,109 @@
-import React from "react";
-import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled, IconButton } from "@mui/material";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useId, useState } from "react";
+import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, IconButton } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyDropdown from "../headerRight/MyDropdown";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from '@mui/icons-material/Add';
 import LiquorIcon from '@mui/icons-material/Liquor';
-import mainSlice, { deleteOrderItem } from "../reducers/mainSlice";
+import mainSlice, { deleteOrderItem, getListOrderDetailByTableId, updateOrder } from "../reducers/mainSlice";
 import { useDispatch, useSelector } from "react-redux";
 import formatPrice from "./FormatPrice";
-import DeletedNotice from "../notice/DeletedNotice";
+import LAYOUT from "../../constant/AppConstant";
+import CustomTypography from "../../constant/CustomTypography";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import Loading from "../loading/Loading";
+import Swal from 'sweetalert';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import swal from 'sweetalert';
 
 const ItemOrder = () => {
   const dispatch = useDispatch();
   const listOrderItem = useSelector((state) => state.main.data.order.orderItems);
   const mainFilters = useSelector((state) => state.main.filters);
-  const deleteSuccess = useSelector(state => state.main.deletedNotice);
+  const tookNote = mainFilters.products.tookNote;
+  const loadingOrder = useSelector(state => state.main.loadingOrder);
+  const [message, setMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    const connectToWebSocket = async () => {
+      const socket = new SockJS('http://localhost:9000/ws');
+      const stompClient = Stomp.over(socket);
+
+      stompClient.connect({}, (frame) => {
+        // console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/reception', (mess) => {
+          // console.log('Received: ' + mess.body);
+          let obj = JSON.parse(mess.body);
+          setMessage(obj.data.message);
+        });
+      }, (error) => {
+        console.log('Error: ' + error);
+        // Xử lý các trường hợp lỗi kết nối ở đây
+      });
+
+      return () => {
+        stompClient.disconnect();
+      };
+    };
+
+    connectToWebSocket();
+  }, []);
+
+  useEffect(() => {
+    if (message) {
+      setShowAlert(true);
+    }
+  }, [message]);
+
+  useEffect(() => {
+    if (showAlert) {
+      swal({
+        title: "Thông báo!",
+        text: message,
+        icon: "warning",
+      }).then(
+        mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected))
+      ).then(() => {
+        setMessage('');
+      });
+      setShowAlert(false);
+    }
+  }, [showAlert, message]);
 
   const totalPrice = () => {
-    if (listOrderItem.length === 0) {
+    const listOrderItemNotStockOut = listOrderItem.filter((item) => item.status !== "STOCK_OUT");
+    if (listOrderItemNotStockOut.length === 0) {
       return 0;
     }
-    const totalPrice = listOrderItem.reduce((acc, item) => acc + item?.amount, 0);
+    const totalPrice = listOrderItemNotStockOut.reduce((acc, item) => acc + item?.amount, 0);
     return totalPrice;
   };
 
-  const CustomTypography = styled(Typography)(({ theme }) => ({
-    "& .MuiSvgIcon-root": {
-      fontSize: "10rem",
-      color: "#69b1ff70"
-    },
-  }));
-
-  const handleDeleteItem = async (orderDetailId) => {
-    if (window.confirm("Bạn chắc chắn muốn xóa?")) {
-      await dispatch(deleteOrderItem(orderDetailId));
-      dispatch(mainSlice.actions.setDeletedNotice(true));
+  const handleDeleteItem = (product) => {
+    if (product.status === 'NEW' || product.status === 'STOCK_OUT') {
+      Swal({
+        title: "Bạn chắc chắn muốn xóa?",
+        text: "Hành động này sẽ không thể hoàn tác!",
+        icon: "warning",
+        buttons: ["Hủy", "Xóa"],
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          dispatch(deleteOrderItem(product.orderDetailId))
+            .then(() => {
+              Swal("Thành công!", "Sản phẩm đã được xóa!", "success");
+            })
+        }
+      });
+    } else {
+      Swal("Lỗi!", "Món này đang được làm không thể xoá!", "error");
     }
   };
 
-  const handleQuantityChange = (orderDetailId, quantity) => {
+  const handleQuantityChange = async (productId, orderDetailId, quantity) => {
     const quantities = listOrderItem.find(e => e.orderDetailId === orderDetailId).quantity;
     const data = JSON.parse(JSON.stringify(listOrderItem));
     let i = data.findIndex(e => e.orderDetailId === orderDetailId);
@@ -49,18 +113,80 @@ const ItemOrder = () => {
       handleDeleteItem(orderDetailId);
       return;
     }
-    dispatch(mainSlice.actions.setQuantityItem(data))
+    await dispatch(mainSlice.actions.setQuantityItem(data))
+
+    dispatch(updateOrder({
+      tableId: mainFilters.tableSelected,
+      productId: productId,
+      quantity: quantity,
+      note: tookNote,
+      status: "NEW"
+    }))
   };
 
-  function getQuantity(orderDetailId) {
-    return listOrderItem.find(e => e.orderDetailId === orderDetailId).quantity || 1;
+  const Item = ({ item, index }) => {
+    const key = useId();
+    return (
+      <>
+        {loadingOrder ? <Loading /> :
+          <TableRow key={key}>
+            <TableCell>{index + 1}</TableCell>
+            {item.note ?
+              <TableCell className="note">
+                {item?.title}
+                <Typography className="cssNote">Ghi chú: {item?.note}</Typography>
+              </TableCell>
+              :
+              <TableCell>{item?.title}</TableCell>}
+            <TableCell>{formatPrice(item?.price)}</TableCell>
+            <TableCell>
+              {item?.status === "NEW" ? (
+                <>
+                  <IconButton
+                    onClick={() => handleQuantityChange(item?.productId, item?.orderDetailId, - 1)
+                    }
+                  >
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                  {item?.quantity}
+                  <IconButton
+                    onClick={() => handleQuantityChange(item?.productId, item?.orderDetailId, 1)
+                    }
+                  >
+                    <AddCircleOutlineIcon />
+                  </IconButton>
+                </>
+              ) : (
+                item?.quantity
+              )}
+            </TableCell>
+            <TableCell>{formatPrice(item?.amount)}</TableCell>
+            <TableCell>
+              <Typography className='cssStatus'
+                variant="outlined"
+                sx={LAYOUT[item.status]}
+              >{item?.status}
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Button
+                onClick={() => handleDeleteItem(item)}
+              >
+                <DeleteIcon
+                  style={{
+                    color: "red",
+                  }}
+                />
+              </Button>
+            </TableCell>
+          </TableRow>
+        }
+      </>
+    )
   }
 
   return (
-    <div>
-      {deleteSuccess && (
-        <DeletedNotice />
-      )}
+    <>
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -80,7 +206,7 @@ const ItemOrder = () => {
         </TabContext>
       </Box>
       <Box sx={{ flexGrow: "1" }}>
-        {listOrderItem && listOrderItem.length > 0 ? (
+        {listOrderItem?.length > 0 ? (
           <TableContainer>
             <Table sx={{ textAlignLast: "center" }}>
               <TableHead>
@@ -89,61 +215,16 @@ const ItemOrder = () => {
                   <TableCell>Tên</TableCell>
                   <TableCell>Giá</TableCell>
                   <TableCell>Số lượng</TableCell>
-                  <TableCell>Ghi chú</TableCell>
                   <TableCell>Tổng tiền</TableCell>
-                  <TableCell>Trạng thái</TableCell>
+                  <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
                   <TableCell>Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {listOrderItem?.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item?.title}</TableCell>
-                    <TableCell>{formatPrice(item?.price)}</TableCell>
-                    <TableCell>
-                      {item?.status === "NEW" ? (
-                        <>
-                          <IconButton
-                            onClick={() => handleQuantityChange(item?.orderDetailId, - 1)
-                            }
-                          >
-                            <RemoveIcon />
-                          </IconButton>
-                          {item?.quantity}
-                          <IconButton
-                            onClick={() => handleQuantityChange(item?.orderDetailId, 1)
-                            }
-                          >
-                            <AddIcon />
-                          </IconButton>
-                        </>
-                      ) : (
-                        item?.quantity
-                      )}
-                    </TableCell>
-                    <TableCell>{item?.note}</TableCell>
-                    <TableCell>
-                      {item?.status === "NEW" ? formatPrice(item?.price * getQuantity(item.orderDetailId)) : formatPrice(item?.amount)}
-                    </TableCell>
-                    <TableCell>{item?.status}</TableCell>
-                    <TableCell>
-                      <Button
-                        startIcon={
-                          <DeleteIcon
-                            style={{
-                              color: "red",
-                            }}
-                          />
-                        }
-                        onClick={() => handleDeleteItem(item?.orderDetailId)}
-                      ></Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {listOrderItem.map((item, index) => <Item item={item} index={index} />)}
               </TableBody>
             </Table>
-            <Box sx={{ position: "absolute", bottom: "15%", right: "5%" }}>
+            <Box sx={{ position: "absolute", bottom: "10%", right: "5%" }}>
               <Typography variant="h3">Tổng tiền: {formatPrice(totalPrice())}</Typography>
             </Box>
           </TableContainer>
@@ -156,7 +237,8 @@ const ItemOrder = () => {
           </CustomTypography>
         )}
       </Box>
-    </div>
+      {showAlert}
+    </>
   );
 };
 

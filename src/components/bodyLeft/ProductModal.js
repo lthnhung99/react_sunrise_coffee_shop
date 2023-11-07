@@ -25,6 +25,7 @@ export default function ProductModal({ open, onClose }) {
 
   const handleNoteChange = (event) => {
     dispatch(mainSlice.actions.setNote(event.target.value));
+    dispatch(mainSlice.actions.setTookNote(event.target.value));
   }
 
   const handleSubmit = (event) => {

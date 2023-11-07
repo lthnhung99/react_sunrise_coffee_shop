@@ -2,8 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 import API_URL from "../constURL/URLMain";
 import API_URL_ORDER from "../constURL/URLOrder";
+import API_URL_BILL from "../constURL/URLBill";
 
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraG9hM0BnbWFpbC5jb20iLCJpYXQiOjE2OTg3MjkwNDAsImV4cCI6MTcwMTMyMTA0MH0.-UmuStd8pG5fumNgXQfGNKUbkRbua80Ab0TJJ51KaLc";
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraG9hM0BnbWFpbC5jb20iLCJpYXQiOjE2OTg5ODAyMjksImV4cCI6MTcwMTU3MjIyOX0.TRdTaaZX_2W5hBXHuU7Tgh1lW2b-YA8_00ynhLgp7Vg";
 const headers = {
     Authorization: token,
     "Content-Type": "application/json"
@@ -40,6 +41,44 @@ export const loadTableOrder = createAsyncThunk(
     }
 );
 
+export const getAllTableOrder = createAsyncThunk(
+    'main/getAllTableOrder',
+    async () => {
+        try {
+            const response = await axios.get(API_URL + `tableOrders/all`);
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+        }
+    }
+);
+
+export const changeAllProductToNewTable = createAsyncThunk(
+    'main/changeAllProductToNewTable',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(API_URL + `tableOrders/change-table`, data, { headers });
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+            return rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+export const combineTables = createAsyncThunk(
+    'main/combineTables',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(API_URL + `tableOrders/combine-tables`, data, { headers });
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+            return rejectWithValue({ error: error.message });
+        }
+    }
+);
+
 export const getListOrderDetailByTableId = createAsyncThunk(
     'main/getListOrderDetailByTableId',
     async (data, { rejectWithValue }) => {
@@ -61,6 +100,7 @@ export const createOrder = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await axios.post(API_URL_ORDER + `create`, data, { headers });
+            console.log(response.data);
             return { order: response.data };
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -74,7 +114,8 @@ export const updateOrder = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await axios.patch(API_URL_ORDER + `update`, data, { headers });
-            return { order: response.data.products };
+            console.log(response.data);
+            return response.data.products;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
             return rejectWithValue({ error: error.message });
@@ -100,13 +141,27 @@ export const changeStatusCooking = createAsyncThunk(
     async (tableId, { rejectWithValue }) => {
         try {
             const response = await axios.post(API_URL_ORDER + `change-status-cooking`, tableId, { headers });
+            console.log(response.data);
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+            return rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+export const createBill = createAsyncThunk(
+    'main/createBill',
+    async (tableId, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(API_URL_BILL + `?tableId=${tableId}`, { headers });
             return response;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
             return rejectWithValue({ error: error.message });
         }
     }
-)
+);
 
 export default createSlice({
     name: 'main',
@@ -118,7 +173,7 @@ export default createSlice({
                 title: '',
                 status: '',
                 page: 0,
-                size: 15,
+                size: 12,
                 totalPages: 0,
             },
             products: {
@@ -126,8 +181,8 @@ export default createSlice({
                 size: 8,
                 totalPages: 0,
                 quantity: 1,
-                // quantityItem: 1,
-                note: ''
+                note: '',
+                tookNote: ''
             },
             tab: 'table',
             tableSelected: '',
@@ -137,6 +192,7 @@ export default createSlice({
         },
         data: {
             tables: [],
+            allTables: [],
             products: [],
             order: {
                 customerId: '',
@@ -148,7 +204,7 @@ export default createSlice({
         },
         loading: false,
         error: '',
-        deletedNotice: false
+        loadingOrder: false
 
     },
     reducers: {
@@ -173,8 +229,8 @@ export default createSlice({
         setNote: (state, action) => {
             state.filters.products.note = action.payload;
         },
-        setDeletedNotice: (state, action) => {
-            state.deletedNotice = action.payload;
+        setTookNote: (state, action) => {
+            state.filters.products.tookNote = action.payload;
         },
         setListOrderDetail: (state, action) => {
             state.data.listOrderWaiting = action.payload;
@@ -230,41 +286,50 @@ export default createSlice({
                     state.filters.page = action.meta.arg.page;
                     state.filters.size = action.meta.arg.size;
                 })
+            builder //change table
+                .addCase(getAllTableOrder.fulfilled, (state, action) => {
+                    state.data.allTables = action.payload;
+                })
+                .addCase(changeAllProductToNewTable.fulfilled, (state, action) => {
+                    state.data.allTables = action.payload;
+                })
+                .addCase(combineTables.fulfilled, (state, action) => {
+
+                })
             builder //show listOrder
                 .addCase(getListOrderDetailByTableId.pending, (state, action) => {
-                    state.loading = true;
+                    state.loadingOrder = true;
                 })
                 .addCase(getListOrderDetailByTableId.fulfilled, (state, action) => {
                     state.data.order.orderItems = action.payload.data;
-                    state.loading = false;
+                    state.loadingOrder = false;
                 })
                 .addCase(getListOrderDetailByTableId.rejected, (state, action) => {
-
+                    state.loadingOrder = false;
                 })
             builder
-                // .addCase(createOrder.pending, (state, action) => {
-                //     state.loading = true;
-                // })
+                .addCase(createOrder.pending, (state, action) => {
+                    state.loadingOrder = true;
+                })
                 .addCase(createOrder.fulfilled, (state, action) => {
                     const newOrder = action.payload.order;
                     state.data.order.orderItems = [...state.data.order.orderItems, newOrder];
-                    state.loading = false;
+                    state.loadingOrder = false;
                 })
                 .addCase(createOrder.rejected, (state, action) => {
-                    state.loading = false;
+                    state.loadingOrder = false;
                     state.error = action.payload.error;
                 })
             builder
-                // .addCase(updateOrder.pending, (state, action) => {
-                //     state.loading = true;
-                // })
+                .addCase(updateOrder.pending, (state, action) => {
+                    state.loadingOrder = true;
+                })
                 .addCase(updateOrder.fulfilled, (state, action) => {
-                    const newOrder = action.payload.order;
-                    state.data.order.orderItems = newOrder;
-                    state.loading = false;
+                    state.data.order.orderItems = action.payload;
+                    state.loadingOrder = false;
                 })
                 .addCase(updateOrder.rejected, (state, action) => {
-                    state.loading = false;
+                    state.loadingOrder = false;
                     state.error = action.payload.error;
                 })
             builder
@@ -285,21 +350,25 @@ export default createSlice({
                 })
                 .addCase(deleteOrderItem.rejected, (state, action) => {
                     state.loading = false;
-                    console.log(action.payload.error);
                     state.error = action.payload.error;
                 })
             builder
                 .addCase(changeStatusCooking.pending, (state, action) => {
-                    state.loading = true;
+                    state.loadingOrder = true;
                 })
                 .addCase(changeStatusCooking.fulfilled, (state, action) => {
-                    state.data.order.orderItems = action.payload.data.orderDetails;
-                    state.loading = false;
+                    state.data.order.orderItems = action.payload;
+                    state.loadingOrder = false;
                 })
                 .addCase(changeStatusCooking.rejected, (state, action) => {
-                    state.loading = false;
+                    state.loadingOrder = false;
                     state.error = action.payload.error;
                 })
-                ;
+            builder
+                .addCase(createBill.fulfilled, (state, action) => {
+                    state.data.order.orderItems = [];
+                })
+                .addCase(createBill.rejected, (state, action) => {
+                })
         },
 });

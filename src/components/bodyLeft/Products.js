@@ -14,8 +14,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { loadProduct } from '../reducers/mainSlice';
 import { useNavigate } from 'react-router-dom';
 import formatPrice from "../bodyRight/FormatPrice";
+import CustomTypography from "../../constant/CustomTypography";
+import NoDrinksIcon from '@mui/icons-material/NoDrinks';
+import swal from 'sweetalert';
 
-export default function Products({ search }) {
+export default function Products() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -43,10 +46,14 @@ export default function Products({ search }) {
 
   const openModal = (product) => {
     if (mainFilters.tableSelected === "") {
-      navigate('/');
-      alert("vui lòng chọn bàn")
+      swal({
+        title: "Vui lòng chọn bàn trước!",
+        icon: "warning",
+      }).then(() => {
+        navigate('/');
+      });
     } else {
-      setSelectedProduct(product)
+      setSelectedProduct(product);
       setIsModalOpen(true);
     }
   };
@@ -110,7 +117,7 @@ export default function Products({ search }) {
         <Grid container spacing={4} sx={{ maxWidth: "100%", margin: "5px 10px 0 0" }}>
           {filteredProduct.length > 0 ? (
             filteredProduct?.map((item) => (
-              <Grid item xs={12} sm={6} md={3} key={item.id}>
+              <Grid item xs={12} sm={6} md={3} key={"product" + item.id}>
                 <Card style={{ height: "250px" }}
                   onClick={() => openModal(item)}>
                   <CardActionArea>
@@ -138,7 +145,10 @@ export default function Products({ search }) {
               </Grid>
             ))
           ) : (
-            <Typography variant="body2">Không có sản phẩm phù hợp.</Typography>
+            <CustomTypography variant="body2" sx={{ marginTop: "20%", textAlign: "center", width: "100%" }}>
+              <NoDrinksIcon />
+              <Typography variant="h3">Không tìm thấy đồ uống phù hợp</Typography>
+            </CustomTypography>
           )}
           <Pageable page={mainFilters.page + 1} setPage={setPage} totalPage={mainFilters.totalPages} />
         </Grid>
