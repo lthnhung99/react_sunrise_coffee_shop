@@ -10,16 +10,23 @@ import TableViewSharpIcon from '@mui/icons-material/TableViewSharp';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 import BlenderIcon from '@mui/icons-material/Blender';
+import { useDispatch, useSelector } from 'react-redux';
+import { getListOrderDetailByTableId } from '../../reducers/mainSlice';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
 const ProfileTab = ({ handleLogout }) => {
   const theme = useTheme();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const tableId = useSelector(state => state.main.filters.tableSelected)
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    if (index === 1) {
+      dispatch(getListOrderDetailByTableId(tableId));
+    }
   };
 
   return (
@@ -50,7 +57,6 @@ const ProfileTab = ({ handleLogout }) => {
             <ListItemText primary="Phòng bếp" />
           </Link>
         </ListItemButton>
-
       )}
 
       <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>

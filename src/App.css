@@ -1,8 +1,10 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box; /** bs**/
+  box-sizing: border-box;
+  /** bs**/
 }
+
 .App {
   text-align: center;
 }
@@ -37,7 +39,122 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.new td {
+  color: #2979ff
+}
+
+.waiting td {
+  color: #ffc107;
+}
+
+.stockOut td {
+  color: #dc3545;
+}
+
+.done td {
+  color: #28a745;
+}
+
+.buttonDemo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 8px 15px
+}
+
+.cssStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.note {
+  display: flex;
+  flex-direction: column;
+}
+
+.cssNote {
+  font-size: 0.8rem;
+  color: darkgrey;
+}
+
+.cssScroll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: space-between;
+  overflow-y: scroll;
+  height: 90%;
+  scrollbar-width: thin;
+  scrollbar-color: #888888 #f3f3f3;
+  margin-top: 24px;
+}
+
+.cssScroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cssScroll::-webkit-scrollbar-track {
+  background: #f3f3f3;
+}
+
+.cssScroll::-webkit-scrollbar-thumb {
+  background: #888888;
+  border-radius: 4px;
+}
+
+.cssScroll::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+.footer {
+  text-align: center;
+  justify-content: center;
+  color: white;
+  padding-bottom: 10px;
+  margin-top: -10px;
+}
+
+.buttonNotification {
+  width: 100%;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 15px 0
+}
+
+.buttonModalBill {
+  width: 100%;
+  border-radius: 10px;
+  margin: 5px;
+}
+
+.bold {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.redColor {
+  color: red;
+  border-color: red;
+}
+
+.redColor:hover {
+  border-color: red;
+}
+
+.blackColor {
+  color: black;
 }

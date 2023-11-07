@@ -1,0 +1,31 @@
+.p-container {
+  display: flex;
+  justify-content: center;
+}
+.p-order {
+  width: 50%;
+}
+.p-order-head h1 {
+  text-align: center;
+}
+.p-order-head p {
+  text-align: center;
+}
+.p-order-main .p-highlight {
+  font-weight: 600;
+}
+.p-tb-order {
+  border-collapse: collapse;
+  width: 100%;
+}
+.p-tb-order th,
+.p-tb-order td {
+  border: 1px dashed black;
+}
+.p-tb-order th {
+  text-align: start;
+}
+.p-order-row-sumary {
+  display: flex;
+  justify-content: space-between;
+}

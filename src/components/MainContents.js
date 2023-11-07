@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Grid } from "@mui/material";
+import { Box, Button, Grid, Modal } from "@mui/material";
 import MenuOrder from './bodyLeft/MenuOrder';
 import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
@@ -10,6 +10,9 @@ import { createOrder, updateOrder, changeStatusCooking } from './reducers/mainSl
 import { useLocation } from 'react-router-dom';
 import mainSlice from './reducers/mainSlice';
 import { blue, purple } from '@mui/material/colors';
+import API_URL from './constURL/URLMain';
+import Bill from './pay/Bill';
+import swal from 'sweetalert';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
@@ -19,8 +22,27 @@ const MainContents = () => {
     const mainFilters = useSelector((state) => state.main.filters);
     const quantity = mainFilters.products.quantity;
     const note = mainFilters.products.note;
-
+    const [openBill, setOpenBill] = useState(false);
     const listOrderItem = useSelector(state => state.main.data.order.orderItems || []);
+    const billItems = listOrderItem.filter((item) => item.status !== "STOCK_OUT");
+
+    const handleOpenModal = () => {
+        const hasNewItem = listOrderItem.some((item) => item.status === "NEW");
+
+        if (hasNewItem) {
+            swal({
+                title: "Cảnh báo!",
+                text: "Có sản phẩm chưa được gửi tới bếp!",
+                icon: "warning",
+            })
+        } else {
+            setOpenBill(true);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setOpenBill(false);
+    };
 
     if (location.pathname === "/") {
         dispatch(mainSlice.actions.tabChanged('table'));
@@ -32,7 +54,7 @@ const MainContents = () => {
         const onProductSelect = async (productId) => {
             console.log("Selected product ID:", productId);
             try {
-                const response = await fetch(`http://localhost:9000/api/products/${productId}`);
+                const response = await fetch(API_URL + `products/${productId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setSelectedProduct(data);
@@ -89,7 +111,7 @@ const MainContents = () => {
     return (
         <div>
             <MenuOrderContext.Provider value={menuOrderData}>
-                <Box sx={{ backgroundColor: purple[500] }}
+                <Box sx={{ backgroundColor: purple[500], height: "100%" }}
                     className="background-container"
                 >
                     <Grid
@@ -98,17 +120,18 @@ const MainContents = () => {
                         spacing={2}
                         sx={{
                             width: "100%",
-                            marginLeft: "-4px"
+                            marginLeft: "-4px",
+                            height: "99.4vh"
                         }}
                     >
-                        <Grid item xs={6} md={7} paddingRight={'8px'} style={{ margin: "1% 0" }}>
+                        <Grid item xs={6} md={6} paddingRight={'8px'} style={{ margin: "1% 0", position: 'relative' }}>
                             <Box sx={{ backgroundColor: 'white', height: "100%", padding: '6px', borderRadius: '10px' }}>
                                 <Box style={{ backgroundColor: "white" }}>
                                     <MenuOrder />
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid item xs={6} md={5} paddingRight={'8px'} style={{ margin: "1% 0" }}>
+                        <Grid item xs={6} md={6} paddingRight={'8px'} style={{ margin: "1% 0", position: 'relative' }}>
                             <Box sx={{ backgroundColor: 'white', height: "100%", padding: '6px', borderRadius: '10px' }}>
                                 <Box
                                     style={{
@@ -126,34 +149,34 @@ const MainContents = () => {
                                     }}
                                 >
                                     <Grid container spacing={2} sx={{ marginBottom: "10px" }}>
+
                                         <Grid item xs={6}>
                                             <Button
+                                                className='buttonNotification'
                                                 size="large"
                                                 variant="contained"
                                                 startIcon={<MonetizationOn />}
                                                 disableElevation
                                                 style={{
-                                                    backgroundColor: blue["A400"],
-                                                    width: "100%",
-                                                    margin: "5px",
-                                                    borderRadius: "10px",
-                                                    padding: "15px 0"
+                                                    backgroundColor: !listOrderItem.length ? blue[400] : blue["A400"]
                                                 }}
+                                                disabled={!listOrderItem.length}
+                                                onClick={handleOpenModal}
                                             >
                                                 Thanh toán
                                             </Button>
+                                            <Modal open={openBill} onClose={handleCloseModal}>
+                                                <Bill billItems={billItems} closeModal={handleCloseModal} />
+                                            </Modal>
                                         </Grid>
                                         <Grid item xs={6} sx={{ paddingRight: "16px" }}>
                                             <Button
+                                                className='buttonNotification'
                                                 size="large"
                                                 variant="contained"
                                                 startIcon={<CircleNotifications />}
                                                 disableElevation
                                                 style={{
-                                                    width: "100%",
-                                                    borderRadius: "10px",
-                                                    margin: "5px",
-                                                    padding: "15px 0",
                                                     backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') ? purple[200] : purple[500]
                                                 }}
                                                 disabled={!listOrderItem?.find(e => e.status === 'NEW')}
@@ -167,13 +190,7 @@ const MainContents = () => {
                             </Box>
                         </Grid>
                     </Grid>
-                    <Grid
-                        style={{
-                            textAlign: "center",
-                            justifyContent: "center",
-                            color: "white",
-                            padding: "0 0 10px 0",
-                        }}
+                    <Grid className='footer'
                         item
                     >
                         Hỗ trợ:19006522 | Chi nhánh trung tâm: Thừa Thiên Huế | NKL-2023

@@ -7,7 +7,7 @@ const Loading = (props) => {
         <Box sx={{
             position: "absolute",
             top: "50%",
-            right: "65%",
+            right: "calc(50% - 100px)",
             width: "100px",
             height: "100px",
             transform: "translate(-50%, -50%)",

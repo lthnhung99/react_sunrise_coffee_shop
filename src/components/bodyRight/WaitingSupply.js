@@ -1,28 +1,37 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, styled } from "@mui/material";
-
+import { Box, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography } from "@mui/material";
 import LiquorIcon from '@mui/icons-material/Liquor';
-import SendIcon from '@mui/icons-material/Send';
-
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import BlockIcon from '@mui/icons-material/Block';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-
+import { changeStatusFromWaitingToDoneAllProductOfOrder, changeStatusFromWaitingToDoneOfProduct, getAll, changeStatusFromWaitingToStockOutToProductOfOrder } from '../reducers/kitchenSlice';
+import Loading from '../loading/Loading';
+import LAYOUT from '../../constant/AppConstant';
+import CustomTypography from '../../constant/CustomTypography';
+import swal from 'sweetalert';
 
 export default function WaitingSupply() {
     const dispatch = useDispatch();
     const orderItemsSupply = useSelector((state) => state.kitchen.orderItemsWaiting);
+    const isLoading = useSelector(state => state.kitchen.loading)
+    const [message, setMessage] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
         const connectToWebSocket = async () => {
-            const socket = new SockJS('http://localhost:9000/ws'); // Thay đổi URL thành URL của Spring Boot endpoint
+            const socket = new SockJS('http://localhost:9000/ws');
             const stompClient = Stomp.over(socket);
 
             stompClient.connect({}, (frame) => {
-                console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/notification', (message) => {
-                    console.log('Received: ' + message.body);
+                // console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/kitchen', (mess) => {
+                    // console.log('Received: ' + mess.body);
+                    let obj = JSON.parse(mess.body);
+                    setMessage(obj.data.message);
                 });
             }, (error) => {
                 console.log('Error: ' + error);
@@ -37,86 +46,116 @@ export default function WaitingSupply() {
         connectToWebSocket();
     }, []);
 
+    useEffect(() => {
+        if (message) {
+            setShowAlert(true);
+        }
+    }, [message]);
 
-    const CustomTypography = styled(Typography)(({ theme }) => ({
-        "& .MuiSvgIcon-root": {
-            fontSize: "10rem",
-            color: "#69b1ff70"
-        },
-    }));
+    useEffect(() => {
+        if (showAlert) {
+            swal({
+                title: "Thông báo!",
+                text: message,
+                icon: "warning",
+            }).then(
+                dispatch(getAll())
+            ).then(() => {
+                setMessage('');
+            });
+            setShowAlert(false);
+        }
+    }, [showAlert, message]);
+
+    const handleStatusChangeOneProduct = async (orderDetailId) => {
+        await dispatch(changeStatusFromWaitingToDoneOfProduct(orderDetailId));
+        dispatch(getAll());
+    };
+
+    const handleStatusChangeAllProduct = async (orderDetailId) => {
+        await dispatch(changeStatusFromWaitingToDoneAllProductOfOrder(orderDetailId));
+        dispatch(getAll());
+    };
+
+    const handleStatusChangeStockOut = async (orderDetailId) => {
+        await dispatch(changeStatusFromWaitingToStockOutToProductOfOrder(orderDetailId));
+        dispatch(getAll());
+    };
+
 
     return (
-        <Box
-            sx={{
-                p: 3,
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "15px",
-                justifyContent: "space-between",
-                overflowY: "scroll",
-                height: "80%",
-                scrollbarWidth: "thin",
-                scrollbarColor: "#888888 #f3f3f3",
-                "&::-webkit-scrollbar": {
-                    width: "8px",
-                },
-                "&::-webkit-scrollbar-track": {
-                    background: "#f3f3f3",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                    background: "#888888",
-                    borderRadius: "4px",
-                },
-                "&::-webkit-scrollbar-thumb:hover": {
-                    background: "#555555",
-                },
-            }}
-        >
-            <Box sx={{ flexGrow: "1" }}>
-                {orderItemsSupply && orderItemsSupply.length > 0 ? (
-                    <TableContainer>
-                        <Table sx={{ textAlignLast: "center" }}>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>#</TableCell>
-                                    <TableCell>Tên</TableCell>
-                                    <TableCell>Số lượng</TableCell>
-                                    <TableCell>Bàn</TableCell>
-                                    <TableCell>Ghi chú</TableCell>
-                                    <TableCell>Trạng thái</TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {orderItemsSupply?.map((item, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>{index + 1}</TableCell>
-                                        <TableCell>{item?.productTitle}</TableCell>
-                                        <TableCell>{item?.quantity}</TableCell>
-                                        <TableCell>{item?.tableName}</TableCell>
-                                        <TableCell>{item?.note}</TableCell>
-                                        <TableCell>{item?.status}</TableCell>
-                                        <TableCell>
-                                            <Button variant="outlined"
-                                                endIcon={<SendIcon />}
-                                                sx={{ borderRadius: "20px", padding: "8px 15px" }}
-                                            // onClick={() => handleStatusChange(item.orderDetailId)}
-                                            >
-                                            </Button>
-                                        </TableCell>
+        <Box className='cssScroll'>
+            {isLoading ? <Loading /> :
+                <Box sx={{ flexGrow: "1" }}>
+                    {orderItemsSupply && orderItemsSupply.length > 0 ? (
+                        <TableContainer>
+                            <Table sx={{ textAlignLast: "center" }}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>#</TableCell>
+                                        <TableCell>Tên</TableCell>
+                                        <TableCell>Số lượng</TableCell>
+                                        <TableCell>Bàn</TableCell>
+                                        <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
+                                        <TableCell sx={{ width: "30%" }}></TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-
-                ) : (
-                    <CustomTypography variant="body2" sx={{ marginTop: "35%", textAlign: "center" }}>
-                        <LiquorIcon />
-                        <Typography variant="h3">Chưa có món nào</Typography>
-                    </CustomTypography>
-                )}
-            </Box>
+                                </TableHead>
+                                <TableBody>
+                                    {orderItemsSupply.map((item, index) => (
+                                        <TableRow key={"listSupply" + index}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            {item.note ?
+                                                <TableCell className="note">
+                                                    {item?.productTitle}
+                                                    <Typography className="cssNote">Ghi chú: {item?.note}</Typography>
+                                                </TableCell>
+                                                :
+                                                <TableCell>{item?.productTitle}</TableCell>}
+                                            <TableCell>{item?.quantity}</TableCell>
+                                            <TableCell>{item?.tableName}</TableCell>
+                                            <TableCell>
+                                                <Typography className='cssStatus'
+                                                    variant="outlined"
+                                                    sx={LAYOUT[item.status]}
+                                                >{item?.status}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Typography sx={{ display: "flex", justifyContent: "space-evenly" }}>
+                                                    <Button className='buttonDemo'
+                                                        variant="outlined"
+                                                        onClick={() => handleStatusChangeOneProduct(item.orderDetailId)}
+                                                    >
+                                                        <KeyboardArrowRightIcon />
+                                                    </Button>
+                                                    <Button className='buttonDemo'
+                                                        variant="outlined"
+                                                        onClick={() => handleStatusChangeAllProduct(item.orderDetailId)}
+                                                    >
+                                                        <KeyboardDoubleArrowRightIcon />
+                                                    </Button>
+                                                    <Button className='buttonDemo redColor'
+                                                        variant="outlined"
+                                                        onClick={() => handleStatusChangeStockOut(item.orderDetailId)}
+                                                    >
+                                                        <BlockIcon />
+                                                    </Button>
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    ) : (
+                        <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center" }}>
+                            <LiquorIcon />
+                            <Typography variant="h3">Chưa có món nào</Typography>
+                        </CustomTypography>
+                    )}
+                </Box>
+            }
+            {showAlert}
         </Box>
     )
 }

@@ -26,7 +26,7 @@ const TabPanel = ({ value, index, search }) => {
                         gap: "15px",
                         justifyContent: "space-between",
                         overflowY: "scroll",
-                        height: "100%",
+                        height: "90%",
                         scrollbarWidth: "thin",
                         scrollbarColor: "#888888 #f3f3f3",
                         "&::-webkit-scrollbar": {
@@ -45,8 +45,8 @@ const TabPanel = ({ value, index, search }) => {
                     }}
                 >
                     <Routes>
-                        <Route path='/' element={<TableOrder search={search} />} />
-                        <Route path="products" element={<Products search={search} />} />
+                        <Route path='/' element={<TableOrder />} />
+                        <Route path="products" element={<Products />} />
                     </Routes>
 
                 </Box>

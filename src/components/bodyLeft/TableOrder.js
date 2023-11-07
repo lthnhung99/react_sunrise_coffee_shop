@@ -6,11 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import Pageable from "../pageable/Pageable";
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import { useDispatch, useSelector } from "react-redux";
-import { getListOrderDetailByTableId, loadTableOrder } from "../reducers/mainSlice";
+import { getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from "../reducers/mainSlice";
 import mainSlice from '../reducers/mainSlice';
 import { purple } from "@mui/material/colors";
+import CustomTypography from "../../constant/CustomTypography";
+import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
 
-const TableOrder = ({ search }) => {
+const TableOrder = () => {
     const dispatch = useDispatch();
     const setPage = (page) => {
         dispatch(loadTableOrder({
@@ -23,6 +25,11 @@ const TableOrder = ({ search }) => {
     const isLoading = useSelector((state) => state.main.loading);
     const [selectedFloor, setSelectedFloor] = useState("");
     const [selectedStatus, setSelectedStatus] = useState('');
+
+    // useEffect(() => {
+    //     dispatch(getAllTableOrder());
+    // }, []);
+    // const allTables = useSelector((state) => state.main.data.allTables) || []
 
     const navigate = useNavigate();
 
@@ -170,7 +177,7 @@ const TableOrder = ({ search }) => {
                 <Grid container spacing={2} sx={{ maxWidth: "100%", margin: "0 5px" }}>
                     {filteredTableOrders.length > 0 ? (
                         filteredTableOrders.map((item) => (
-                            <Grid item xs={6} sm={3} md={2.3} mb={2} key={item.id}>
+                            <Grid item xs={6} sm={3} md={2.8} mb={2} key={"table" + item.id}>
                                 <Card sx={{ backgroundColor: item.status === "BUSY" ? purple[100] : "inherit", textAlign: "center", borderRadius: "25%" }}>
                                     <CardActionArea onClick={() => handleTableOrderClick(item)}>
                                         <CardContent>
@@ -187,9 +194,10 @@ const TableOrder = ({ search }) => {
                             </Grid>
                         ))
                     ) : (
-                        <Typography variant="body1" sx={{ margin: "20px" }}>
-                            Không tìm thấy bàn này!
-                        </Typography>
+                        <CustomTypography variant="body2" sx={{ marginTop: "15%", textAlign: "center", width: "100%" }}>
+                            <BrowserNotSupportedIcon />
+                            <Typography variant="h3">Không tìm thấy bàn phù hợp</Typography>
+                        </CustomTypography>
                     )}
                     <Pageable page={mainFilters.page + 1} setPage={setPage} totalPage={mainFilters.totalPage} />
                 </Grid>
