@@ -17,6 +17,7 @@ import Swal from 'sweetalert';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import swal from 'sweetalert';
+import ReactHowler from "react-howler";
 
 const ItemOrder = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ const ItemOrder = () => {
   const loadingOrder = useSelector(state => state.main.loadingOrder);
   const [message, setMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [play, setPlay] = useState(false);
 
   useEffect(() => {
     const connectToWebSocket = async () => {
@@ -60,12 +62,15 @@ const ItemOrder = () => {
 
   useEffect(() => {
     if (showAlert) {
+      setPlay(true);
       swal({
         title: "Thông báo!",
         text: message,
-        icon: "warning",
-      }).then(
-        mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected))
+        icon: "success",
+      }).then(() => {
+        mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected));
+        setPlay(false);
+      }
       ).then(() => {
         setMessage('');
       });
@@ -207,7 +212,7 @@ const ItemOrder = () => {
           <TabPanel value="1"></TabPanel>
         </TabContext>
       </Box>
-      <Box sx={{ flexGrow: "1" }}>
+      <Box sx={{ flexGrow: "1", maxHeight: '80%' }} className="cssScroll">
         {listOrderItem?.length > 0 ? (
           <TableContainer>
             <Table sx={{ textAlignLast: "center" }}>
@@ -219,7 +224,7 @@ const ItemOrder = () => {
                   <TableCell>Số lượng</TableCell>
                   <TableCell>Tổng tiền</TableCell>
                   <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
-                  <TableCell>Action</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -232,13 +237,14 @@ const ItemOrder = () => {
           </TableContainer>
 
         ) : (
-          <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center" }}>
+          <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center", width: "100%" }}>
             <LiquorIcon />
             <Typography variant="h3">Chưa có món nào</Typography>
             <Typography variant="h5" color="darkgray">Vui lòng chọn món trong thực đơn</Typography>
           </CustomTypography>
         )}
       </Box>
+      <ReactHowler src='./mixkit-correct-answer-tone-2870.mp3' playing={play} />
       {showAlert}
     </>
   );

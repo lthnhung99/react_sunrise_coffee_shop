@@ -25,7 +25,7 @@ const ProfileTab = ({ handleLogout }) => {
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
     if (index === 1) {
-      dispatch(getListOrderDetailByTableId(tableId));
+      tableId && dispatch(getListOrderDetailByTableId(tableId));
     }
   };
 
@@ -40,23 +40,23 @@ const ProfileTab = ({ handleLogout }) => {
       </ListItemButton>
 
       {location.pathname === "/kitchen" ? (
-        <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
-          <ListItemIcon>
-            <TableViewSharpIcon />
-          </ListItemIcon>
-          <Link to={"/"} style={{ textDecoration: "none" }}>
-            <ListItemText primary="Thu ngân" />
-          </Link>
-        </ListItemButton>
+        <Link to={"/"} style={{ textDecoration: "none" }}>
+          <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
+            <ListItemIcon>
+              <TableViewSharpIcon />
+            </ListItemIcon>
+            <ListItemText primary="Thu ngân" className='blackColor' />
+          </ListItemButton>
+        </Link>
       ) : (
-        <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
-          <ListItemIcon>
-            <BlenderIcon />
-          </ListItemIcon>
-          <Link to={"/kitchen"} style={{ textDecoration: "none" }}>
-            <ListItemText primary="Phòng bếp" />
-          </Link>
-        </ListItemButton>
+        <Link to={"/kitchen"} style={{ textDecoration: "none" }}>
+          <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
+            <ListItemIcon>
+              <BlenderIcon />
+            </ListItemIcon>
+            <ListItemText primary="Phòng bếp" className='blackColor' />
+          </ListItemButton>
+        </Link>
       )}
 
       <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>

@@ -5,5 +5,5 @@ const LAYOUT = {
     DONE: { color: "white", backgroundColor: "#28a745" },
     COOKING: { color: "white", backgroundColor: "#f06292" }
 }
-
+export const URL_BASE = "http://localhost:9000/api"
 export default LAYOUT;
