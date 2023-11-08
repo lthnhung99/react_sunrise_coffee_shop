@@ -1,3 +1,5 @@
-const API_URL_ORDER = "http://localhost:9000/api/orders/";
+import { URL_BASE } from "../../constant/AppConstant";
+
+const API_URL_ORDER = URL_BASE + "/orders/";
 
 export default API_URL_ORDER;

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeAllProductToNewTable, getAllTableOrder, loadTableOrder } from './reducers/mainSlice';
+import { changeAllProductToNewTable, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from './reducers/mainSlice';
 import { red } from '@mui/material/colors';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
@@ -39,6 +39,9 @@ const SwitchTables = ({ open, closeModal }) => {
             search: mainFilters.search,
             totalPages: mainFilters.totalPages
         })).then(() => {
+            mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected))
+        }
+        ).then(() => {
             Swal("Thành công!", "Chuyển bàn thành công!", "success");
         })
     };

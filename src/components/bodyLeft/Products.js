@@ -48,7 +48,7 @@ export default function Products() {
     if (mainFilters.tableSelected === "") {
       swal({
         title: "Vui lòng chọn bàn trước!",
-        icon: "warning",
+        icon: "error",
       }).then(() => {
         navigate('/');
       });

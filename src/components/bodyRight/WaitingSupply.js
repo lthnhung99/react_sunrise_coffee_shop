@@ -13,6 +13,7 @@ import Loading from '../loading/Loading';
 import LAYOUT from '../../constant/AppConstant';
 import CustomTypography from '../../constant/CustomTypography';
 import swal from 'sweetalert';
+import ReactHowler from 'react-howler';
 
 export default function WaitingSupply() {
     const dispatch = useDispatch();
@@ -20,6 +21,7 @@ export default function WaitingSupply() {
     const isLoading = useSelector(state => state.kitchen.loading)
     const [message, setMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
+    const [play, setPlay] = useState(false);
 
     useEffect(() => {
         const connectToWebSocket = async () => {
@@ -54,14 +56,17 @@ export default function WaitingSupply() {
 
     useEffect(() => {
         if (showAlert) {
+            setPlay(true);
             swal({
                 title: "Thông báo!",
                 text: message,
                 icon: "warning",
-            }).then(
-                dispatch(getAll())
+            }).then(() => {
+                dispatch(getAll());
+            }
             ).then(() => {
                 setMessage('');
+                setPlay(false);
             });
             setShowAlert(false);
         }
@@ -155,6 +160,7 @@ export default function WaitingSupply() {
                     )}
                 </Box>
             }
+            <ReactHowler src='./mixkit-correct-answer-tone-2870.mp3' playing={play} />
             {showAlert}
         </Box>
     )

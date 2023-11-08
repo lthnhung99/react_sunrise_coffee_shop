@@ -5,36 +5,35 @@ import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import Notification from "../headerRight/Notification";
 import Profile from "./Profile/Profile";
 import DropdownButton from "../DropdownButton";
+import { useLocation } from "react-router";
 
 function MyDropdown() {
-
+  const location = useLocation();
   return (
     <Box
       style={{
         position: "absolute",
         right: "15px",
-
         alignItems: "space-between",
       }}
     >
       <Box style={{ display: "flex", alignItems: "center" }}>
+        {location.pathname === "/kitchen" ? "" :
+          <IconButton
+            disableRipple
+            title="Thao tác với bàn"
+            color="secondary"
+            sx={{
+              bgcolor: "grey.100",
+              marginRight: "4px",
+            }}
+          >
+            <DropdownButton />
+          </IconButton>}
         <IconButton
           disableRipple
           color="secondary"
-          sx={{
-            color: "text.primary",
-            bgcolor: "grey.100",
-            marginRight: "4px",
-          }}
-        >
-          <DropdownButton />
-        </IconButton>
-        <IconButton
-          href="https://github.com/codedthemes/mantis-free-react-admin-template"
-          target="_blank"
-          disableRipple
-          color="secondary"
-          title="Download Free Version"
+          title="Bật tắt âm lượng"
           sx={{
             color: "text.primary",
             bgcolor: "grey.100",
@@ -43,8 +42,8 @@ function MyDropdown() {
         >
           <VolumeUpIcon />
         </IconButton>
-        <Notification />
-        <IconButton
+        {/* <Notification /> */}
+        {/* <IconButton
           href="https://github.com/codedthemes/mantis-free-react-admin-template"
           target="_blank"
           disableRipple
@@ -57,7 +56,7 @@ function MyDropdown() {
           }}
         >
           <LocalPrintshopIcon />
-        </IconButton>
+        </IconButton> */}
 
         <Profile />
       </Box>

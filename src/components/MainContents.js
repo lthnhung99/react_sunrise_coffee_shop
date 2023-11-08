@@ -12,7 +12,7 @@ import mainSlice from './reducers/mainSlice';
 import { blue, purple } from '@mui/material/colors';
 import API_URL from './constURL/URLMain';
 import Bill from './pay/Bill';
-import swal from 'sweetalert';
+import Swal from 'sweetalert';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
@@ -30,7 +30,7 @@ const MainContents = () => {
         const hasNewItem = listOrderItem.some((item) => item.status === "NEW");
 
         if (hasNewItem) {
-            swal({
+            Swal({
                 title: "Cảnh báo!",
                 text: "Có sản phẩm chưa được gửi tới bếp!",
                 icon: "warning",
@@ -98,7 +98,10 @@ const MainContents = () => {
     }
 
     const handleStatusChange = () => {
-        dispatch(changeStatusCooking(mainFilters.tableSelected));
+        dispatch(changeStatusCooking(mainFilters.tableSelected))
+            .then(() => {
+                Swal("Thành công!", "Gửi đi thành công!", "success");
+            });
     };
 
     const menuOrderData = {

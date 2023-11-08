@@ -10,7 +10,6 @@ import {
   CardContent,
   ClickAwayListener,
   Grid,
-  IconButton,
   Paper,
   Popper,
   Stack,
@@ -25,8 +24,9 @@ import Transitions from '../../@extended/Transitions';
 import ProfileTab from './ProfileTab';
 
 // assets
-import avatar1 from '../../../assets/images/users/avatar-1.png';
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import avatar1 from '../../../assets/images/users/avatar-3.png';
+import { UserOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -54,6 +54,9 @@ function a11yProps(index) {
 
 const Profile = () => {
   const theme = useTheme();
+  const uses = useSelector(state => state.main.auth);
+  const name = localStorage.getItem("name");
+  const roles = localStorage.getItem("roles");
 
   const handleLogout = async () => {
     // logout
@@ -97,7 +100,7 @@ const Profile = () => {
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-          <Typography variant="subtitle1">John Doe</Typography>
+          <Typography variant="subtitle1">{uses.name || name}</Typography>
         </Stack>
       </ButtonBase>
       <Popper
@@ -140,17 +143,12 @@ const Profile = () => {
                           <Stack direction="row" spacing={1.25} alignItems="center">
                             <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                             <Stack>
-                              <Typography variant="h6">John Doe</Typography>
+                              <Typography variant="h6">{uses.name || name}</Typography>
                               <Typography variant="body2" color="textSecondary">
-                                UI/UX Designer
+                                {uses.roles.authority || roles}
                               </Typography>
                             </Stack>
                           </Stack>
-                        </Grid>
-                        <Grid item>
-                          <IconButton size="large" color="secondary" onClick={handleLogout}>
-                            <LogoutOutlined />
-                          </IconButton>
                         </Grid>
                       </Grid>
                     </CardContent>

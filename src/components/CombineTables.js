@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { combineTables, getAllTableOrder, loadTableOrder } from './reducers/mainSlice';
+import { combineTables, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from './reducers/mainSlice';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CallMergeIcon from '@mui/icons-material/CallMerge';
 import { red } from '@mui/material/colors';
@@ -40,6 +40,9 @@ const CombineTables = ({ open, closeModal }) => {
             search: mainFilters.search,
             totalPages: mainFilters.totalPages
         })).then(() => {
+            mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected));
+        }
+        ).then(() => {
             Swal("Thành công!", "Gộp bàn thành công!", "success");
         })
     };

@@ -57,6 +57,7 @@ export default function MenuSimple() {
                 aria-expanded={open ? 'true' : undefined}
                 onClick={handleClick}
                 className='blackColor'
+                sx={{ width: 10 }}
             >
                 <ChangeCircleIcon />
             </Button>
