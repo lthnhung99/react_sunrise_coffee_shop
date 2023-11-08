@@ -34,12 +34,12 @@ const Bill = ({ billItems, closeModal }) => {
 
     return (
         <Paper style={{ height: 700, width: "50%", bottom: "20%", left: "25%", position: "absolute" }}>
-            <TableContainer>
+            <TableContainer sx={{ maxHeight: "85%", overflow: "auto" }}>
                 <Typography variant="h3" gutterBottom className='textCenter' sx={{ marginTop: '3%' }}>SUNRISE COFFEE SHOP</Typography>
                 <Typography variant="h5" gutterBottom className='textCenter'>28 Nguyễn Tri Phương</Typography>
                 <Typography variant="h5" gutterBottom className='textCenter'>0399 578 134</Typography>
                 <Typography variant="h3" gutterBottom className='textCenter'>HÓA ĐƠN THANH TOÁN</Typography>
-                <Table sx={{ margin: "5% 0 0 10%", width: "80%" }} size="small" aria-label="a dense table">
+                <Table sx={{ marginLeft: "10%", width: "80%" }} size="small" aria-label="simple table">
                     <TableHead>
                         <TableRow>
                             <TableCell>#</TableCell>
@@ -67,6 +67,7 @@ const Bill = ({ billItems, closeModal }) => {
                         </TableRow>
                     </TableBody>
                 </Table>
+
                 <Box
                     sx={{
                         display: "flex",

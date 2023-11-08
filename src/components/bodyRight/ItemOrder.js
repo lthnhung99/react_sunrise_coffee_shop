@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useId, useState } from "react";
-import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, IconButton } from "@mui/material";
+import { Box, Tab, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Typography, IconButton, Tooltip } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import MyDropdown from "../headerRight/MyDropdown";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -169,15 +169,17 @@ const ItemOrder = () => {
               </Typography>
             </TableCell>
             <TableCell>
-              <Button
-                onClick={() => handleDeleteItem(item)}
-              >
-                <DeleteIcon
-                  style={{
-                    color: "red",
-                  }}
-                />
-              </Button>
+              <Tooltip title="Delete">
+                <Button
+                  onClick={() => handleDeleteItem(item)}
+                >
+                  <DeleteIcon
+                    style={{
+                      color: "red",
+                    }}
+                  />
+                </Button>
+              </Tooltip>
             </TableCell>
           </TableRow>
         }
