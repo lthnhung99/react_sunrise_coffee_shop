@@ -7,33 +7,52 @@ import { DialogContentText, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import MenuOrderContext from "../MenuOrderContext";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import mainSlice from '../reducers/mainSlice';
 import formatPrice from "../bodyRight/FormatPrice";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useRef } from "react";
+
+const orderFormSchema = yup
+  .object()
+  .shape({
+    quantity: yup.number()
+      .required("Số lượng không được để trống!")
+      .typeError('Số lượng phải là một số')
+      .integer('Số lượng phải là số nguyên')
+      .min(1, 'Số lượng phải lớn hơn hoặc bằng 1')
+      .max(99, 'Số lượng phải nhỏ hơn hoặc bằng 99')
+  }).required();
 
 export default function ProductModal({ open, onClose }) {
   const { selectedProduct, handleAddProduct } = React.useContext(MenuOrderContext);
-  const mainFilters = useSelector((state) => state.main.filters);
   const dispatch = useDispatch();
+  const ref = useRef();
+  const ref2 = useRef();
 
-  const quantity = mainFilters.products.quantity;
-  const note = mainFilters.products.note;
+  const { handleSubmit, formState: { errors }, reset, control } = useForm({
+    resolver: yupResolver(orderFormSchema)
+  });
 
-  const handleQuantityChange = (event) => {
-    dispatch(mainSlice.actions.setQuantity(event.target.value));
-  };
+  // const { ref, ...rest } = register("quantity", { required: true });
 
   const handleNoteChange = (event) => {
     dispatch(mainSlice.actions.setNote(event.target.value));
-    dispatch(mainSlice.actions.setTookNote(event.target.value));
   }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    handleAddProduct(selectedProduct);
+  const onSubmit = () => {
+    console.log(ref.current)
+    handleAddProduct({
+      ...selectedProduct,
+      quantity: +ref.current.value,
+      note: ref2.current.value
+    });
     dispatch(mainSlice.actions.setQuantity(1));
     dispatch(mainSlice.actions.setNote(""));
     onClose();
+    reset();
   };
 
   return (
@@ -46,6 +65,7 @@ export default function ProductModal({ open, onClose }) {
         width: "100%",
       }}
       component="form"
+      onSubmit={handleSubmit(onSubmit)}
     >
       <DialogContent style={{ display: "flex", flexDirection: "row" }}>
         <DialogContentText style={{ display: "flex", alignItems: "center" }}>
@@ -79,21 +99,31 @@ export default function ProductModal({ open, onClose }) {
             Giá:{" "}
             {selectedProduct && selectedProduct.price ? formatPrice(selectedProduct.price) : "Price Not Available"}
           </p>
-
-          <TextField
-            autoFocus
-            margin="dense"
-            id="quantity"
-            label="Số lượng"
-            type="number"
-            fullWidth
-            variant="standard"
-            defaultValue={quantity}
-            onChange={handleQuantityChange}
-            inputProps={{
-              min: 1,
-              max: 99
+          <Controller
+            as={TextField}
+            render={({ field }) => {
+              return (
+                <TextField
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  // onBlur={onBlur}
+                  defaultValue={""}
+                  helperText={errors.quantity?.message}
+                  error={errors['quantity'] ? true : false}
+                  margin={"dense"}
+                  id={"quantity"}
+                  type={'number'}
+                  autoFocus
+                  label={'Số lượng'}
+                  inputRef={ref}
+                  inputProps={{
+                    min: 1,
+                    max: 99
+                  }}
+                />
+              )
             }}
+            name={'quantity'}
+            control={control}
           />
           <TextField
             autoFocus
@@ -101,11 +131,10 @@ export default function ProductModal({ open, onClose }) {
             id="note"
             label="Ghi chú *"
             type="multiline"
-            fullWidth
-            variant="standard"
             multiline
             rows={3}
-            defaultValue={note}
+            defaultValue={""}
+            inputRef={ref2}
             onChange={handleNoteChange}
           />
         </div>
@@ -117,7 +146,6 @@ export default function ProductModal({ open, onClose }) {
           startIcon={<AddIcon />}
           variant="contained"
           color="primary"
-          onClick={handleSubmit}
         >
           Thêm món
         </Button>

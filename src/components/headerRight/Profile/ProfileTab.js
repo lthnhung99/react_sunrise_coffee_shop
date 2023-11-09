@@ -12,6 +12,7 @@ import { Link, useLocation } from 'react-router-dom';
 import BlenderIcon from '@mui/icons-material/Blender';
 import { useDispatch, useSelector } from 'react-redux';
 import { getListOrderDetailByTableId } from '../../reducers/mainSlice';
+import ViewProfile from './ViewProfile';
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
@@ -19,14 +20,23 @@ const ProfileTab = ({ handleLogout }) => {
   const theme = useTheme();
   const location = useLocation();
   const dispatch = useDispatch();
-  const tableId = useSelector(state => state.main.filters.tableSelected)
+  const tableId = useSelector(state => state.main.filters.tableSelected);
+  const [open, setOpen] = useState(false);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState('');
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
     if (index === 1) {
       tableId && dispatch(getListOrderDetailByTableId(tableId));
     }
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -35,8 +45,9 @@ const ProfileTab = ({ handleLogout }) => {
       <ListItemButton selected={selectedIndex === 0} onClick={(event) => handleListItemClick(event, 0)}>
         <ListItemIcon>
           <UserOutlined />
+          <ViewProfile open={open} closeModal={handleClose} />
         </ListItemIcon>
-        <ListItemText primary="View Profile" />
+        <ListItemText primary="Xem thông tin" onClick={handleOpen} />
       </ListItemButton>
 
       {location.pathname === "/kitchen" ? (
