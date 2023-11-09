@@ -10,6 +10,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import Loading from "./loading/Loading";
 import LAYOUT from '../constant/AppConstant';
 import CustomTypography from '../constant/CustomTypography';
+import swal from 'sweetalert';
 
 const Waiting = () => {
     const dispatch = useDispatch();
@@ -33,7 +34,10 @@ const Waiting = () => {
 
     const handleStatusChangeStockOut = async (productId, note) => {
         await dispatch(changeStatusFromCookingToStockOutOfProduct({ productId, note }));
-        dispatch(getAll());
+        dispatch(getAll())
+            .then(() => {
+                swal("Thành công!", "Sản phẩm đã được thông báo hết!", "success");
+            });
     };
 
     return (

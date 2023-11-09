@@ -20,14 +20,13 @@ const MainContents = () => {
     const dispatch = useDispatch();
     const location = useLocation();
     const mainFilters = useSelector((state) => state.main.filters);
-    const quantity = mainFilters.products.quantity;
-    const note = mainFilters.products.note;
     const [openBill, setOpenBill] = useState(false);
     const listOrderItem = useSelector(state => state.main.data.order.orderItems || []);
     const billItems = listOrderItem.filter((item) => item.status !== "STOCK_OUT");
 
     const handleOpenModal = () => {
         const hasNewItem = listOrderItem.some((item) => item.status === "NEW");
+        const allStockOut = listOrderItem.every((item) => item.status === "STOCK_OUT");
 
         if (hasNewItem) {
             Swal({
@@ -35,6 +34,12 @@ const MainContents = () => {
                 text: "Có sản phẩm chưa được gửi tới bếp!",
                 icon: "warning",
             })
+        } else if (allStockOut) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Không có sản phẩm để thanh toán!",
+                icon: "warning",
+            });
         } else {
             setOpenBill(true);
         }
@@ -73,13 +78,14 @@ const MainContents = () => {
     }, [selectedProduct.id, previousSelectedProductId]);
 
     const handleAddProduct = (product) => {
+        console.log(product);
         if (listOrderItem.length === 0) {
             if (product && product.id) {
                 dispatch(createOrder({
                     tableId: mainFilters.tableSelected,
                     productId: product.id,
-                    quantity: quantity,
-                    note: note
+                    quantity: product.quantity,
+                    note: product.note
                 }));
             }
         }
@@ -88,8 +94,8 @@ const MainContents = () => {
                 dispatch(updateOrder({
                     tableId: mainFilters.tableSelected,
                     productId: product.id,
-                    quantity: quantity,
-                    note: note,
+                    quantity: product.quantity,
+                    note: product.note,
                     status: "NEW"
                 }));
             }

@@ -16,14 +16,12 @@ import Loading from "../loading/Loading";
 import Swal from 'sweetalert';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import swal from 'sweetalert';
 import ReactHowler from "react-howler";
 
 const ItemOrder = () => {
   const dispatch = useDispatch();
   const listOrderItem = useSelector((state) => state.main.data.order.orderItems);
   const mainFilters = useSelector((state) => state.main.filters);
-  const tookNote = mainFilters.products.tookNote;
   const loadingOrder = useSelector(state => state.main.loadingOrder);
   const [message, setMessage] = useState('');
   const [showAlert, setShowAlert] = useState(false);
@@ -63,7 +61,7 @@ const ItemOrder = () => {
   useEffect(() => {
     if (showAlert) {
       setPlay(true);
-      swal({
+      Swal({
         title: "Thông báo!",
         text: message,
         icon: "success",
@@ -124,7 +122,7 @@ const ItemOrder = () => {
       tableId: mainFilters.tableSelected,
       productId: productId,
       quantity: quantity,
-      note: tookNote,
+      note: data[i].note,
       status: "NEW"
     }))
   };

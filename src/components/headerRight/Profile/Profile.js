@@ -165,7 +165,7 @@ const Profile = () => {
                                 textTransform: 'capitalize'
                               }}
                               icon={<UserOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
-                              label="Profile"
+                              label="Thông tin"
                               {...a11yProps(0)}
                             />
                           </Tabs>

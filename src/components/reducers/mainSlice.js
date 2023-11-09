@@ -212,7 +212,6 @@ export default createSlice({
                 totalPages: 0,
                 quantity: 1,
                 note: '',
-                tookNote: ''
             },
             tab: 'table',
             tableSelected: '',
@@ -269,9 +268,6 @@ export default createSlice({
         },
         setNote: (state, action) => {
             state.filters.products.note = action.payload;
-        },
-        setTookNote: (state, action) => {
-            state.filters.products.tookNote = action.payload;
         },
         setListOrderDetail: (state, action) => {
             state.data.listOrderWaiting = action.payload;
