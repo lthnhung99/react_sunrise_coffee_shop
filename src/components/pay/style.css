@@ -2,30 +2,46 @@
   display: flex;
   justify-content: center;
 }
+
 .p-order {
-  width: 50%;
+  width: 60%;
 }
+
 .p-order-head h1 {
   text-align: center;
 }
+
 .p-order-head p {
   text-align: center;
 }
+
 .p-order-main .p-highlight {
   font-weight: 600;
 }
+
 .p-tb-order {
   border-collapse: collapse;
   width: 100%;
 }
+
 .p-tb-order th,
 .p-tb-order td {
-  border: 1px dashed black;
+  border: 1px solid black;
 }
+
 .p-tb-order th {
-  text-align: start;
+  text-align: center;
 }
+
 .p-order-row-sumary {
   display: flex;
   justify-content: space-between;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.align-center {
+  text-align: center;
 }

@@ -11,37 +11,39 @@ import ProductModal from "./ProductModal";
 import Pageable from "../pageable/Pageable";
 import MenuOrderContext from "../MenuOrderContext";
 import { useDispatch, useSelector } from "react-redux";
-import { loadProduct } from '../reducers/mainSlice';
+import { getAllProducts, loadCategory, loadProduct } from '../reducers/mainSlice';
 import { useNavigate } from 'react-router-dom';
 import formatPrice from "../bodyRight/FormatPrice";
 import CustomTypography from "../../constant/CustomTypography";
 import NoDrinksIcon from '@mui/icons-material/NoDrinks';
 import swal from 'sweetalert';
+import { useEffect } from "react";
 
 export default function Products() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const setPage = (page) => {
-    dispatch(loadProduct({
-      page: page, size: mainFilters.size,
-      search: mainFilters.search, totalPages: mainFilters.totalPages
-    }))
-  }
+
+  useEffect(() => {
+    dispatch(loadCategory());
+  }, []);
+
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, []);
+
   const [selectedCate, setSelectedCate] = React.useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { selectedProduct, setSelectedProduct } = React.useContext(MenuOrderContext);
 
-  const product = useSelector((state) => state.main.data.products);
+  const product = useSelector((state) => state.main.data.products) || [];
+  const category = useSelector((state) => state.main.data.categories);
   const mainFilters = useSelector((state) => state.main.filters);
   const isLoading = useSelector((state) => state.main.loading);
 
-
-  const cateTitle = [...new Set(product?.map(item => item.category.title))]
-
   const arrProduct = [...product];
   const filteredProduct = selectedCate
-    ? arrProduct?.filter(item => item.category.title === selectedCate).sort((a, b) => a.title.localeCompare(b.title))
+    ? arrProduct?.filter(item => item.category.id === selectedCate).sort((a, b) => a.title.localeCompare(b.title))
     : arrProduct?.sort((a, b) => a.title.localeCompare(b.title));
 
   const openModal = (product) => {
@@ -65,49 +67,56 @@ export default function Products() {
   React.useEffect(() => {
     dispatch(loadProduct({
       search: mainFilters.search,
+      category: selectedCate,
       page: mainFilters.products.page,
       size: mainFilters.products.size,
       totalPages: mainFilters.products.totalPages
     }));
-  }, [])
+  }, [mainFilters.search, selectedCate]);
+
+  const setPage = (page) => {
+    dispatch(loadProduct({
+      page: page,
+      category: selectedCate,
+      size: mainFilters.products.size,
+      search: mainFilters.search,
+      totalPages: mainFilters.products.totalPages
+    }))
+  }
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
 
       <Box sx={{ marginBottom: "10px" }}>
         <FormControl component="fieldset">
-          {isLoading ? (
-            ""
-          ) : (
-            <ButtonGroup
-              aria-label="floor"
-              name="floor"
-              value={selectedCate}
-              variant="outlined"
-              sx={{
-                flexDirection: "row",
-                "& .MuiButton-root": {
-                  borderRadius: "10px"
-                }
-              }}
+          <ButtonGroup
+            aria-label="floor"
+            name="floor"
+            value={selectedCate}
+            variant="outlined"
+            sx={{
+              flexDirection: "row",
+              "& .MuiButton-root": {
+                borderRadius: "10px"
+              }
+            }}
+          >
+            <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
+              onClick={() => setSelectedCate("")}
+              variant={selectedCate === "" ? "contained" : "outlined"}
             >
+              Tất cả
+            </Button>
+            {category?.map((item) => (
               <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
-                onClick={() => setSelectedCate("")}
-                variant={selectedCate === "" ? "contained" : "outlined"}
+                key={item.title}
+                onClick={() => setSelectedCate(item.id)}
+                variant={selectedCate === item.id ? "contained" : "outlined"}
               >
-                Tất cả
+                {item.title}
               </Button>
-              {cateTitle.sort()?.map((title) => (
-                <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
-                  key={title}
-                  onClick={() => setSelectedCate(title)}
-                  variant={selectedCate === title ? "contained" : "outlined"}
-                >
-                  {title}
-                </Button>
-              ))}
-            </ButtonGroup>
-          )}
+            ))}
+          </ButtonGroup>
         </FormControl>
       </Box>
 

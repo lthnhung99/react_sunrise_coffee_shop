@@ -9,6 +9,7 @@ import { useLocation } from "react-router";
 
 function MyDropdown() {
   const location = useLocation();
+
   return (
     <Box
       style={{
@@ -37,23 +38,22 @@ function MyDropdown() {
           sx={{
             color: "text.primary",
             bgcolor: "grey.100",
-            marginRight: "-2px",
+            marginRight: "4px",
           }}
         >
           <VolumeUpIcon />
         </IconButton>
         {/* <Notification /> */}
         {/* <IconButton
-          href="https://github.com/codedthemes/mantis-free-react-admin-template"
-          target="_blank"
           disableRipple
           color="secondary"
-          title="Download Free Version"
+          title="In hóa đơn"
           sx={{
             color: "text.primary",
             bgcolor: "grey.100",
             marginRight: "4px",
           }}
+          onClick={handlePrint}
         >
           <LocalPrintshopIcon />
         </IconButton> */}

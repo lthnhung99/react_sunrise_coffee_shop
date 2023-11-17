@@ -37,7 +37,7 @@ const LoginForm = () => {
             username: data.username.value,
             password: data.password.value
         }
-        dispatch(auth(obj))
+        dispatch(auth(obj));
         navigate("/")
 
     };

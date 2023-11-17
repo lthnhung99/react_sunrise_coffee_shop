@@ -14,47 +14,77 @@ import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
 
 const TableOrder = () => {
     const dispatch = useDispatch();
-    const setPage = (page) => {
-        dispatch(loadTableOrder({
-            page: page, size: mainFilters.size,
-            search: mainFilters.search, totalPages: mainFilters.totalPages
-        }))
-    }
+    const navigate = useNavigate();
+
     const tableOrders = useSelector((state) => state.main.data.tables) || [];
     const mainFilters = useSelector((state) => state.main.filters);
     const isLoading = useSelector((state) => state.main.loading);
     const [selectedFloor, setSelectedFloor] = useState("");
     const [selectedStatus, setSelectedStatus] = useState('');
+    const count = useSelector((state) => state.main.counts);
 
-    // useEffect(() => {
-    //     dispatch(getAllTableOrder());
-    // }, []);
-    // const allTables = useSelector((state) => state.main.data.allTables) || []
+    useEffect(() => {
+        dispatch(getAllTableOrder());
+    }, []);
 
-    const navigate = useNavigate();
+    const allTables = useSelector((state) => state.main.data.allTables) || [];
 
-    const zoneTitles = [...new Set(tableOrders?.map((item) => item.zone.title))];
-    const tableOrderStatus = [...new Set(tableOrders?.map((item) => item.status))];
+    const setPage = (page) => {
+        dispatch(loadTableOrder({
+            page: page,
+            size: mainFilters.tableOrders.size,
+            zone: selectedFloor,
+            status: selectedStatus,
+            search: mainFilters.search,
+            totalPages: mainFilters.tableOrders.totalPages
+        }));
+    }
 
-    const countTableOrderByStatusAndZone = (status, zone) => {
-        if (zone === "") {
-            return tableOrders.filter((item) => item.status === status).length;
-        } else {
-            return tableOrders.filter((item) => item.status === status && item.zone.title === zone).length;
-        }
-    };
+    useEffect(() => {
+        let countBusy = 0;
+        let countEmpty = 0;
 
-    const orderCounts = {};
-    tableOrderStatus.forEach((status) => {
-        orderCounts[status] = countTableOrderByStatusAndZone(status);
-    });
+        for (const item of allTables) {
+            if (!item.title.includes(mainFilters.search)) continue;
+            if (
+                item.status === 'BUSY' &&
+                (selectedFloor === '' || selectedFloor === item.zone.title)
+            ) {
+                countBusy++;
+            }
+            if (
+                item.status === 'EMPTY' &&
+                (selectedFloor === '' || selectedFloor === item.zone.title)
+            ) {
+                countEmpty++;
+            }
+        };
 
-    const totalCount = tableOrderStatus.reduce((sum, status) => {
-        return sum + countTableOrderByStatusAndZone(status, selectedFloor);
-    }, 0);
+        dispatch(mainSlice.actions.setCounts({
+            countBusy,
+            countEmpty,
+            countTotal: countBusy + countEmpty,
+        }));
+
+        dispatch(
+            loadTableOrder({
+                search: mainFilters.search,
+                zone: selectedFloor,
+                status: selectedStatus,
+                page: mainFilters.tableOrders.page,
+                size: mainFilters.tableOrders.size,
+                totalPages: mainFilters.tableOrders.totalPages,
+            })
+        );
+
+    }, [allTables, selectedFloor, selectedStatus, mainFilters.search]);
+
+    const zoneTitles = [...new Set(allTables?.map((item) => item.zone.title))];
+    const tableOrderStatus = [...new Set(allTables?.map((item) => item.status))];
 
     const handleStatusChange = (event) => {
-        setSelectedStatus(event.target.value);
+        const status = event.target.value;
+        setSelectedStatus(status);
     };
 
     const filteredTableOrders = selectedFloor
@@ -84,15 +114,6 @@ const TableOrder = () => {
         navigate('/products');
     }
 
-    useEffect(() => {
-        dispatch(loadTableOrder({
-            search: mainFilters.search,
-            page: mainFilters.tableOrders.page,
-            size: mainFilters.tableOrders.size,
-            totalPages: mainFilters.tableOrders.totalPages,
-        }));
-    }, [])
-
     return (
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
             <Box sx={{ marginBottom: "10px" }}>
@@ -109,17 +130,12 @@ const TableOrder = () => {
                             }
                         }}
                     >
-                        {isLoading ? (
-                            ""
-                        ) : (
-                            <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
-                                onClick={() => setSelectedFloor("")}
-                                variant={selectedFloor === "" ? "contained" : "outlined"}
-                            >
-                                Tất cả
-                            </Button>
-                        )}
-
+                        <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
+                            onClick={() => setSelectedFloor("")}
+                            variant={selectedFloor === "" ? "contained" : "outlined"}
+                        >
+                            Tất cả
+                        </Button>
                         {zoneTitles.sort().map((title) => (
                             <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
                                 key={title}
@@ -142,21 +158,24 @@ const TableOrder = () => {
                         onChange={handleStatusChange}
                         sx={{ flexDirection: "row" }}
                     >
-                        {isLoading ? (
-                            ""
-                        ) : (
-                            <FormControlLabel
-                                value=""
-                                control={<Radio />}
-                                label={`Tất cả (${totalCount})`}
-                                sx={{
-                                    color: selectedStatus === "" ? "darkViolet" : "inherit"
-                                }}
-                            />
-                        )}
+                        <FormControlLabel
+                            value=""
+                            control={<Radio />}
+                            label={`Tất cả (${count.countTotal || 0})`}
+                            sx={{
+                                color: selectedStatus === "" ? "darkViolet" : "inherit"
+                            }}
+                        />
                         {tableOrderStatus?.map((status) => {
-                            const count = countTableOrderByStatusAndZone(status, selectedFloor);
-                            const label = `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()} (${count})`;
+
+                            let label;
+
+                            if (status === "EMPTY") {
+                                label = `Trống (${count.countEmpty || 0})`;
+                            } else if (status === "BUSY") {
+
+                                label = `Bận (${count.countBusy || 0})`;
+                            }
 
                             return (
                                 <FormControlLabel
@@ -205,6 +224,5 @@ const TableOrder = () => {
         </Box>
     );
 };
-
 
 export default TableOrder;

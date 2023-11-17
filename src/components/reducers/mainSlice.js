@@ -26,6 +26,7 @@ export const auth = createAsyncThunk(
             localStorage.setItem('jwt', response.data.token);
             localStorage.setItem('name', response.data.name);
             localStorage.setItem('roles', response.data.roles[0].authority);
+            localStorage.setItem('avatar', response.data.staffAvatar.fileUrl);
             instance = axios.create({
                 baseURL: URL_BASE,
                 headers: {
@@ -44,7 +45,11 @@ export const loadProduct = createAsyncThunk(
     'main/loadProduct',
     async (data, { rejectWithValue }) => {
         try {
-            const response = await instance.get(API_URL + `products?page=${data.page}&size=${data.size}&search=${data.search}`);
+            let url = API_URL + `products?page=${data.page}&size=${data.size}&search=${data.search}`;
+            if (data.category) {
+                url += `&category=${data.category}`
+            }
+            const response = await instance.get(url);
             return {
                 request: data,
                 data: response.data
@@ -56,11 +61,42 @@ export const loadProduct = createAsyncThunk(
     }
 );
 
+export const getAllProducts = createAsyncThunk(
+    'main/getAllProducts',
+    async () => {
+        try {
+            const response = await instance.get(API_URL + `products/all`);
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+        }
+    }
+);
+
+export const loadCategory = createAsyncThunk(
+    'main/loadCategory',
+    async () => {
+        try {
+            const response = await instance.get(API_URL + `categories`);
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+        }
+    }
+);
+
 export const loadTableOrder = createAsyncThunk(
     'main/loadTableOrder',
     async (data, { rejectWithValue }) => {
         try {
-            const response = await instance.get(API_URL + `tableOrders?page=${data.page}&size=${data.size}&search=${data.search}`);
+            let url = API_URL + `tableOrders?page=${data.page}&size=${data.size}&search=${data.search}`
+            if (data.status) {
+                url += `&status=${data.status}`;
+            }
+            if (data.zone) {
+                url += `&zone=${data.zone?.split(' ')[1]}`;
+            }
+            const response = await instance.get(url);
             return {
                 request: data,
                 data: response.data
@@ -196,6 +232,11 @@ export const createBill = createAsyncThunk(
 export default createSlice({
     name: 'main',
     initialState: {
+        counts: {
+            countBusy: 0,
+            countEmpty: 0,
+            countTotal: 0,
+        },
         filters: {
             search: '',
             tableOrders: {
@@ -204,7 +245,7 @@ export default createSlice({
                 status: '',
                 page: 0,
                 size: 12,
-                totalPages: 0,
+                totalPages: 0
             },
             products: {
                 page: 0,
@@ -214,10 +255,7 @@ export default createSlice({
                 note: '',
             },
             tab: 'table',
-            tableSelected: '',
-            menu: {
-                category: '',
-            },
+            tableSelected: ''
         },
         auth: {
             id: '',
@@ -228,15 +266,16 @@ export default createSlice({
             roles:
             {
                 authority: ""
-            }
+            },
+            staffAvatar: ""
         },
         data: {
             tables: [],
             allTables: [],
             products: [],
+            allProducts: [],
+            categories: [],
             order: {
-                customerId: '',
-                phoneNumber: '',
                 orderItems: [],
                 tableOrderTitle: ''
             },
@@ -271,7 +310,10 @@ export default createSlice({
         },
         setListOrderDetail: (state, action) => {
             state.data.listOrderWaiting = action.payload;
-        }
+        },
+        setCounts: (state, action) => {
+            state.counts = action.payload;
+        },
     },
     extraReducers:
         (builder) => {
@@ -282,7 +324,8 @@ export default createSlice({
                     state.auth.type = action.payload.type;
                     state.auth.username = action.payload.username;
                     state.auth.name = action.payload.name;
-                    state.auth.roles.authority = action.payload.roles[0].authority
+                    state.auth.roles.authority = action.payload.roles[0].authority;
+                    state.auth.staffAvatar = action.payload.staffAvatar.fileUrl;
                 })
             builder //show product
                 .addCase(loadProduct.pending, (state) => {
@@ -308,6 +351,13 @@ export default createSlice({
                     state.filters.page = action.meta.arg.page;
                     state.filters.size = action.meta.arg.size;
                 })
+                .addCase(getAllProducts.fulfilled, (state, action) => {
+                    state.data.allProducts = action.payload;
+                })
+            builder
+                .addCase(loadCategory.fulfilled, (state, action) => {
+                    state.data.categories = action.payload;
+                })
             builder //show table
                 .addCase(loadTableOrder.pending, (state) => {
                     state.loading = true;
@@ -320,6 +370,8 @@ export default createSlice({
                         state.data.tables = [];
                     }
                     state.filters.search = action.payload.request.search;
+                    state.filters.tableOrders.floor = action.payload.request.zone;
+                    state.filters.tableOrders.status = action.payload.request.status;
                     state.filters.size = action.payload.request.size;
                     state.filters.page = action.payload.request.page;
                     state.loading = false;
@@ -329,12 +381,19 @@ export default createSlice({
                     state.loading = false;
                     state.filters.totalPages = action.meta.arg.totalPages;
                     state.filters.search = action.meta.arg.search;
+                    state.filters.floor = action.meta.arg.zone;
+                    state.filters.status = action.meta.arg.status;
                     state.filters.page = action.meta.arg.page;
                     state.filters.size = action.meta.arg.size;
+                    state.counts.countBusy = 0;
+                    state.counts.countEmpty = 0;
+                    state.counts.countTotal = 0;
                 })
             builder //change table
                 .addCase(getAllTableOrder.fulfilled, (state, action) => {
                     state.data.allTables = action.payload;
+                })
+                .addCase(getAllTableOrder.rejected, (state, action) => {
                 })
                 .addCase(changeAllProductToNewTable.fulfilled, (state, action) => {
                     state.data.allTables = action.payload;

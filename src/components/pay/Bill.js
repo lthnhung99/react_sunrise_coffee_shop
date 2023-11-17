@@ -15,6 +15,7 @@ import Swal from 'sweetalert';
 const Bill = ({ billItems, closeModal }) => {
     const dispatch = useDispatch();
     const table = useSelector(state => state.main.filters);
+    const roles = localStorage.getItem("roles");
     const componentRef = useRef(null);
     const handlePrint = useReactToPrint({
         content: () => componentRef.current,
@@ -25,11 +26,25 @@ const Bill = ({ billItems, closeModal }) => {
     };
 
     const pay = () => {
-        dispatch(createBill(table.tableSelected))
-            .then(closeModal)
-            .then(() => {
-                Swal("Thành công!", "Thanh toán thành công!", "success");
-            })
+        if (roles === "STAFF_ORDER") {
+            Swal({
+                title: "Thông báo!",
+                text: "Nhân viên phục vụ không thể thanh toán!",
+                icon: "error",
+                timer: 1000
+            });
+        } else {
+            dispatch(createBill(table.tableSelected))
+                .then(closeModal)
+                .then(() => {
+                    Swal({
+                        title: "Thành công!",
+                        text: "Thanh toán thành công!",
+                        icon: "success",
+                        timer: 1000
+                    });
+                })
+        }
     }
 
     return (

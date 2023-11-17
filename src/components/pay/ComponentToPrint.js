@@ -20,25 +20,25 @@ class ComponentToPrint extends React.PureComponent {
                     </div>
                     <div className='p-order-main'>
                         <p><span className='p-highlight'>Ngày: </span>1/11/2023</p>
-                        <p><span className='p-highlight'>Bàn: </span> {tableName}</p>
+                        <p className='p-highlight'>{tableName}</p>
                         <table className='p-tb-order'>
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Tên món</th>
-                                    <th>Số lượng</th>
-                                    <th>Đơn giá</th>
-                                    <th>Thành tiền</th>
+                                    <th style={{ width: "5%" }}>#</th>
+                                    <th style={{ width: "45%" }}>Tên món</th>
+                                    <th style={{ width: "15%" }}>Số lượng</th>
+                                    <th style={{ width: "15%" }}>Đơn giá</th>
+                                    <th style={{ width: "20%" }}>Thành tiền</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {billItems.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{index + 1}</td>
+                                        <td className='align-center'>{index + 1}</td>
                                         <td>{item.title}</td>
-                                        <td>{item.quantity}</td>
-                                        <td>{formatPrice(item.price)}</td>
-                                        <td>{formatPrice(item.amount)}</td>
+                                        <td className='align-center'>{item.quantity}</td>
+                                        <td className='align-right'>{formatPrice(item.price)}</td>
+                                        <td className='align-right'>{formatPrice(item.amount)}</td>
                                     </tr>
                                 ))}
                             </tbody>

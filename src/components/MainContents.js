@@ -13,6 +13,7 @@ import { blue, purple } from '@mui/material/colors';
 import API_URL from './constURL/URLMain';
 import Bill from './pay/Bill';
 import Swal from 'sweetalert';
+import { NEW, STOCK_OUT } from '../constant/AppConstant';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
@@ -22,11 +23,11 @@ const MainContents = () => {
     const mainFilters = useSelector((state) => state.main.filters);
     const [openBill, setOpenBill] = useState(false);
     const listOrderItem = useSelector(state => state.main.data.order.orderItems || []);
-    const billItems = listOrderItem.filter((item) => item.status !== "STOCK_OUT");
+    const billItems = listOrderItem.filter((item) => item.status !== STOCK_OUT);
 
     const handleOpenModal = () => {
-        const hasNewItem = listOrderItem.some((item) => item.status === "NEW");
-        const allStockOut = listOrderItem.every((item) => item.status === "STOCK_OUT");
+        const hasNewItem = listOrderItem.some((item) => item.status === NEW);
+        const allStockOut = listOrderItem.every((item) => item.status === STOCK_OUT);
 
         if (hasNewItem) {
             Swal({
@@ -78,7 +79,6 @@ const MainContents = () => {
     }, [selectedProduct.id, previousSelectedProductId]);
 
     const handleAddProduct = (product) => {
-        console.log(product);
         if (listOrderItem.length === 0) {
             if (product && product.id) {
                 dispatch(createOrder({
@@ -96,12 +96,12 @@ const MainContents = () => {
                     productId: product.id,
                     quantity: product.quantity,
                     note: product.note,
-                    status: "NEW"
+                    status: NEW
                 }));
             }
         }
 
-    }
+    };
 
     const handleStatusChange = () => {
         dispatch(changeStatusCooking(mainFilters.tableSelected))
@@ -114,7 +114,8 @@ const MainContents = () => {
         selectedProduct,
         setSelectedProduct,
         handleAddProduct,
-        listOrderItem
+        listOrderItem,
+        billItems
     };
 
     return (
@@ -133,15 +134,16 @@ const MainContents = () => {
                             height: "99.4vh"
                         }}
                     >
-                        <Grid item xs={6} md={6} paddingRight={'8px'} style={{ margin: "1% 0", position: 'relative' }}>
-                            <Box sx={{ backgroundColor: 'white', height: "100%", padding: '6px', borderRadius: '10px' }}>
+                        <Grid item xs={6} md={6} paddingRight={'8px'} style={{ margin: "1% 0", height: "100%", position: 'relative' }}>
+                            <Box sx={{ backgroundColor: 'white', height: "96%", padding: '6px', borderRadius: '10px' }}>
                                 <Box style={{ backgroundColor: "white" }}>
                                     <MenuOrder />
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid item xs={6} md={6} paddingRight={'8px'} style={{ margin: "1% 0", position: 'relative' }}>
-                            <Box sx={{ backgroundColor: 'white', height: "100%", padding: '6px', borderRadius: '10px' }}>
+
+                        <Grid item xs={6} md={6} paddingRight={'8px'} style={{ margin: "1% 0", height: "100%", position: 'relative' }}>
+                            <Box sx={{ backgroundColor: 'white', height: "96%", padding: '6px', borderRadius: '10px' }}>
                                 <Box
                                     style={{
                                         backgroundColor: "white",
@@ -153,12 +155,10 @@ const MainContents = () => {
                                 <Box
                                     sx={{
                                         display: "flex",
-                                        height: "50px",
                                         flexDirection: "column",
                                     }}
                                 >
-                                    <Grid container spacing={2} sx={{ marginBottom: "10px" }}>
-
+                                    <Grid container spacing={2}>
                                         <Grid item xs={6}>
                                             <Button
                                                 className='buttonNotification'

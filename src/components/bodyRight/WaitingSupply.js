@@ -10,7 +10,7 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import { changeStatusFromWaitingToDoneAllProductOfOrder, changeStatusFromWaitingToDoneOfProduct, getAll, changeStatusFromWaitingToStockOutToProductOfOrder } from '../reducers/kitchenSlice';
 import Loading from '../loading/Loading';
-import LAYOUT from '../../constant/AppConstant';
+import LAYOUT, { URL_SOCKET } from '../../constant/AppConstant';
 import CustomTypography from '../../constant/CustomTypography';
 import swal from 'sweetalert';
 import ReactHowler from 'react-howler';
@@ -25,7 +25,7 @@ export default function WaitingSupply() {
 
     useEffect(() => {
         const connectToWebSocket = async () => {
-            const socket = new SockJS('http://localhost:9000/ws');
+            const socket = new SockJS(URL_SOCKET);
             const stompClient = Stomp.over(socket);
 
             stompClient.connect({}, (frame) => {
@@ -61,6 +61,7 @@ export default function WaitingSupply() {
                 title: "Thông báo!",
                 text: message,
                 icon: "warning",
+                timer: 1500
             }).then(() => {
                 dispatch(getAll());
             }
@@ -90,21 +91,21 @@ export default function WaitingSupply() {
 
     return (
         <Box className='cssScroll'>
-            {isLoading ? <Loading /> :
-                <Box sx={{ flexGrow: "1" }}>
-                    {orderItemsSupply && orderItemsSupply.length > 0 ? (
-                        <TableContainer>
-                            <Table sx={{ textAlignLast: "center" }}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>Tên</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                        <TableCell>Bàn</TableCell>
-                                        <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
-                                        <TableCell sx={{ width: "30%" }}></TableCell>
-                                    </TableRow>
-                                </TableHead>
+            <Box sx={{ flexGrow: "1" }}>
+                {orderItemsSupply && orderItemsSupply.length > 0 ? (
+                    <TableContainer>
+                        <Table sx={{ textAlignLast: "center" }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ width: "5%" }}>#</TableCell>
+                                    <TableCell sx={{ width: "30%" }}>Tên sản phẩm</TableCell>
+                                    <TableCell sx={{ width: "10%" }}>Số lượng</TableCell>
+                                    <TableCell sx={{ width: "10%" }}>Bàn</TableCell>
+                                    <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
+                                    <TableCell sx={{ width: "30%" }}></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            {isLoading ? <Loading /> :
                                 <TableBody>
                                     {orderItemsSupply.map((item, index) => (
                                         <TableRow key={"listSupply" + index}>
@@ -150,16 +151,17 @@ export default function WaitingSupply() {
                                         </TableRow>
                                     ))}
                                 </TableBody>
-                            </Table>
-                        </TableContainer>
-                    ) : (
-                        <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center" }}>
-                            <LiquorIcon />
-                            <Typography variant="h3">Chưa có món nào</Typography>
-                        </CustomTypography>
-                    )}
-                </Box>
-            }
+                            }
+                        </Table>
+                    </TableContainer>
+                ) : (
+                    <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center" }}>
+                        <LiquorIcon />
+                        <Typography variant="h3">Chưa có món nào</Typography>
+                    </CustomTypography>
+                )}
+            </Box>
+
             <ReactHowler src='./mixkit-correct-answer-tone-2870.mp3' playing={play} />
             {showAlert}
         </Box>

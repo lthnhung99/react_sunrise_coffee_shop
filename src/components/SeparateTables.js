@@ -19,7 +19,7 @@ const SeparateTables = ({ open, closeModal }) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={closeModal} autoFocus>
-                    Agree
+                    Đồng ý
                 </Button>
             </DialogActions>
         </Dialog>

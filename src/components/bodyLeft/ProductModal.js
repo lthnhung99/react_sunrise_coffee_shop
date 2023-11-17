@@ -36,14 +36,11 @@ export default function ProductModal({ open, onClose }) {
     resolver: yupResolver(orderFormSchema)
   });
 
-  // const { ref, ...rest } = register("quantity", { required: true });
-
   const handleNoteChange = (event) => {
     dispatch(mainSlice.actions.setNote(event.target.value));
   }
 
   const onSubmit = () => {
-    console.log(ref.current)
     handleAddProduct({
       ...selectedProduct,
       quantity: +ref.current.value,
@@ -102,11 +99,11 @@ export default function ProductModal({ open, onClose }) {
           <Controller
             as={TextField}
             render={({ field }) => {
+              const value = field.value?.toString().slice(0, 3);
+              const displayValue = value?.length <= 3 ? parseInt(value) : "";
               return (
                 <TextField
                   onChange={(e) => field.onChange(parseInt(e.target.value))}
-                  // onBlur={onBlur}
-                  defaultValue={""}
                   helperText={errors.quantity?.message}
                   error={errors['quantity'] ? true : false}
                   margin={"dense"}
@@ -115,10 +112,7 @@ export default function ProductModal({ open, onClose }) {
                   autoFocus
                   label={'Số lượng'}
                   inputRef={ref}
-                  inputProps={{
-                    min: 1,
-                    max: 99
-                  }}
+                  value={displayValue}
                 />
               )
             }}
@@ -152,7 +146,10 @@ export default function ProductModal({ open, onClose }) {
         <Button
           startIcon={<ClearIcon />}
           variant="contained"
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            reset();
+          }}
           color="error"
         >
           Đóng
