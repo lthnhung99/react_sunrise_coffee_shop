@@ -42,20 +42,20 @@ const Waiting = () => {
 
     return (
         <Box className='cssScroll'>
-            {isLoading ? <Loading /> :
-                <Box sx={{ flexGrow: "1" }}>
-                    {listOrderWaiting && listOrderWaiting.length > 0 ? (
-                        <TableContainer>
-                            <Table sx={{ textAlignLast: "center" }}>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>Tên</TableCell>
-                                        <TableCell>Số lượng</TableCell>
-                                        <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
-                                        <TableCell sx={{ width: "30%" }}></TableCell>
-                                    </TableRow>
-                                </TableHead>
+            <Box sx={{ flexGrow: "1" }}>
+                {listOrderWaiting && listOrderWaiting.length > 0 ? (
+                    <TableContainer>
+                        <Table sx={{ textAlignLast: "center" }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ width: "5%" }}>#</TableCell>
+                                    <TableCell sx={{ width: "35%" }}>Tên sản phẩm</TableCell>
+                                    <TableCell sx={{ width: "15%" }}>Số lượng</TableCell>
+                                    <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
+                                    <TableCell sx={{ width: "30%" }}></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            {isLoading ? <Loading /> :
                                 <TableBody>
                                     {listOrderWaiting.map((item, index) => (
                                         <TableRow key={"listWaiting" + index}>
@@ -100,16 +100,18 @@ const Waiting = () => {
                                         </TableRow>
                                     ))}
                                 </TableBody>
-                            </Table>
-                        </TableContainer>
-                    ) : (
-                        <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center" }}>
-                            <LiquorIcon />
-                            <Typography variant="h3">Chưa có món nào</Typography>
-                        </CustomTypography>
-                    )}
-                </Box>
-            }
+                            }
+
+                        </Table>
+                    </TableContainer>
+                ) : (
+                    <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center" }}>
+                        <LiquorIcon />
+                        <Typography variant="h3">Chưa có món nào</Typography>
+                    </CustomTypography>
+                )}
+            </Box>
+
         </Box>
     );
 };

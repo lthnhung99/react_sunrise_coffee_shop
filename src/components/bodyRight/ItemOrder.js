@@ -8,7 +8,7 @@ import LiquorIcon from '@mui/icons-material/Liquor';
 import mainSlice, { deleteOrderItem, getListOrderDetailByTableId, updateOrder } from "../reducers/mainSlice";
 import { useDispatch, useSelector } from "react-redux";
 import formatPrice from "./FormatPrice";
-import LAYOUT from "../../constant/AppConstant";
+import LAYOUT, { COOKING, NEW, STOCK_OUT, URL_SOCKET, WAITING } from "../../constant/AppConstant";
 import CustomTypography from "../../constant/CustomTypography";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
@@ -29,7 +29,7 @@ const ItemOrder = () => {
 
   useEffect(() => {
     const connectToWebSocket = async () => {
-      const socket = new SockJS('http://localhost:9000/ws');
+      const socket = new SockJS(URL_SOCKET);
       const stompClient = Stomp.over(socket);
 
       stompClient.connect({}, (frame) => {
@@ -65,6 +65,7 @@ const ItemOrder = () => {
         title: "Thông báo!",
         text: message,
         icon: "success",
+        timer: 1500
       }).then(() => {
         mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected));
         setPlay(false);
@@ -77,7 +78,7 @@ const ItemOrder = () => {
   }, [showAlert, message]);
 
   const totalPrice = () => {
-    const listOrderItemNotStockOut = listOrderItem.filter((item) => item.status !== "STOCK_OUT");
+    const listOrderItemNotStockOut = listOrderItem.filter((item) => item.status !== STOCK_OUT);
     if (listOrderItemNotStockOut.length === 0) {
       return 0;
     }
@@ -86,7 +87,7 @@ const ItemOrder = () => {
   };
 
   const handleDeleteItem = (product) => {
-    if (product.status === 'NEW' || product.status === 'STOCK_OUT') {
+    if (product.status === NEW || product.status === STOCK_OUT) {
       Swal({
         title: "Bạn chắc chắn muốn xóa?",
         text: "Hành động này sẽ không thể hoàn tác!",
@@ -101,9 +102,11 @@ const ItemOrder = () => {
             })
         }
       });
+    } else if (product.status === COOKING || product.status === WAITING) {
+      Swal("Lỗi!", "Món này đang được làm, không thể xoá!", "error");
     } else {
-      Swal("Lỗi!", "Món này đang được làm không thể xoá!", "error");
-    }
+      Swal("Lỗi!", "Món này đã được làm xong, không thể xoá!", "error");
+    };
   };
 
   const handleQuantityChange = async (productId, orderDetailId, quantity) => {
@@ -123,7 +126,7 @@ const ItemOrder = () => {
       productId: productId,
       quantity: quantity,
       note: data[i].note,
-      status: "NEW"
+      status: NEW
     }))
   };
 
@@ -132,7 +135,7 @@ const ItemOrder = () => {
     return (
       <>
         {loadingOrder ? <Loading /> :
-          <TableRow key={key}>
+          <TableRow key={"orderItem" + key}>
             <TableCell>{index + 1}</TableCell>
             {item.note ?
               <TableCell className="note">
@@ -229,13 +232,13 @@ const ItemOrder = () => {
                 {listOrderItem.map((item, index) => <Item item={item} index={index} />)}
               </TableBody>
             </Table>
-            <Box sx={{ position: "absolute", bottom: "10%", right: "5%" }}>
+            <Box sx={{ position: "absolute", bottom: "13%", right: "5%" }}>
               <Typography variant="h3">Tổng tiền: {formatPrice(totalPrice())}</Typography>
             </Box>
           </TableContainer>
 
         ) : (
-          <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center", width: "100%" }}>
+          <CustomTypography variant="body2" sx={{ marginTop: "25%", textAlign: "center", width: "100%" }}>
             <LiquorIcon />
             <Typography variant="h3">Chưa có món nào</Typography>
             <Typography variant="h5" color="darkgray">Vui lòng chọn món trong thực đơn</Typography>

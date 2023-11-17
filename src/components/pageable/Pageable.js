@@ -25,7 +25,7 @@ const Pageable = ({ page, setPage, totalPage }) => {
     };
 
     return (
-        <div style={{ position: "absolute", bottom: "5%", left: "35%" }}>
+        <div style={{ position: "absolute", bottom: "7%", left: "30%" }}>
             <Pagination
                 count={mainFilters.totalPages}
                 page={page}
