@@ -15,6 +15,8 @@ import Swal from 'sweetalert';
 const Bill = ({ billItems, closeModal }) => {
     const dispatch = useDispatch();
     const table = useSelector(state => state.main.filters);
+    // const createdAt = useSelector(state => state.main.data.order.createdAt);
+    const isLoading = useSelector(state => state.main.loadingOrder);
     const roles = localStorage.getItem("roles");
     const componentRef = useRef(null);
     const handlePrint = useReactToPrint({
@@ -107,6 +109,7 @@ const Bill = ({ billItems, closeModal }) => {
                                     backgroundColor: blue["A400"]
                                 }}
                                 onClick={pay}
+                                disabled={isLoading}
                             >
                                 Thanh toán
                             </Button>

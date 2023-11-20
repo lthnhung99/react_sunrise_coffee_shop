@@ -5,6 +5,9 @@ import formatPrice from '../bodyRight/FormatPrice';
 class ComponentToPrint extends React.PureComponent {
     render() {
         const { billItems, tableName } = this.props;
+        const currentDate = new Date();
+        const options = { day: "numeric", month: "numeric", year: "numeric", hour: "numeric", minute: "numeric" };
+        const formattedDate = currentDate.toLocaleDateString("en-GB", options);
         const getTotalAmount = () => {
             return billItems.reduce((total, item) => total + item.price * item.quantity, 0);
         };
@@ -19,8 +22,10 @@ class ComponentToPrint extends React.PureComponent {
                         <h1>HÓA ĐƠN THANH TOÁN</h1>
                     </div>
                     <div className='p-order-main'>
-                        <p><span className='p-highlight'>Ngày: </span>1/11/2023</p>
-                        <p className='p-highlight'>{tableName}</p>
+                        <div className='d-flex'>
+                            <h3 className='p-highlight'>{tableName}</h3>
+                            <h3><span className='p-highlight'>Ngày: </span>{formattedDate}</h3>
+                        </div>
                         <table className='p-tb-order'>
                             <thead>
                                 <tr>

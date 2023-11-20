@@ -167,10 +167,10 @@ const TableOrder = () => {
                             let label;
 
                             if (status === "EMPTY") {
-                                label = `Trống (${count.countEmpty || 0})`;
+                                label = `Còn trống (${count.countEmpty || 0})`;
                             } else if (status === "BUSY") {
 
-                                label = `Bận (${count.countBusy || 0})`;
+                                label = `Sử dụng (${count.countBusy || 0})`;
                             }
 
                             return (

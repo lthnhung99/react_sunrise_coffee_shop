@@ -45,3 +45,8 @@
 .align-center {
   text-align: center;
 }
+
+.d-flex {
+  display: flex;
+  justify-content: space-between;
+}

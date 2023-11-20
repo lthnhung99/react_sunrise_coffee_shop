@@ -24,6 +24,7 @@ const MainContents = () => {
     const [openBill, setOpenBill] = useState(false);
     const listOrderItem = useSelector(state => state.main.data.order.orderItems || []);
     const billItems = listOrderItem.filter((item) => item.status !== STOCK_OUT);
+    const isLoading = useSelector(state => state.main.loadingOrder);
 
     const handleOpenModal = () => {
         const hasNewItem = listOrderItem.some((item) => item.status === NEW);
@@ -193,9 +194,9 @@ const MainContents = () => {
                                                 startIcon={<CircleNotifications />}
                                                 disableElevation
                                                 style={{
-                                                    backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') ? purple[200] : purple[500]
+                                                    backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') || isLoading ? purple[200] : purple[500]
                                                 }}
-                                                disabled={!listOrderItem?.find(e => e.status === 'NEW')}
+                                                disabled={!listOrderItem?.find(e => e.status === 'NEW') || isLoading}
                                                 onClick={handleStatusChange}
                                             >
                                                 Thông báo
