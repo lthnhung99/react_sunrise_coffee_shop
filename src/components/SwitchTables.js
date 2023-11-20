@@ -42,7 +42,12 @@ const SwitchTables = ({ open, closeModal }) => {
             mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected))
         }
         ).then(() => {
-            Swal("Thành công!", "Chuyển bàn thành công!", "success");
+            Swal({
+                title: "Thành công!",
+                text: "Chuyển bàn thành công!",
+                icon: "success",
+                timer: 1500
+            });
         })
     };
 

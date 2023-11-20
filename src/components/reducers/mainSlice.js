@@ -20,7 +20,7 @@ if (jwt) {
 
 export const auth = createAsyncThunk(
     'main/login',
-    async (data) => {
+    async (data, { rejectWithValue }) => {
         try {
             const response = await axios.post(API_URL_LOGIN, data);
             localStorage.setItem('jwt', response.data.token);
@@ -36,7 +36,8 @@ export const auth = createAsyncThunk(
             });
             return response.data;
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data);
+            return rejectWithValue({ error: error.response.data });
         }
     }
 );
@@ -167,7 +168,6 @@ export const createOrder = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await instance.post(API_URL_ORDER + `create`, data);
-            console.log(response.data);
             return { order: response.data };
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -255,7 +255,8 @@ export default createSlice({
                 note: '',
             },
             tab: 'table',
-            tableSelected: ''
+            tableSelected: '',
+            floorSelected: ''
         },
         auth: {
             id: '',
@@ -290,6 +291,15 @@ export default createSlice({
         tabChanged: (state, action) => {
             state.filters.tab = action.payload;     // table or product
         },
+        logout: (state) => {
+            state.auth.id = '';
+            state.auth.token = '';
+            state.auth.type = '';
+            state.auth.username = '';
+            state.auth.name = '';
+            state.auth.roles.authority = '';
+            state.auth.staffAvatar = '';
+        },
         setTableSelected: (state, action) => {
             state.filters.tableSelected = action.payload;
         },
@@ -297,7 +307,7 @@ export default createSlice({
             state.filters.tableOrders.title = action.payload;
         },
         setZoneTitle: (state, action) => {
-            state.filters.tableOrders.floor = action.payload;
+            state.filters.floorSelected = action.payload;
         },
         setQuantity: (state, action) => {
             state.filters.products.quantity = action.payload;
@@ -318,7 +328,11 @@ export default createSlice({
     extraReducers:
         (builder) => {
             builder
+                .addCase(auth.pending, (state, action) => {
+                    state.loading = true;
+                })
                 .addCase(auth.fulfilled, (state, action) => {
+                    state.error = '';
                     state.auth.id = action.payload.id;
                     state.auth.token = action.payload.token;
                     state.auth.type = action.payload.type;
@@ -326,6 +340,11 @@ export default createSlice({
                     state.auth.name = action.payload.name;
                     state.auth.roles.authority = action.payload.roles[0].authority;
                     state.auth.staffAvatar = action.payload.staffAvatar.fileUrl;
+                    state.loading = false;
+                })
+                .addCase(auth.rejected, (state, action) => {
+                    state.error = action.payload.error;
+                    state.loading = false;
                 })
             builder //show product
                 .addCase(loadProduct.pending, (state) => {

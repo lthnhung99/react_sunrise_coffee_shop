@@ -90,7 +90,6 @@ export const changeStatusFromCookingToStockOutOfProduct = createAsyncThunk(
     async (product, { rejectWithValue }) => {
         try {
             const response = await axios.post(API_URL_KITCHEN + `product/change-status-cooking-to-stock-out-all-product`, product, { headers });
-            console.log(response);
             return response;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -104,7 +103,6 @@ export const changeStatusFromWaitingToStockOutToProductOfOrder = createAsyncThun
     async (orderDetailId, { rejectWithValue }) => {
         try {
             const response = await axios.post(API_URL_KITCHEN + `table/change-status-waiting-to-stock-out-to-product?orderDetailId=${orderDetailId}`, { headers });
-            console.log(response);
             return response;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);

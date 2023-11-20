@@ -43,7 +43,12 @@ const CombineTables = ({ open, closeModal }) => {
             mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected));
         }
         ).then(() => {
-            Swal("Thành công!", "Gộp bàn thành công!", "success");
+            Swal({
+                title: "Thành công!",
+                text: "Gộp bàn thành công!",
+                icon: "success",
+                timer: 1500
+            });
         })
     };
 

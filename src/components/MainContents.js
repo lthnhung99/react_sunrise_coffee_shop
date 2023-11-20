@@ -34,12 +34,14 @@ const MainContents = () => {
                 title: "Cảnh báo!",
                 text: "Có sản phẩm chưa được gửi tới bếp!",
                 icon: "warning",
+                timer: 1500
             })
         } else if (allStockOut) {
             Swal({
                 title: "Cảnh báo!",
                 text: "Không có sản phẩm để thanh toán!",
                 icon: "warning",
+                timer: 1500
             });
         } else {
             setOpenBill(true);
@@ -106,7 +108,12 @@ const MainContents = () => {
     const handleStatusChange = () => {
         dispatch(changeStatusCooking(mainFilters.tableSelected))
             .then(() => {
-                Swal("Thành công!", "Gửi đi thành công!", "success");
+                Swal({
+                    title: "Thành công!",
+                    text: "Gửi đi thành công!",
+                    icon: "success",
+                    timer: 1500
+                });
             });
     };
 
@@ -119,7 +126,7 @@ const MainContents = () => {
     };
 
     return (
-        <div>
+        <>
             <MenuOrderContext.Provider value={menuOrderData}>
                 <Box sx={{ backgroundColor: purple[500], height: "100%" }}
                     className="background-container"
@@ -206,7 +213,7 @@ const MainContents = () => {
                     </Grid>
                 </Box>
             </MenuOrderContext.Provider>
-        </div>
+        </>
     );
 };
 

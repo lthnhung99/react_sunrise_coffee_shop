@@ -20,7 +20,7 @@ const TableOrder = () => {
     const mainFilters = useSelector((state) => state.main.filters);
     const isLoading = useSelector((state) => state.main.loading);
     const [selectedFloor, setSelectedFloor] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState("");
     const count = useSelector((state) => state.main.counts);
 
     useEffect(() => {
@@ -38,7 +38,7 @@ const TableOrder = () => {
             search: mainFilters.search,
             totalPages: mainFilters.tableOrders.totalPages
         }));
-    }
+    };
 
     useEffect(() => {
         let countBusy = 0;
@@ -46,18 +46,14 @@ const TableOrder = () => {
 
         for (const item of allTables) {
             if (!item.title.includes(mainFilters.search)) continue;
-            if (
-                item.status === 'BUSY' &&
-                (selectedFloor === '' || selectedFloor === item.zone.title)
-            ) {
+            if (item.status === 'BUSY' &&
+                (selectedFloor === '' || selectedFloor === item.zone.title)) {
                 countBusy++;
-            }
-            if (
-                item.status === 'EMPTY' &&
-                (selectedFloor === '' || selectedFloor === item.zone.title)
-            ) {
+            };
+            if (item.status === 'EMPTY' &&
+                (selectedFloor === '' || selectedFloor === item.zone.title)) {
                 countEmpty++;
-            }
+            };
         };
 
         dispatch(mainSlice.actions.setCounts({
@@ -112,7 +108,7 @@ const TableOrder = () => {
         dispatch(mainSlice.actions.setZoneTitle(tableOrder.zone.title));
         dispatch(getListOrderDetailByTableId(tableOrder.id));
         navigate('/products');
-    }
+    };
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
