@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -34,7 +35,6 @@ const LoginForm = () => {
     const navigate = useNavigate();
     const error = useSelector(state => state.main.error);
     const isLogin = useSelector(state => state.main.loading);
-    console.log(error);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -46,24 +46,27 @@ const LoginForm = () => {
         dispatch(auth(obj));
     };
     useEffect(() => {
-        if (localStorage.getItem('jwt')) {
-            // Swal({
-            //     title: "Thông báo!",
-            //     text: "Đăng nhập thành công!",
-            //     icon: "success",
-            //     timer: 1000
-            // });
-            navigate("/");
-        } else if (error) {
-            navigate("/login");
-            Swal({
-                title: "Thông báo!",
-                text: error.message || error.username || error.password,
-                icon: "error",
-                timer: 1500
-            });
+        if (!isLogin) {
+            if (localStorage.getItem('jwt')) {
+                Swal({
+                    title: "Thông báo!",
+                    text: "Đăng nhập thành công!",
+                    icon: "success",
+                    timer: 1000
+                });
+                navigate("/");
+            } else if (error) {
+                navigate("/login");
+                Swal({
+                    title: "Thông báo!",
+                    text: error.message || error.username || error.password,
+                    icon: "error",
+                    timer: 1500
+                });
+            }
         }
-    }, [isLogin, error, navigate]);
+
+    }, [isLogin, error]);
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component='main' sx={{ height: '100vh' }}>
