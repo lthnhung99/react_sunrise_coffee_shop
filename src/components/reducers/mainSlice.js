@@ -169,7 +169,6 @@ export const createOrder = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await instance.post(API_URL_ORDER + `create`, data);
-            console.log(response.data);
             return { order: response.data };
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -209,7 +208,6 @@ export const changeStatusCooking = createAsyncThunk(
     async (tableId, { rejectWithValue }) => {
         try {
             const response = await instance.post(API_URL_ORDER + `change-status-cooking`, tableId);
-            console.log(response.data);
             return response.data;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -280,7 +278,8 @@ export default createSlice({
             categories: [],
             order: {
                 orderItems: [],
-                tableOrderTitle: ''
+                tableOrderTitle: '',
+                createdAt: ''
             },
             listOrderWaiting: []
         },
@@ -440,6 +439,7 @@ export default createSlice({
                 .addCase(createOrder.fulfilled, (state, action) => {
                     const newOrder = action.payload.order;
                     state.data.order.orderItems = [...state.data.order.orderItems, newOrder];
+                    state.data.order.createdAt = action.payload.order.createdAt;
                     state.loadingOrder = false;
                 })
                 .addCase(createOrder.rejected, (state, action) => {
@@ -491,10 +491,15 @@ export default createSlice({
                     state.error = action.payload.error;
                 })
             builder
+                .addCase(createBill.pending, (state) => {
+                    state.loadingOrder = true;
+                })
                 .addCase(createBill.fulfilled, (state, action) => {
+                    state.loadingOrder = false;
                     state.data.order.orderItems = [];
                 })
                 .addCase(createBill.rejected, (state, action) => {
+                    state.loadingOrder = false;
                 })
         },
 });
