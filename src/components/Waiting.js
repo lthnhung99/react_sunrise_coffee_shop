@@ -10,7 +10,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import Loading from "./loading/Loading";
 import LAYOUT from '../constant/AppConstant';
 import CustomTypography from '../constant/CustomTypography';
-import swal from 'sweetalert';
+import Swal from 'sweetalert';
 
 const Waiting = () => {
     const dispatch = useDispatch();
@@ -36,7 +36,12 @@ const Waiting = () => {
         await dispatch(changeStatusFromCookingToStockOutOfProduct({ productId, note }));
         dispatch(getAll())
             .then(() => {
-                swal("Thành công!", "Sản phẩm đã được thông báo hết!", "success");
+                Swal({
+                    title: "Thành công!",
+                    text: "Sản phẩm đã được thông báo hết!",
+                    icon: "success",
+                    timer: 1500
+                });
             });
     };
 

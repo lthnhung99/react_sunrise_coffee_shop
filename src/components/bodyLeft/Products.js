@@ -86,7 +86,6 @@ export default function Products() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-
       <Box sx={{ marginBottom: "10px" }}>
         <FormControl component="fieldset">
           <ButtonGroup

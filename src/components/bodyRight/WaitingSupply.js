@@ -88,7 +88,6 @@ export default function WaitingSupply() {
         dispatch(getAll());
     };
 
-
     return (
         <Box className='cssScroll'>
             <Box sx={{ flexGrow: "1" }}>
@@ -161,7 +160,6 @@ export default function WaitingSupply() {
                     </CustomTypography>
                 )}
             </Box>
-
             <ReactHowler src='./mixkit-correct-answer-tone-2870.mp3' playing={play} />
             {showAlert}
         </Box>

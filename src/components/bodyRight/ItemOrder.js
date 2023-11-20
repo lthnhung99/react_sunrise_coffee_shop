@@ -98,14 +98,29 @@ const ItemOrder = () => {
         if (willDelete) {
           dispatch(deleteOrderItem(product.orderDetailId))
             .then(() => {
-              Swal("Thành công!", "Sản phẩm đã được xóa!", "success");
+              Swal({
+                title: "Thành công!",
+                text: "Sản phẩm đã được xóa!",
+                icon: "success",
+                timer: 1500
+              });
             })
         }
       });
     } else if (product.status === COOKING || product.status === WAITING) {
-      Swal("Lỗi!", "Món này đang được làm, không thể xoá!", "error");
+      Swal({
+        title: "Lỗi!",
+        text: "Món này đang được làm, không thể xoá!",
+        icon: "error",
+        timer: 1500
+      });
     } else {
-      Swal("Lỗi!", "Món này đã được làm xong, không thể xoá!", "error");
+      Swal({
+        title: "Lỗi!",
+        text: "Món này đã được làm xong, không thể xoá!",
+        icon: "error",
+        timer: 1500
+      });
     };
   };
 
@@ -202,7 +217,7 @@ const ItemOrder = () => {
               <Tab
                 label={
                   <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: '20px' }}>
-                    {mainFilters.tableOrders.title && mainFilters.tableOrders.title + " / " + mainFilters.tableOrders.floor}
+                    {mainFilters.tableOrders.title && mainFilters.tableOrders.title + " / " + mainFilters.floorSelected}
                   </Typography>
                 }
                 value="1"
@@ -219,13 +234,13 @@ const ItemOrder = () => {
             <Table sx={{ textAlignLast: "center" }}>
               <TableHead>
                 <TableRow>
-                  <TableCell></TableCell>
-                  <TableCell>Tên</TableCell>
-                  <TableCell>Giá</TableCell>
-                  <TableCell>Số lượng</TableCell>
-                  <TableCell>Tổng tiền</TableCell>
+                  <TableCell sx={{ width: "5%" }}>#</TableCell>
+                  <TableCell sx={{ width: "30%" }}>Tên</TableCell>
+                  <TableCell sx={{ width: "15%" }}>Giá</TableCell>
+                  <TableCell sx={{ width: "15%" }}>Số lượng</TableCell>
+                  <TableCell sx={{ width: "15%" }}>Tổng tiền</TableCell>
                   <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
-                  <TableCell></TableCell>
+                  <TableCell sx={{ width: "5%" }}></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -238,7 +253,7 @@ const ItemOrder = () => {
           </TableContainer>
 
         ) : (
-          <CustomTypography variant="body2" sx={{ marginTop: "25%", textAlign: "center", width: "100%" }}>
+          <CustomTypography sx={{ marginTop: "25%", textAlign: "center", width: "100%" }}>
             <LiquorIcon />
             <Typography variant="h3">Chưa có món nào</Typography>
             <Typography variant="h5" color="darkgray">Vui lòng chọn món trong thực đơn</Typography>

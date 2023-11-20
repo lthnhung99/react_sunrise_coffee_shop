@@ -12,9 +12,11 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { auth } from '../reducers/mainSlice';
 import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import Swal from 'sweetalert';
 function Copyright(props) {
     return (
         <Typography variant='body2' color='text.secondary' align='center' {...props}>
@@ -30,6 +32,10 @@ const defaultTheme = createTheme();
 const LoginForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const error = useSelector(state => state.main.error);
+    const isLogin = useSelector(state => state.main.loading);
+    console.log(error);
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = event.currentTarget;
@@ -38,9 +44,26 @@ const LoginForm = () => {
             password: data.password.value
         }
         dispatch(auth(obj));
-        navigate("/")
-
     };
+    useEffect(() => {
+        if (localStorage.getItem('jwt')) {
+            // Swal({
+            //     title: "Thông báo!",
+            //     text: "Đăng nhập thành công!",
+            //     icon: "success",
+            //     timer: 1000
+            // });
+            navigate("/");
+        } else if (error) {
+            navigate("/login");
+            Swal({
+                title: "Thông báo!",
+                text: error.message || error.username || error.password,
+                icon: "error",
+                timer: 1500
+            });
+        }
+    }, [isLogin, error, navigate]);
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component='main' sx={{ height: '100vh' }}>

@@ -43,7 +43,7 @@ export default function ProductModal({ open, onClose }) {
   const onSubmit = () => {
     handleAddProduct({
       ...selectedProduct,
-      quantity: +ref.current.value,
+      quantity: +ref.current.value || 1,
       note: ref2.current.value
     });
     dispatch(mainSlice.actions.setQuantity(1));
