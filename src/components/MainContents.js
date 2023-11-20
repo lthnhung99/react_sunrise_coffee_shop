@@ -10,7 +10,7 @@ import { createOrder, updateOrder, changeStatusCooking } from './reducers/mainSl
 import { useLocation } from 'react-router-dom';
 import mainSlice from './reducers/mainSlice';
 import { blue, purple } from '@mui/material/colors';
-import API_URL from './constURL/URLMain';
+import API_URL_PRODUCT from './constURL/URLProduct';
 import Bill from './pay/Bill';
 import Swal from 'sweetalert';
 import { NEW, STOCK_OUT } from '../constant/AppConstant';
@@ -62,7 +62,7 @@ const MainContents = () => {
         const onProductSelect = async (productId) => {
             console.log("Selected product ID:", productId);
             try {
-                const response = await fetch(API_URL + `products/${productId}`);
+                const response = await fetch(API_URL_PRODUCT + `/${productId}`);
                 if (response.ok) {
                     const data = await response.json();
                     setSelectedProduct(data);

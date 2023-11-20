@@ -1,9 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
-import API_URL from "../constURL/URLMain";
 import API_URL_ORDER from "../constURL/URLOrder";
 import API_URL_BILL from "../constURL/URLBill";
 import API_URL_LOGIN from "../constURL/URLLogin";
+import API_URL_PRODUCT from "../constURL/URLProduct";
+import API_URL_TABLE from "../constURL/URLTable";
+import API_URL_CATEGORY from "../constURL/URLCategory";
 import { URL_BASE } from "../../constant/AppConstant";
 
 export let instance = {};
@@ -45,7 +47,7 @@ export const loadProduct = createAsyncThunk(
     'main/loadProduct',
     async (data, { rejectWithValue }) => {
         try {
-            let url = API_URL + `products?page=${data.page}&size=${data.size}&search=${data.search}`;
+            let url = API_URL_PRODUCT + `?page=${data.page}&size=${data.size}&search=${data.search}`;
             if (data.category) {
                 url += `&category=${data.category}`
             }
@@ -65,7 +67,7 @@ export const getAllProducts = createAsyncThunk(
     'main/getAllProducts',
     async () => {
         try {
-            const response = await instance.get(API_URL + `products/all`);
+            const response = await instance.get(API_URL_PRODUCT + `/all`);
             return response.data;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -77,7 +79,7 @@ export const loadCategory = createAsyncThunk(
     'main/loadCategory',
     async () => {
         try {
-            const response = await instance.get(API_URL + `categories`);
+            const response = await instance.get(API_URL_CATEGORY);
             return response.data;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -89,7 +91,7 @@ export const loadTableOrder = createAsyncThunk(
     'main/loadTableOrder',
     async (data, { rejectWithValue }) => {
         try {
-            let url = API_URL + `tableOrders?page=${data.page}&size=${data.size}&search=${data.search}`
+            let url = API_URL_TABLE + `?page=${data.page}&size=${data.size}&search=${data.search}`
             if (data.status) {
                 url += `&status=${data.status}`;
             }
@@ -112,7 +114,7 @@ export const getAllTableOrder = createAsyncThunk(
     'main/getAllTableOrder',
     async () => {
         try {
-            const response = await axios.get(API_URL + `tableOrders/all`);
+            const response = await axios.get(API_URL_TABLE + `/all`);
             return response.data;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -124,7 +126,7 @@ export const changeAllProductToNewTable = createAsyncThunk(
     'main/changeAllProductToNewTable',
     async (data, { rejectWithValue }) => {
         try {
-            const response = await instance.post(API_URL + `tableOrders/change-table`, data);
+            const response = await instance.post(API_URL_TABLE + `/change-table`, data);
             return response.data;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -137,7 +139,7 @@ export const combineTables = createAsyncThunk(
     'main/combineTables',
     async (data, { rejectWithValue }) => {
         try {
-            const response = await instance.post(API_URL + `tableOrders/combine-tables`, data);
+            const response = await instance.post(API_URL_TABLE + `/combine-tables`, data);
             return response.data;
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
@@ -167,6 +169,7 @@ export const createOrder = createAsyncThunk(
     async (data, { rejectWithValue }) => {
         try {
             const response = await instance.post(API_URL_ORDER + `create`, data);
+            console.log(response.data);
             return { order: response.data };
         } catch (error) {
             console.log("Loading Todo  API error: " + error);
