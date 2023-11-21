@@ -19,7 +19,6 @@ const orderFormSchema = yup
   .object()
   .shape({
     quantity: yup.number()
-      .required("Số lượng không được để trống!")
       .typeError('Số lượng phải là một số')
       .integer('Số lượng phải là số nguyên')
       .min(1, 'Số lượng phải lớn hơn hoặc bằng 1')
@@ -112,7 +111,7 @@ export default function ProductModal({ open, onClose }) {
                   autoFocus
                   label={'Số lượng'}
                   inputRef={ref}
-                  value={displayValue}
+                  value={displayValue || 1}
                 />
               )
             }}

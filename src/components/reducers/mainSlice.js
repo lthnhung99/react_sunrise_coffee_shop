@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
-import API_URL_ORDER from "../constURL/URLOrder";
-import API_URL_BILL from "../constURL/URLBill";
-import API_URL_LOGIN from "../constURL/URLLogin";
-import API_URL_PRODUCT from "../constURL/URLProduct";
-import API_URL_TABLE from "../constURL/URLTable";
-import API_URL_CATEGORY from "../constURL/URLCategory";
+import API_URL_ORDER from "../../constant/constURL/URLOrder";
+import API_URL_BILL from "../../constant/constURL/URLBill";
+import API_URL_LOGIN from "../../constant/constURL/URLLogin";
+import API_URL_PRODUCT from "../../constant/constURL/URLProduct";
+import API_URL_TABLE from "../../constant/constURL/URLTable";
+import API_URL_CATEGORY from "../../constant/constURL/URLCategory";
 import { URL_BASE } from "../../constant/AppConstant";
 
 export let instance = {};
@@ -354,22 +354,22 @@ export default createSlice({
                 .addCase(loadProduct.fulfilled, (state, action) => {
                     if (action.payload != null && action.payload.data !== "") {
                         state.data.products = action.payload.data.content;
-                        state.filters.totalPages = action.payload.data.totalPages;
+                        state.filters.products.totalPages = action.payload.data.totalPages;
                     } else {
                         state.data.products = [];
                     }
                     state.filters.search = action.payload.request.search;
-                    state.filters.size = action.payload.request.size;
-                    state.filters.page = action.payload.request.page;
+                    state.filters.products.size = action.payload.request.size;
+                    state.filters.products.page = action.payload.request.page;
                     state.loading = false;
                 })
                 .addCase(loadProduct.rejected, (state, action) => {
                     state.data.products = [];
                     state.loading = false;
-                    state.filters.totalPages = action.meta.arg.totalPages;
+                    state.filters.products.totalPages = action.meta.arg.totalPages;
                     state.filters.search = action.meta.arg.search;
-                    state.filters.page = action.meta.arg.page;
-                    state.filters.size = action.meta.arg.size;
+                    state.filters.products.page = action.meta.arg.page;
+                    state.filters.products.size = action.meta.arg.size;
                 })
                 .addCase(getAllProducts.fulfilled, (state, action) => {
                     state.data.allProducts = action.payload;
@@ -385,15 +385,15 @@ export default createSlice({
                 .addCase(loadTableOrder.fulfilled, (state, action) => {
                     if (action.payload != null && action.payload.data !== "") {
                         state.data.tables = action.payload.data.content;
-                        state.filters.totalPages = action.payload.data.totalPages;
+                        state.filters.tableOrders.totalPages = action.payload.data.totalPages;
                     } else {
                         state.data.tables = [];
                     }
                     state.filters.search = action.payload.request.search;
                     state.filters.tableOrders.floor = action.payload.request.zone;
                     state.filters.tableOrders.status = action.payload.request.status;
-                    state.filters.size = action.payload.request.size;
-                    state.filters.page = action.payload.request.page;
+                    state.filters.tableOrders.size = action.payload.request.size;
+                    state.filters.tableOrders.page = action.payload.request.page;
                     state.loading = false;
                 })
                 .addCase(loadTableOrder.rejected, (state, action) => {

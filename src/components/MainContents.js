@@ -10,10 +10,10 @@ import { createOrder, updateOrder, changeStatusCooking } from './reducers/mainSl
 import { useLocation } from 'react-router-dom';
 import mainSlice from './reducers/mainSlice';
 import { blue, purple } from '@mui/material/colors';
-import API_URL_PRODUCT from './constURL/URLProduct';
+import API_URL_PRODUCT from '../constant/constURL/URLProduct';
 import Bill from './pay/Bill';
 import Swal from 'sweetalert';
-import { NEW, STOCK_OUT } from '../constant/AppConstant';
+import { NEW, STOCK_OUT, BARISTA } from '../constant/AppConstant';
 
 const MainContents = () => {
     const [selectedProduct, setSelectedProduct] = useState({});
@@ -82,28 +82,36 @@ const MainContents = () => {
     }, [selectedProduct.id, previousSelectedProductId]);
 
     const handleAddProduct = (product) => {
-        if (listOrderItem.length === 0) {
-            if (product && product.id) {
-                dispatch(createOrder({
-                    tableId: mainFilters.tableSelected,
-                    productId: product.id,
-                    quantity: product.quantity,
-                    note: product.note
-                }));
+        if (localStorage.getItem('roles') === BARISTA) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền order!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            if (listOrderItem.length === 0) {
+                if (product && product.id) {
+                    dispatch(createOrder({
+                        tableId: mainFilters.tableSelected,
+                        productId: product.id,
+                        quantity: product.quantity,
+                        note: product.note
+                    }));
+                }
+            }
+            else {
+                if (product && product.id) {
+                    dispatch(updateOrder({
+                        tableId: mainFilters.tableSelected,
+                        productId: product.id,
+                        quantity: product.quantity,
+                        note: product.note,
+                        status: NEW
+                    }));
+                }
             }
         }
-        else {
-            if (product && product.id) {
-                dispatch(updateOrder({
-                    tableId: mainFilters.tableSelected,
-                    productId: product.id,
-                    quantity: product.quantity,
-                    note: product.note,
-                    status: NEW
-                }));
-            }
-        }
-
     };
 
     const handleStatusChange = () => {

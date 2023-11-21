@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createBill } from '../reducers/mainSlice';
 import formatPrice from '../bodyRight/FormatPrice';
 import Swal from 'sweetalert';
+import { BARISTA, STAFF_ORDER } from '../../constant/AppConstant';
 
 const Bill = ({ billItems, closeModal }) => {
     const dispatch = useDispatch();
@@ -28,11 +29,11 @@ const Bill = ({ billItems, closeModal }) => {
     };
 
     const pay = () => {
-        if (roles === "STAFF_ORDER") {
+        if (roles === STAFF_ORDER || roles === BARISTA) {
             Swal({
                 title: "Thông báo!",
-                text: "Nhân viên phục vụ không thể thanh toán!",
-                icon: "error",
+                text: "Bạn không có quyền thanh toán!",
+                icon: "warning",
                 timer: 1000
             });
         } else {

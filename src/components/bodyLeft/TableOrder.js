@@ -43,7 +43,6 @@ const TableOrder = () => {
     useEffect(() => {
         let countBusy = 0;
         let countEmpty = 0;
-
         for (const item of allTables) {
             if (!item.title.includes(mainFilters.search)) continue;
             if (item.status === 'BUSY' &&
@@ -56,12 +55,6 @@ const TableOrder = () => {
             };
         };
 
-        dispatch(mainSlice.actions.setCounts({
-            countBusy,
-            countEmpty,
-            countTotal: countBusy + countEmpty,
-        }));
-
         dispatch(
             loadTableOrder({
                 search: mainFilters.search,
@@ -73,7 +66,14 @@ const TableOrder = () => {
             })
         );
 
+        dispatch(mainSlice.actions.setCounts({
+            countBusy,
+            countEmpty,
+            countTotal: countBusy + countEmpty,
+        }));
+
     }, [allTables, selectedFloor, selectedStatus, mainFilters.search]);
+
 
     const zoneTitles = [...new Set(allTables?.map((item) => item.zone.title))];
     const tableOrderStatus = [...new Set(allTables?.map((item) => item.status))];
@@ -163,16 +163,12 @@ const TableOrder = () => {
                             }}
                         />
                         {tableOrderStatus?.map((status) => {
-
                             let label;
-
                             if (status === "EMPTY") {
-                                label = `Còn trống (${count.countEmpty || 0})`;
+                                label = `Còn trống (${count.countEmpty})`;
                             } else if (status === "BUSY") {
-
-                                label = `Sử dụng (${count.countBusy || 0})`;
+                                label = `Sử dụng (${count.countBusy})`;
                             }
-
                             return (
                                 <FormControlLabel
                                     key={status}
@@ -214,7 +210,7 @@ const TableOrder = () => {
                             <Typography variant="h3">Không tìm thấy bàn phù hợp</Typography>
                         </CustomTypography>
                     )}
-                    <Pageable page={mainFilters.page + 1} setPage={setPage} totalPage={mainFilters.totalPage} />
+                    <Pageable page={mainFilters.tableOrders.page + 1} setPage={setPage} totalPage={mainFilters.tableOrders.totalPages} />
                 </Grid>
             }
         </Box>

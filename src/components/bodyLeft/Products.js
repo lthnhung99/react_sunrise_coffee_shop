@@ -158,7 +158,7 @@ export default function Products() {
               <Typography variant="h3">Không tìm thấy đồ uống phù hợp</Typography>
             </CustomTypography>
           )}
-          <Pageable page={mainFilters.page + 1} setPage={setPage} totalPage={mainFilters.totalPages} />
+          <Pageable page={mainFilters.products.page + 1} setPage={setPage} totalPage={mainFilters.products.totalPages} />
         </Grid>
       )}
       {selectedProduct && (

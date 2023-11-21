@@ -10,6 +10,8 @@ import CallMergeIcon from '@mui/icons-material/CallMerge';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import CombineTables from './CombineTables';
 import SeparateTables from './SeparateTables';
+import { BARISTA } from '../constant/AppConstant';
+import Swal from 'sweetalert';
 
 export default function MenuSimple() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -23,8 +25,17 @@ export default function MenuSimple() {
 
     const [openSwitchTable, setOpenSwitchTable] = useState(false);
     const handleOpenSwitchModal = () => {
-        setOpenSwitchTable(true);
-        handleClose();
+        if (localStorage.getItem('roles') === BARISTA) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền chuyển bàn!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            setOpenSwitchTable(true);
+            handleClose();
+        }
     };
     const handleCloseSwitchModal = () => {
         setOpenSwitchTable(false);
@@ -32,8 +43,17 @@ export default function MenuSimple() {
 
     const [openCombineTable, setOpenCombineTable] = useState(false);
     const handleOpenCombineModal = () => {
-        setOpenCombineTable(true);
-        handleClose();
+        if (localStorage.getItem('roles') === BARISTA) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền gộp bàn!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            setOpenCombineTable(true);
+            handleClose();
+        };
     };
     const handleCloseCombineModal = () => {
         setOpenCombineTable(false);
