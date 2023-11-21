@@ -10,9 +10,9 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import { changeStatusFromWaitingToDoneAllProductOfOrder, changeStatusFromWaitingToDoneOfProduct, getAll, changeStatusFromWaitingToStockOutToProductOfOrder } from '../reducers/kitchenSlice';
 import Loading from '../loading/Loading';
-import LAYOUT, { URL_SOCKET } from '../../constant/AppConstant';
+import LAYOUT, { CASHIER, STAFF_ORDER, URL_SOCKET } from '../../constant/AppConstant';
 import CustomTypography from '../../constant/CustomTypography';
-import swal from 'sweetalert';
+import Swal from 'sweetalert';
 import ReactHowler from 'react-howler';
 
 export default function WaitingSupply() {
@@ -57,7 +57,7 @@ export default function WaitingSupply() {
     useEffect(() => {
         if (showAlert) {
             setPlay(true);
-            swal({
+            Swal({
                 title: "Thông báo!",
                 text: message,
                 icon: "warning",
@@ -74,18 +74,52 @@ export default function WaitingSupply() {
     }, [showAlert, message]);
 
     const handleStatusChangeOneProduct = async (orderDetailId) => {
-        await dispatch(changeStatusFromWaitingToDoneOfProduct(orderDetailId));
-        dispatch(getAll());
+        if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            await dispatch(changeStatusFromWaitingToDoneOfProduct(orderDetailId));
+            dispatch(getAll());
+        };
     };
 
     const handleStatusChangeAllProduct = async (orderDetailId) => {
-        await dispatch(changeStatusFromWaitingToDoneAllProductOfOrder(orderDetailId));
-        dispatch(getAll());
+        if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            await dispatch(changeStatusFromWaitingToDoneAllProductOfOrder(orderDetailId));
+            dispatch(getAll());
+        };
     };
 
     const handleStatusChangeStockOut = async (orderDetailId) => {
-        await dispatch(changeStatusFromWaitingToStockOutToProductOfOrder(orderDetailId));
-        dispatch(getAll());
+        if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            await dispatch(changeStatusFromWaitingToStockOutToProductOfOrder(orderDetailId));
+            dispatch(getAll()).then(() => {
+                Swal({
+                    title: "Thành công!",
+                    text: "Sản phẩm đã được thông báo hết!",
+                    icon: "success",
+                    timer: 1500
+                });
+            });
+        };
     };
 
     return (

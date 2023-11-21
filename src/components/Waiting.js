@@ -8,7 +8,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import BlockIcon from '@mui/icons-material/Block';
 import Loading from "./loading/Loading";
-import LAYOUT from '../constant/AppConstant';
+import LAYOUT, { CASHIER, STAFF_ORDER } from '../constant/AppConstant';
 import CustomTypography from '../constant/CustomTypography';
 import Swal from 'sweetalert';
 
@@ -23,19 +23,44 @@ const Waiting = () => {
     const isLoading = useSelector(state => state.kitchen.loading)
 
     const handleStatusChangeOneProduct = async (productId, note) => {
-        await dispatch(changeStatusOneProductFromCookingToWaitingOfGroupProduct({ productId, note }));
-        dispatch(getAll());
+        if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            await dispatch(changeStatusOneProductFromCookingToWaitingOfGroupProduct({ productId, note }));
+            dispatch(getAll());
+        };
     };
 
     const handleStatusChangeAllProduct = async (productId, note) => {
-        await dispatch(changeStatusAllProductFromCookingToWaitingOfGroupProduct({ productId, note }));
-        dispatch(getAll());
+        if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            await dispatch(changeStatusAllProductFromCookingToWaitingOfGroupProduct({ productId, note }));
+            dispatch(getAll());
+        };
     };
 
     const handleStatusChangeStockOut = async (productId, note) => {
-        await dispatch(changeStatusFromCookingToStockOutOfProduct({ productId, note }));
-        dispatch(getAll())
-            .then(() => {
+        if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
+            Swal({
+                title: "Cảnh báo!",
+                text: "Bạn không có quyền!",
+                icon: "warning",
+                timer: 1500
+            });
+        } else {
+            await dispatch(changeStatusFromCookingToStockOutOfProduct({ productId, note }));
+            dispatch(getAll()).then(() => {
                 Swal({
                     title: "Thành công!",
                     text: "Sản phẩm đã được thông báo hết!",
@@ -43,6 +68,7 @@ const Waiting = () => {
                     timer: 1500
                 });
             });
+        };
     };
 
     return (

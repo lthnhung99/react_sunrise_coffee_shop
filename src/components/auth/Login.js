@@ -18,6 +18,7 @@ import { auth } from '../reducers/mainSlice';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import Swal from 'sweetalert';
+import { CASHIER, BARISTA, STAFF_ORDER } from '../../constant/AppConstant';
 function Copyright(props) {
     return (
         <Typography variant='body2' color='text.secondary' align='center' {...props}>
@@ -47,7 +48,7 @@ const LoginForm = () => {
     };
     useEffect(() => {
         if (!isLogin) {
-            if (localStorage.getItem('jwt')) {
+            if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
                 Swal({
                     title: "Thông báo!",
                     text: "Đăng nhập thành công!",
@@ -55,6 +56,14 @@ const LoginForm = () => {
                     timer: 1000
                 });
                 navigate("/");
+            } else if (localStorage.getItem('roles') === BARISTA) {
+                Swal({
+                    title: "Thông báo!",
+                    text: "Đăng nhập thành công!",
+                    icon: "success",
+                    timer: 1000
+                });
+                navigate("/kitchen");
             } else if (error) {
                 navigate("/login");
                 Swal({

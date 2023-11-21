@@ -11,4 +11,7 @@ export const NEW = "NEW";
 export const COOKING = "COOKING";
 export const WAITING = "WAITING";
 export const STOCK_OUT = "STOCK_OUT";
+export const CASHIER = "CASHIER";
+export const STAFF_ORDER = "STAFF_ORDER";
+export const BARISTA = "BARISTA";
 export default LAYOUT;

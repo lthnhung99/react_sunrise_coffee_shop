@@ -6,9 +6,12 @@ import Notification from "../headerRight/Notification";
 import Profile from "./Profile/Profile";
 import DropdownButton from "../DropdownButton";
 import { useLocation } from "react-router";
+import { useSelector } from "react-redux";
 
 function MyDropdown() {
   const location = useLocation();
+  const tableId = useSelector(state => state.main.filters.tableSelected);
+  const listOrderItem = useSelector((state) => state.main.data.order.orderItems);
 
   return (
     <Box
@@ -19,7 +22,7 @@ function MyDropdown() {
       }}
     >
       <Box style={{ display: "flex", alignItems: "center" }}>
-        {location.pathname === "/kitchen" ? "" :
+        {location.pathname === "/kitchen" ? "" : (tableId && listOrderItem.length > 0) ?
           <IconButton
             disableRipple
             title="Thao tác với bàn"
@@ -30,7 +33,7 @@ function MyDropdown() {
             }}
           >
             <DropdownButton />
-          </IconButton>}
+          </IconButton> : ""}
         <IconButton
           disableRipple
           color="secondary"

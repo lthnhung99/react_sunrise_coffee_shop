@@ -119,7 +119,6 @@ export default createSlice({
         orderItemsWaiting: [],
         loading: false,
         error: ''
-
     },
     reducers: {
 
