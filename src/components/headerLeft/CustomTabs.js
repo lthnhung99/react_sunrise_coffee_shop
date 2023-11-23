@@ -14,7 +14,7 @@ const CustomTabs = () => {
         <Tabs value={location.pathname} aria-label="basic tabs example">
             {tabs.map((tab, index) => (
                 <Tab style={{ display: "flex", flexDirection: "row", gap: "8px" }}
-                    key={index}
+                    key={"tab" + index}
                     component={Link}
                     to={tab.to}
                     icon={tab.icon}

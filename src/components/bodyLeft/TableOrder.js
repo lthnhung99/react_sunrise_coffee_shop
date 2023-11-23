@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Pageable from "../pageable/Pageable";
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from "../reducers/mainSlice";
+import { getListOrderDetailByTableId, loadTableOrder } from "../reducers/mainSlice";
 import mainSlice from '../reducers/mainSlice';
 import { purple } from "@mui/material/colors";
 import CustomTypography from "../../constant/CustomTypography";
@@ -22,11 +22,6 @@ const TableOrder = () => {
     const [selectedFloor, setSelectedFloor] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
     const count = useSelector((state) => state.main.counts);
-
-    useEffect(() => {
-        dispatch(getAllTableOrder());
-    }, []);
-
     const allTables = useSelector((state) => state.main.data.allTables) || [];
 
     const setPage = (page) => {
@@ -55,6 +50,12 @@ const TableOrder = () => {
             };
         };
 
+        dispatch(mainSlice.actions.setCounts({
+            countBusy,
+            countEmpty,
+            countTotal: countBusy + countEmpty,
+        }));
+
         dispatch(
             loadTableOrder({
                 search: mainFilters.search,
@@ -65,13 +66,6 @@ const TableOrder = () => {
                 totalPages: mainFilters.tableOrders.totalPages,
             })
         );
-
-        dispatch(mainSlice.actions.setCounts({
-            countBusy,
-            countEmpty,
-            countTotal: countBusy + countEmpty,
-        }));
-
     }, [allTables, selectedFloor, selectedStatus, mainFilters.search]);
 
 
@@ -88,19 +82,25 @@ const TableOrder = () => {
             .filter((item) => item.zone.title === selectedFloor)
             .filter((item) => !selectedStatus || item.status === selectedStatus)
             .sort((a, b) => {
-                if (a.zone.title === b.zone.title) {
-                    return a.title.localeCompare(b.title);
-                }
-                return a.zone.title.localeCompare(b.zone.title);
+                const numA = extractNumberFromTitle(a.title);
+                const numB = extractNumberFromTitle(b.title);
+                return numA - numB;
             })
         : tableOrders
             .filter((item) => !selectedStatus || item.status === selectedStatus)
             .sort((a, b) => {
-                if (a.zone.title === b.zone.title) {
-                    return a.title.localeCompare(b.title);
-                }
-                return a.zone.title.localeCompare(b.zone.title);
+                const numA = extractNumberFromTitle(a.title);
+                const numB = extractNumberFromTitle(b.title);
+                return numA - numB;
             });
+
+    function extractNumberFromTitle(title) {
+        const match = title.match(/\d+/);
+        if (match) {
+            return parseInt(match[0], 10);
+        }
+        return NaN;
+    }
 
     const handleTableOrderClick = (tableOrder) => {
         dispatch(mainSlice.actions.setTableSelected(tableOrder.id));
@@ -144,7 +144,6 @@ const TableOrder = () => {
                     </ButtonGroup>
                 </FormControl>
             </Box>
-
             <Box sx={{ margin: "0 0 10px 16px" }}>
                 <FormControl component="fieldset">
                     <RadioGroup

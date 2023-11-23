@@ -9,7 +9,6 @@ const PrivateRoute = ({
     if (!user) {
         return <Navigate to={redirectPath} replace />;
     }
-
     return children;
 };
 

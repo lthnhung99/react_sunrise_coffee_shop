@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import LiquorIcon from '@mui/icons-material/Liquor';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,9 +8,12 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import BlockIcon from '@mui/icons-material/Block';
 import Loading from "./loading/Loading";
-import LAYOUT, { CASHIER, STAFF_ORDER } from '../constant/AppConstant';
+import LAYOUT, { CASHIER, STAFF_ORDER, URL_SOCKET } from '../constant/AppConstant';
 import CustomTypography from '../constant/CustomTypography';
 import Swal from 'sweetalert';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import ReactHowler from 'react-howler';
 
 const Waiting = () => {
     const dispatch = useDispatch();
@@ -20,7 +23,60 @@ const Waiting = () => {
     }, [])
 
     const listOrderWaiting = useSelector((state) => state.kitchen.listOrderItem);
-    const isLoading = useSelector(state => state.kitchen.loading)
+    const isLoading = useSelector(state => state.kitchen.loading);
+    const [message, setMessage] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [play, setPlay] = useState(false);
+
+    useEffect(() => {
+        const connectToWebSocket = async () => {
+            const socket = new SockJS(URL_SOCKET);
+            const stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, (frame) => {
+                // console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/kitchen', (mess) => {
+                    // console.log('Received: ' + mess.body);
+                    let obj = JSON.parse(mess.body);
+                    setMessage(obj.data.message);
+                });
+            }, (error) => {
+                console.log('Error: ' + error);
+                // Xử lý các trường hợp lỗi kết nối ở đây
+            });
+
+            return () => {
+                stompClient.disconnect();
+            };
+        };
+
+        connectToWebSocket();
+    }, []);
+
+    useEffect(() => {
+        if (message) {
+            setShowAlert(true);
+        }
+    }, [message]);
+
+    useEffect(() => {
+        if (showAlert) {
+            setPlay(true);
+            Swal({
+                title: "Thông báo!",
+                text: message,
+                icon: "warning",
+                timer: 2000
+            }).then(() => {
+                dispatch(getAll());
+            }
+            ).then(() => {
+                setMessage('');
+                setPlay(false);
+            });
+            setShowAlert(false);
+        }
+    }, [showAlert, message]);
 
     const handleStatusChangeOneProduct = async (productId, note) => {
         if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
@@ -142,7 +198,8 @@ const Waiting = () => {
                     </CustomTypography>
                 )}
             </Box>
-
+            <ReactHowler src='./mixkit-correct-answer-tone-2870.mp3' playing={play} />
+            {showAlert}
         </Box>
     );
 };
