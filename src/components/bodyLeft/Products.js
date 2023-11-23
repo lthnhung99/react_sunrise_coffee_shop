@@ -4,7 +4,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { Box, Button, ButtonGroup, CardActionArea, FormControl, Grid } from "@mui/material";
+import { Box, Button, ButtonGroup, CardActionArea, FormControl, Grid, Tooltip, Zoom } from "@mui/material";
 import Loading from "../loading/Loading";
 import { useState } from "react";
 import ProductModal from "./ProductModal";
@@ -136,9 +136,11 @@ export default function Products() {
                       alt="green iguana"
                     />
                     <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {item.title}
-                      </Typography>
+                      <Tooltip title={item.title} placement="top" TransitionComponent={Zoom}>
+                        <Typography gutterBottom variant="h5" component="div">
+                          {item.title.length > 12 ? `${item.title.slice(0, 12)}...` : item.title}
+                        </Typography>
+                      </Tooltip>
                       <Typography sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Typography variant="body2">
                           {formatPrice(item.price)}

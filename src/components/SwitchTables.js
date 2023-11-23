@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from 'react';
-import { Box, Button, Card, CardActionArea, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeAllProductToNewTable, getListOrderDetailByTableId, loadTableOrder } from './reducers/mainSlice';
 import { purple, red } from '@mui/material/colors';
@@ -13,21 +13,53 @@ import mainSlice from './reducers/mainSlice';
 import Pageable from './pageable/Pageable';
 
 const SwitchTables = ({ open, closeModal }) => {
+    const dispatch = useDispatch();
     const [targetTable, setTargetTable] = useState('');
     const [selectedTableId, setSelectedTableId] = useState(null);
-    const dispatch = useDispatch();
+    const [selectedZone, setSelectedZone] = useState("");
+    const [totalPages, setTotalPages] = useState(0);
+    const [filteredTables, setFilteredTables] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 12;
 
     const mainFilters = useSelector((state) => state.main.filters);
     const currentTableId = mainFilters.tableSelected;
     const listTable = useSelector(state => state.main.data.allTables);
     const listTableEmpty = listTable.filter(table => table.status === "EMPTY");
+    const zoneTitles = [...new Set(listTableEmpty?.map((item) => item.zone.title))];
     const table = listTable.find(table => table.id === currentTableId);
     const currentTableTitle = table ? table.title : '';
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber + 1);
+    };
 
     const handleClick = (targetTable) => {
         setTargetTable(targetTable);
         setSelectedTableId(targetTable.id);
     };
+
+    useEffect(() => {
+        let totalItems = 0;
+        let filtered = listTableEmpty;
+        if (selectedZone !== "") {
+            setCurrentPage(1);
+            filtered = listTableEmpty.filter(table => table.zone.title === selectedZone);
+        };
+
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize - 1;
+        const itemsOnPage = filtered.slice(startIndex, endIndex + 1);
+
+        if (selectedZone === "") {
+            totalItems = listTableEmpty.length;
+        } else {
+            totalItems = itemsOnPage.length;
+        };
+
+        setFilteredTables(itemsOnPage);
+        setTotalPages(Math.ceil(totalItems / pageSize));
+    }, [selectedZone, currentPage]);
 
     const handleSwitchTables = (oldTableId, newTableId) => {
         Swal({
@@ -38,42 +70,29 @@ const SwitchTables = ({ open, closeModal }) => {
             dangerMode: true,
         }).then((willSwitch) => {
             if (willSwitch) {
-                dispatch(changeAllProductToNewTable({ oldTableId, newTableId }));
                 closeModal();
-                dispatch(loadTableOrder({
-                    page: mainFilters.tableOrders.page,
-                    size: mainFilters.tableOrders.size,
-                    search: mainFilters.search,
-                    totalPages: mainFilters.tableOrders.totalPages
-                })).then(() => {
-                    dispatch(mainSlice.actions.setTableTitle(targetTable.title));
-                    dispatch(mainSlice.actions.setTableSelected(targetTable.id));
-                }).then(() => {
-                    mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(targetTable.id));
-                    Swal({
-                        title: "Thành công!",
-                        text: "Chuyển bàn thành công!",
-                        icon: "success",
-                        timer: 1500
-                    });
-                })
+                dispatch(changeAllProductToNewTable({ oldTableId, newTableId }))
+                    .then(() => {
+                        dispatch(mainSlice.actions.setTableTitle(targetTable.title));
+                        dispatch(mainSlice.actions.setZoneTitle(targetTable.zone.title));
+                        dispatch(mainSlice.actions.setTableSelected(targetTable.id));
+                    }).then(() => {
+                        mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(targetTable.id));
+                        dispatch(loadTableOrder({
+                            page: mainFilters.tableOrders.page,
+                            size: mainFilters.tableOrders.size,
+                            search: mainFilters.search,
+                            totalPages: mainFilters.tableOrders.totalPages
+                        }));
+                        Swal({
+                            title: "Thành công!",
+                            text: "Chuyển bàn thành công!",
+                            icon: "success",
+                            timer: 1500
+                        });
+                    })
             }
         });
-    };
-
-    const pageSize = 12;
-    const totalItems = listTableEmpty.length;
-
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
-
-    const itemsOnPage = listTableEmpty.slice(startIndex, endIndex + 1);
-
-    const handlePageChange = (pageNumber) => {
-        console.log(pageNumber + 1);
-        setCurrentPage(pageNumber + 1);
     };
 
     return (
@@ -85,11 +104,44 @@ const SwitchTables = ({ open, closeModal }) => {
             <DialogTitle variant='h5'>
                 Vui lòng chọn bàn để chuyển bàn
             </DialogTitle>
+
             <DialogContent>
+                <Box sx={{ marginBottom: "10px" }}>
+                    <FormControl component="fieldset">
+                        <ButtonGroup
+                            aria-label="floor"
+                            name="floor"
+                            value={selectedZone}
+                            variant="outlined"
+                            sx={{
+                                flexDirection: "row",
+                                "& .MuiButton-root": {
+                                    borderRadius: "10px"
+                                }
+                            }}
+                        >
+                            <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
+                                onClick={() => setSelectedZone("")}
+                                variant={selectedZone === "" ? "contained" : "outlined"}
+                            >
+                                Tất cả
+                            </Button>
+                            {zoneTitles.sort().map((title) => (
+                                <Button style={{ marginRight: "10px", borderRight: "solid 1px" }}
+                                    key={title}
+                                    onClick={() => setSelectedZone(title)}
+                                    variant={selectedZone === title ? "contained" : "outlined"}
+                                >
+                                    {title}
+                                </Button>
+                            ))}
+                        </ButtonGroup>
+                    </FormControl>
+                </Box>
                 <Box sx={{ width: "700px", height: "500px" }}>
                     <Grid container spacing={2} sx={{ maxWidth: "100%", margin: "0 5px" }}>
-                        {listTableEmpty.length > 0 ? (
-                            itemsOnPage.map((item) => (
+                        {filteredTables.length > 0 ? (
+                            filteredTables.map((item) => (
                                 <Grid item xs={6} sm={3} md={2.8} mb={2} key={"table" + item.id}>
                                     <Card sx={{ backgroundColor: selectedTableId === item.id ? purple[100] : "inherit", textAlign: "center", borderRadius: "25%" }}>
                                         <CardActionArea onClick={() => handleClick(item)}>
@@ -111,7 +163,7 @@ const SwitchTables = ({ open, closeModal }) => {
                                 <Typography variant="h3">Không tìm thấy bàn phù hợp</Typography>
                             </CustomTypography>
                         )}
-                        <Pageable page={currentPage} setPage={handlePageChange} totalPage={Math.ceil(totalItems / pageSize)} />
+                        <Pageable page={currentPage} setPage={handlePageChange} totalPage={totalPages} />
                     </Grid>
                 </Box>
             </DialogContent>

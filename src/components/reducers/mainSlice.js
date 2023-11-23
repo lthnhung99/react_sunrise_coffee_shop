@@ -285,7 +285,8 @@ export default createSlice({
         },
         loading: false,
         error: '',
-        loadingOrder: false
+        loadingOrder: false,
+        isLogin: true
 
     },
     reducers: {
@@ -330,7 +331,7 @@ export default createSlice({
         (builder) => {
             builder
                 .addCase(auth.pending, (state, action) => {
-                    state.loading = true;
+                    state.isLogin = false;
                 })
                 .addCase(auth.fulfilled, (state, action) => {
                     state.error = '';
@@ -341,11 +342,11 @@ export default createSlice({
                     state.auth.name = action.payload.name;
                     state.auth.roles.authority = action.payload.roles[0].authority;
                     state.auth.staffAvatar = action.payload.staffAvatar.fileUrl;
-                    state.loading = false;
+                    state.isLogin = true;
                 })
                 .addCase(auth.rejected, (state, action) => {
                     state.error = action.payload.error;
-                    state.loading = false;
+                    state.isLogin = true;
                 })
             builder //show product
                 .addCase(loadProduct.pending, (state) => {
@@ -399,12 +400,12 @@ export default createSlice({
                 .addCase(loadTableOrder.rejected, (state, action) => {
                     state.data.tables = [];
                     state.loading = false;
-                    state.filters.totalPages = action.meta.arg.totalPages;
+                    state.filters.tableOrders.totalPages = action.meta.arg.totalPages;
                     state.filters.search = action.meta.arg.search;
-                    state.filters.floor = action.meta.arg.zone;
-                    state.filters.status = action.meta.arg.status;
-                    state.filters.page = action.meta.arg.page;
-                    state.filters.size = action.meta.arg.size;
+                    state.filters.tableOrders.floor = action.meta.arg.zone;
+                    state.filters.tableOrders.status = action.meta.arg.status;
+                    state.filters.tableOrders.page = action.meta.arg.page;
+                    state.filters.tableOrders.size = action.meta.arg.size;
                     state.counts.countBusy = 0;
                     state.counts.countEmpty = 0;
                     state.counts.countTotal = 0;
@@ -460,7 +461,7 @@ export default createSlice({
                 })
             builder
                 .addCase(deleteOrderItem.pending, (state, action) => {
-                    state.loading = true;
+                    state.loadingOrder = true;
                 })
                 .addCase(deleteOrderItem.fulfilled, (state, action) => {
                     const orderItemId = action.payload.orderItemId;
@@ -472,10 +473,10 @@ export default createSlice({
                         ...state.data.order,
                         orderItems: updatedOrderItems
                     };
-                    state.loading = false;
+                    state.loadingOrder = false;
                 })
                 .addCase(deleteOrderItem.rejected, (state, action) => {
-                    state.loading = false;
+                    state.loadingOrder = false;
                     state.error = action.payload.error;
                 })
             builder

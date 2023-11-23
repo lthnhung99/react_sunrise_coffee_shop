@@ -48,7 +48,6 @@ const TabPanel = ({ value, index, search }) => {
                         <Route path='/' element={<TableOrder />} />
                         <Route path="products" element={<Products />} />
                     </Routes>
-
                 </Box>
             )}
         </div>

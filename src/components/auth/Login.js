@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
 import Swal from 'sweetalert';
 import { CASHIER, BARISTA, STAFF_ORDER } from '../../constant/AppConstant';
+
 function Copyright(props) {
     return (
         <Typography variant='body2' color='text.secondary' align='center' {...props}>
@@ -29,13 +30,15 @@ function Copyright(props) {
             {'.'}
         </Typography>
     );
-}
+};
+
 const defaultTheme = createTheme();
+
 const LoginForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const error = useSelector(state => state.main.error);
-    const isLogin = useSelector(state => state.main.loading);
+    const isLogin = useSelector(state => state.main.isLogin);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -46,8 +49,9 @@ const LoginForm = () => {
         }
         dispatch(auth(obj));
     };
+
     useEffect(() => {
-        if (!isLogin) {
+        if (isLogin) {
             if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
                 Swal({
                     title: "Thông báo!",
@@ -65,17 +69,17 @@ const LoginForm = () => {
                 });
                 navigate("/kitchen");
             } else if (error) {
-                navigate("/login");
                 Swal({
                     title: "Thông báo!",
                     text: error.message || error.username || error.password,
                     icon: "error",
                     timer: 1500
                 });
+                navigate("/login");
             }
         }
-
     }, [isLogin, error]);
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component='main' sx={{ height: '100vh' }}>
@@ -84,9 +88,9 @@ const LoginForm = () => {
                     item
                     xs={false}
                     sm={4}
-                    md={7}
+                    md={8}
                     sx={{
-                        backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+                        backgroundImage: 'url(./coffee.jpg)',
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) =>
                             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -94,7 +98,7 @@ const LoginForm = () => {
                         backgroundPosition: 'center',
                     }}
                 />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} square>
                     <Box
                         sx={{
                             my: 8,

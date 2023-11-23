@@ -17,6 +17,7 @@ import Swal from 'sweetalert';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import ReactHowler from "react-howler";
+import { Link } from "react-router-dom";
 
 const ItemOrder = () => {
   const dispatch = useDispatch();
@@ -109,14 +110,14 @@ const ItemOrder = () => {
       });
     } else if (product.status === COOKING || product.status === WAITING) {
       Swal({
-        title: "Lỗi!",
+        title: "Thông báo!",
         text: "Món này đang được làm, không thể xoá!",
         icon: "error",
         timer: 1500
       });
     } else {
       Swal({
-        title: "Lỗi!",
+        title: "Thông báo!",
         text: "Món này đã được làm xong, không thể xoá!",
         icon: "error",
         timer: 1500
@@ -254,7 +255,11 @@ const ItemOrder = () => {
 
         ) : (
           <CustomTypography sx={{ marginTop: "25%", textAlign: "center", width: "100%" }}>
-            <LiquorIcon />
+            {mainFilters.tableSelected ? (
+              <Link to="/products">
+                <LiquorIcon />
+              </Link>
+            ) : <LiquorIcon />}
             <Typography variant="h3">Chưa có món nào</Typography>
             <Typography variant="h5" color="darkgray">Vui lòng chọn món trong thực đơn</Typography>
           </CustomTypography>

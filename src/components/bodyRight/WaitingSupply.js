@@ -5,10 +5,9 @@ import { Box, Button, TableContainer, Table, TableHead, TableRow, TableCell, Tab
 import LiquorIcon from '@mui/icons-material/Liquor';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
-import BlockIcon from '@mui/icons-material/Block';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-import { changeStatusFromWaitingToDoneAllProductOfOrder, changeStatusFromWaitingToDoneOfProduct, getAll, changeStatusFromWaitingToStockOutToProductOfOrder } from '../reducers/kitchenSlice';
+import { changeStatusFromWaitingToDoneAllProductOfOrder, changeStatusFromWaitingToDoneOfProduct, getAll } from '../reducers/kitchenSlice';
 import Loading from '../loading/Loading';
 import LAYOUT, { CASHIER, STAFF_ORDER, URL_SOCKET } from '../../constant/AppConstant';
 import CustomTypography from '../../constant/CustomTypography';
@@ -101,27 +100,6 @@ export default function WaitingSupply() {
         };
     };
 
-    const handleStatusChangeStockOut = async (orderDetailId) => {
-        if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền!",
-                icon: "warning",
-                timer: 1500
-            });
-        } else {
-            await dispatch(changeStatusFromWaitingToStockOutToProductOfOrder(orderDetailId));
-            dispatch(getAll()).then(() => {
-                Swal({
-                    title: "Thành công!",
-                    text: "Sản phẩm đã được thông báo hết!",
-                    icon: "success",
-                    timer: 1500
-                });
-            });
-        };
-    };
-
     return (
         <Box className='cssScroll'>
             <Box sx={{ flexGrow: "1" }}>
@@ -131,11 +109,11 @@ export default function WaitingSupply() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={{ width: "5%" }}>#</TableCell>
-                                    <TableCell sx={{ width: "30%" }}>Tên sản phẩm</TableCell>
+                                    <TableCell sx={{ width: "35%" }}>Tên sản phẩm</TableCell>
                                     <TableCell sx={{ width: "10%" }}>Số lượng</TableCell>
-                                    <TableCell sx={{ width: "10%" }}>Bàn</TableCell>
+                                    <TableCell sx={{ width: "15%" }}>Bàn</TableCell>
                                     <TableCell sx={{ width: "15%" }}>Trạng thái</TableCell>
-                                    <TableCell sx={{ width: "30%" }}></TableCell>
+                                    <TableCell sx={{ width: "20%" }}></TableCell>
                                 </TableRow>
                             </TableHead>
                             {isLoading ? <Loading /> :
@@ -172,12 +150,6 @@ export default function WaitingSupply() {
                                                         onClick={() => handleStatusChangeAllProduct(item.orderDetailId)}
                                                     >
                                                         <KeyboardDoubleArrowRightIcon />
-                                                    </Button>
-                                                    <Button className='buttonDemo redColor'
-                                                        variant="outlined"
-                                                        onClick={() => handleStatusChangeStockOut(item.orderDetailId)}
-                                                    >
-                                                        <BlockIcon />
                                                     </Button>
                                                 </Typography>
                                             </TableCell>

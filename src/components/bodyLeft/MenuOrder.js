@@ -18,11 +18,11 @@ const MenuOrder = () => {
         dispatch(
             mainFilters.tab === "table" ?
                 loadTableOrder({
-                    size: mainFilters.size,
+                    size: mainFilters.tableOrders.size,
                     page: 0,
                     search: search,
                 }) : loadProduct({
-                    size: mainFilters.size,
+                    size: mainFilters.products.size,
                     page: 0,
                     search: search,
                 }));
@@ -37,11 +37,11 @@ const MenuOrder = () => {
             dispatch(
                 mainFilters.tab === "table" ?
                     loadTableOrder({
-                        size: mainFilters.size,
+                        size: mainFilters.tableOrders.size,
                         page: 0,
                         search: value,
                     }) : loadProduct({
-                        size: mainFilters.size,
+                        size: mainFilters.products.size,
                         page: 0,
                         search: value,
                     }));
@@ -57,11 +57,11 @@ const MenuOrder = () => {
             dispatch(
                 mainFilters.tab === "table" ?
                     loadTableOrder({
-                        size: mainFilters.size,
+                        size: mainFilters.tableOrders.size,
                         page: 0,
                         search: "",
                     }) : loadProduct({
-                        size: mainFilters.size,
+                        size: mainFilters.products.size,
                         page: 0,
                         search: "",
                     }));

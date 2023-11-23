@@ -4,12 +4,11 @@ import MainContents from "./components/MainContents";
 import Kitchen from "./components/Kitchen";
 import { Route, Routes } from "react-router";
 import LoginForm from "./components/auth/Login";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
-  // const user = useSelector(state => state.main.auth);
-  const user = localStorage.getItem("roles");
+  const user = useSelector(state => state.main.auth.roles.authority || localStorage.getItem("roles"));
   return (
     <>
       <ThemeCustomization>

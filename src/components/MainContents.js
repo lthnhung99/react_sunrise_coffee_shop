@@ -6,7 +6,7 @@ import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
 import MenuOrderContext from './MenuOrderContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { createOrder, updateOrder, changeStatusCooking } from './reducers/mainSlice';
+import { createOrder, updateOrder, changeStatusCooking, getAllTableOrder } from './reducers/mainSlice';
 import { useLocation } from 'react-router-dom';
 import mainSlice from './reducers/mainSlice';
 import { blue, purple } from '@mui/material/colors';
@@ -25,6 +25,10 @@ const MainContents = () => {
     const listOrderItem = useSelector(state => state.main.data.order.orderItems || []);
     const billItems = listOrderItem.filter((item) => item.status !== STOCK_OUT);
     const isLoading = useSelector(state => state.main.loadingOrder);
+
+    useEffect(() => {
+        dispatch(getAllTableOrder());
+    }, []);
 
     const handleOpenModal = () => {
         const hasNewItem = listOrderItem.some((item) => item.status === NEW);
