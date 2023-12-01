@@ -68,7 +68,7 @@ export default function Products() {
     dispatch(loadProduct({
       search: mainFilters.search,
       category: selectedCate,
-      page: mainFilters.products.page,
+      page: 0,
       size: mainFilters.products.size,
       totalPages: mainFilters.products.totalPages
     }));
@@ -86,7 +86,7 @@ export default function Products() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-      <Box sx={{ marginBottom: "10px" }}>
+      <Box sx={{ marginBottom: "10px", overflowX: "auto" }}>
         <FormControl component="fieldset">
           <ButtonGroup
             aria-label="floor"

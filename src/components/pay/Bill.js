@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Box, Grid } from '@mui/material';
+import { Typography, Table, TableHead, TableRow, TableCell, TableBody, Button, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { blue, red } from '@mui/material/colors';
 import { MonetizationOn } from '@mui/icons-material';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
@@ -13,10 +13,9 @@ import formatPrice from '../bodyRight/FormatPrice';
 import Swal from 'sweetalert';
 import { BARISTA, STAFF_ORDER } from '../../constant/AppConstant';
 
-const Bill = ({ billItems, closeModal }) => {
+const Bill = ({ billItems, open, closeModal }) => {
     const dispatch = useDispatch();
     const table = useSelector(state => state.main.filters);
-    // const createdAt = useSelector(state => state.main.data.order.createdAt);
     const isLoading = useSelector(state => state.main.loadingOrder);
     const roles = localStorage.getItem("roles");
     const componentRef = useRef(null);
@@ -51,104 +50,96 @@ const Bill = ({ billItems, closeModal }) => {
     }
 
     return (
-        <Paper style={{ height: 700, width: "50%", bottom: "20%", left: "25%", position: "absolute" }}>
-            <TableContainer sx={{ maxHeight: "85%", overflow: "auto" }}>
-                <Typography variant="h3" gutterBottom className='textCenter' sx={{ marginTop: '3%' }}>SUNRISE COFFEE SHOP</Typography>
-                <Typography variant="h5" gutterBottom className='textCenter'>28 Nguyễn Tri Phương</Typography>
-                <Typography variant="h5" gutterBottom className='textCenter'>0399 578 134</Typography>
-                <Typography variant="h3" gutterBottom className='textCenter'>HÓA ĐƠN THANH TOÁN</Typography>
-                <Table sx={{ marginLeft: "10%", width: "80%" }} size="small" aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>#</TableCell>
-                            <TableCell>Tên món</TableCell>
-                            <TableCell>Số lượng</TableCell>
-                            <TableCell>Đơn giá</TableCell>
-                            <TableCell align="right">Thành tiền</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {billItems.map((item, index) => (
-                            <TableRow key={"bill" + index}>
-                                <TableCell>{index + 1}</TableCell>
-                                <TableCell>{item.title}</TableCell>
-                                <TableCell>{item.quantity}</TableCell>
-                                <TableCell>{formatPrice(item.price)}</TableCell>
-                                <TableCell align="right">{formatPrice(item.amount)}</TableCell>
-                            </TableRow>
-                        ))}
-                        <TableRow>
-                            <TableCell colSpan={4} align="right" className='bold'>
-                                Tổng cộng:
-                            </TableCell>
-                            <TableCell align="right" className='bold'>{formatPrice(getTotalAmount())}</TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
+        <Dialog open={open} onClose={closeModal}>
+            <DialogTitle variant="h3" className="textCenter">
+                SUNRISE COFFEE SHOP
+                <br />
+                <Typography variant="h5">
+                    28 Nguyễn Tri Phương
+                    <br />
+                    0399 578 134
+                </Typography>
+                <br />
+                HÓA ĐƠN THANH TOÁN
+            </DialogTitle>
 
-                <Box
-                    sx={{
-                        display: "flex",
-                        height: "50px",
-                        flexDirection: "column",
-                        position: "absolute",
-                        bottom: "5%",
-                        right: "5%",
-                        width: "70%"
-                    }}
-                >
-                    <Grid container spacing={2} sx={{ marginBottom: "10px", width: "100%", textAlign: "end" }}>
-                        <Grid item xs={3}></Grid>
-                        <Grid item xs={3}>
-                            <Button
-                                className='buttonModalBill'
-                                size="large"
-                                variant="contained"
-                                startIcon={<MonetizationOn />}
-                                disableElevation
-                                style={{
-                                    backgroundColor: blue["A400"]
-                                }}
-                                onClick={pay}
-                                disabled={isLoading}
-                            >
-                                Thanh toán
-                            </Button>
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Button
-                                className='buttonModalBill'
-                                size="large"
-                                variant="contained"
-                                startIcon={<LocalPrintshopIcon />}
-                                disableElevation
-                                onClick={handlePrint}
-                            >
-                                In hóa đơn
-                            </Button>
-                            {<div style={{ display: 'none' }}>
-                                <ComponentToPrint ref={componentRef} billItems={billItems} tableName={table.tableOrders.title} />
-                            </div>}
-                        </Grid>
-                        <Grid item xs={3}>
-                            <Button
-                                className='buttonModalBill'
-                                size="large"
-                                variant="contained"
-                                startIcon={<CancelIcon />}
-                                disableElevation
-                                onClick={closeModal}
-                                style={{
-                                    backgroundColor: red["A400"]
-                                }}
-                            >
-                                Đóng
-                            </Button>
-                        </Grid>
-                    </Grid>
+            <DialogContent sx={{ width: "750px", height: "500px" }}>
+                <Box>
+                    <Table sx={{ marginLeft: "10%", width: "80%" }} size="small" aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>#</TableCell>
+                                <TableCell>Tên món</TableCell>
+                                <TableCell>Số lượng</TableCell>
+                                <TableCell>Đơn giá</TableCell>
+                                <TableCell align="right">Thành tiền</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {billItems.map((item, index) => (
+                                <TableRow key={"bill" + index}>
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell>{item.title}</TableCell>
+                                    <TableCell>{item.quantity}</TableCell>
+                                    <TableCell>{formatPrice(item.price)}</TableCell>
+                                    <TableCell align="right">{formatPrice(item.amount)}</TableCell>
+                                </TableRow>
+                            ))}
+                            <TableRow>
+                                <TableCell colSpan={4} align="right" className='bold'>
+                                    Tổng cộng:
+                                </TableCell>
+                                <TableCell align="right" className='bold'>{formatPrice(getTotalAmount())}</TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
                 </Box>
-            </TableContainer>
-        </Paper>
+            </DialogContent>
+            <DialogActions>
+                <Box style={{ width: "70%", display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                        className='buttonModalBill'
+                        size="medium"
+                        variant="contained"
+                        startIcon={<MonetizationOn />}
+                        disableElevation
+                        style={{
+                            backgroundColor: blue["A400"]
+                        }}
+                        onClick={pay}
+                        disabled={isLoading}
+                    >
+                        Thanh toán
+                    </Button>
+                    <Button
+                        className='buttonModalBill'
+                        size="medium"
+                        variant="contained"
+                        startIcon={<LocalPrintshopIcon />}
+                        disableElevation
+                        onClick={handlePrint}
+                    >
+                        In hóa đơn
+                    </Button>
+                    {<div style={{ display: 'none' }}>
+                        <ComponentToPrint ref={componentRef} billItems={billItems} tableName={table.tableOrders.title} />
+                    </div>}
+                    <Button
+                        className='buttonModalBill'
+                        size="medium"
+                        variant="contained"
+                        startIcon={<CancelIcon />}
+                        disableElevation
+                        onClick={closeModal}
+                        style={{
+                            backgroundColor: red["A400"]
+                        }}
+                    >
+                        Đóng
+                    </Button>
+                </Box>
+            </DialogActions>
+        </Dialog>
     );
 };
 

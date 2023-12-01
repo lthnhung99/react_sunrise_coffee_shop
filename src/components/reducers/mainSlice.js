@@ -148,6 +148,32 @@ export const combineTables = createAsyncThunk(
     }
 );
 
+export const combineProducts = createAsyncThunk(
+    'main/combineProducts',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await instance.post(API_URL_TABLE + `/combine-products`, data);
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+            return rejectWithValue({ error: error.message });
+        }
+    }
+);
+
+export const splitProduct = createAsyncThunk(
+    'main/splitProduct',
+    async (data, { rejectWithValue }) => {
+        try {
+            const response = await instance.post(API_URL_TABLE + `/split-products`, data);
+            return response.data;
+        } catch (error) {
+            console.log("Loading Todo  API error: " + error);
+            return rejectWithValue({ error: error.message });
+        }
+    }
+)
+
 export const getListOrderDetailByTableId = createAsyncThunk(
     'main/getListOrderDetailByTableId',
     async (data, { rejectWithValue }) => {
@@ -420,6 +446,12 @@ export default createSlice({
                     state.data.allTables = action.payload;
                 })
                 .addCase(combineTables.fulfilled, (state, action) => {
+
+                })
+                .addCase(combineProducts.fulfilled, (state, action) => {
+
+                })
+                .addCase(splitProduct.fulfilled, (state, action) => {
 
                 })
             builder //show listOrder
