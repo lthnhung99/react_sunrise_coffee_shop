@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeAllProductToNewTable, getListOrderDetailByTableId, loadTableOrder } from './reducers/mainSlice';
+import { changeAllProductToNewTable, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from './reducers/mainSlice';
 import { purple, red } from '@mui/material/colors';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
@@ -11,6 +11,7 @@ import CustomTypography from '../constant/CustomTypography';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import mainSlice from './reducers/mainSlice';
 import Pageable from './pageable/Pageable';
+import { EMPTY, TAKE_AWAY } from '../constant/AppConstant';
 
 const SwitchTables = ({ open, closeModal }) => {
     const dispatch = useDispatch();
@@ -25,10 +26,16 @@ const SwitchTables = ({ open, closeModal }) => {
     const mainFilters = useSelector((state) => state.main.filters);
     const currentTableId = mainFilters.tableSelected;
     const listTable = useSelector(state => state.main.data.allTables);
-    const listTableEmpty = listTable.filter(table => table.status === "EMPTY");
-    const zoneTitles = [...new Set(listTableEmpty?.map((item) => item.zone.title))];
+    const listTableEmpty = listTable.filter(table => table.status === EMPTY);
+    const zoneTitles = [...new Set(listTableEmpty?.map((item) => item.zone.title))].filter((title) => title !== TAKE_AWAY);
     const table = listTable.find(table => table.id === currentTableId);
     const currentTableTitle = table ? table.title : '';
+
+    useEffect(() => {
+        if (open) {
+            dispatch(getAllTableOrder());
+        }
+    }, [open]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber + 1);
@@ -97,7 +104,7 @@ const SwitchTables = ({ open, closeModal }) => {
 
     return (
         <Dialog open={open} onClose={closeModal}>
-            <DialogTitle variant='h3' className='App'>Chuyển bàn</DialogTitle>
+            <DialogTitle variant='h3' className='textCenter'>Chuyển bàn</DialogTitle>
             <DialogTitle variant='h4'>
                 Bàn hiện tại: {currentTableTitle}
             </DialogTitle>
@@ -176,6 +183,7 @@ const SwitchTables = ({ open, closeModal }) => {
                         startIcon={<ChangeCircleIcon />}
                         disableElevation
                         onClick={() => handleSwitchTables(currentTableId, targetTable.id)}
+                        disabled={!selectedTableId}
                     >
                         Chuyển bàn
                     </Button>

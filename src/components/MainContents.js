@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Grid, Modal } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import MenuOrder from './bodyLeft/MenuOrder';
 import ItemOrder from './bodyRight/ItemOrder';
 import { CircleNotifications, MonetizationOn } from '@mui/icons-material';
@@ -123,7 +123,7 @@ const MainContents = () => {
             .then(() => {
                 Swal({
                     title: "Thành công!",
-                    text: "Gửi đi thành công!",
+                    text: "Đã gửi tới bếp!",
                     icon: "success",
                     timer: 1500
                 });
@@ -194,9 +194,7 @@ const MainContents = () => {
                                             >
                                                 Thanh toán
                                             </Button>
-                                            <Modal open={openBill} onClose={handleCloseModal}>
-                                                <Bill billItems={billItems} closeModal={handleCloseModal} />
-                                            </Modal>
+                                            <Bill billItems={billItems} open={openBill} closeModal={handleCloseModal} />
                                         </Grid>
                                         <Grid item xs={6} sx={{ paddingRight: "16px" }}>
                                             <Button
@@ -206,12 +204,12 @@ const MainContents = () => {
                                                 startIcon={<CircleNotifications />}
                                                 disableElevation
                                                 style={{
-                                                    backgroundColor: !listOrderItem?.find(e => e.status === 'NEW') || isLoading ? purple[200] : purple[500]
+                                                    backgroundColor: !listOrderItem?.find(e => e.status === NEW) || isLoading ? purple[200] : purple[500]
                                                 }}
-                                                disabled={!listOrderItem?.find(e => e.status === 'NEW') || isLoading}
+                                                disabled={!listOrderItem?.find(e => e.status === NEW) || isLoading}
                                                 onClick={handleStatusChange}
                                             >
-                                                Thông báo
+                                                Gửi bếp/bar
                                             </Button>
                                         </Grid>
                                     </Grid>

@@ -14,4 +14,7 @@ export const STOCK_OUT = "STOCK_OUT";
 export const CASHIER = "CASHIER";
 export const STAFF_ORDER = "STAFF_ORDER";
 export const BARISTA = "BARISTA";
+export const TAKE_AWAY = "Mang về";
+export const BUSY = "BUSY";
+export const EMPTY = "EMPTY"
 export default LAYOUT;

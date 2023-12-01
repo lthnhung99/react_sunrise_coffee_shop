@@ -160,7 +160,7 @@ export default function WaitingSupply() {
                         </Table>
                     </TableContainer>
                 ) : (
-                    <CustomTypography variant="body2" sx={{ marginTop: "30%", textAlign: "center" }}>
+                    <CustomTypography sx={{ marginTop: "30%", textAlign: "center", width: "100%" }}>
                         <LiquorIcon />
                         <Typography variant="h3">Chưa có món nào</Typography>
                     </CustomTypography>

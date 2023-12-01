@@ -11,6 +11,7 @@ import mainSlice from '../reducers/mainSlice';
 import { purple } from "@mui/material/colors";
 import CustomTypography from "../../constant/CustomTypography";
 import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
+import { BUSY, EMPTY, TAKE_AWAY } from "../../constant/AppConstant";
 
 const TableOrder = () => {
     const dispatch = useDispatch();
@@ -40,11 +41,11 @@ const TableOrder = () => {
         let countEmpty = 0;
         for (const item of allTables) {
             if (!item.title.includes(mainFilters.search)) continue;
-            if (item.status === 'BUSY' &&
+            if (item.status === BUSY &&
                 (selectedFloor === '' || selectedFloor === item.zone.title)) {
                 countBusy++;
             };
-            if (item.status === 'EMPTY' &&
+            if (item.status === EMPTY &&
                 (selectedFloor === '' || selectedFloor === item.zone.title)) {
                 countEmpty++;
             };
@@ -59,15 +60,14 @@ const TableOrder = () => {
         dispatch(
             loadTableOrder({
                 search: mainFilters.search,
-                zone: selectedFloor,
+                zone: selectedFloor === TAKE_AWAY ? "zone 4" : selectedFloor,
                 status: selectedStatus,
-                page: mainFilters.tableOrders.page,
+                page: 0,
                 size: mainFilters.tableOrders.size,
                 totalPages: mainFilters.tableOrders.totalPages,
             })
         );
     }, [allTables, selectedFloor, selectedStatus, mainFilters.search]);
-
 
     const zoneTitles = [...new Set(allTables?.map((item) => item.zone.title))];
     const tableOrderStatus = [...new Set(allTables?.map((item) => item.status))];
@@ -100,7 +100,7 @@ const TableOrder = () => {
             return parseInt(match[0], 10);
         }
         return NaN;
-    }
+    };
 
     const handleTableOrderClick = (tableOrder) => {
         dispatch(mainSlice.actions.setTableSelected(tableOrder.id));
@@ -156,7 +156,7 @@ const TableOrder = () => {
                         <FormControlLabel
                             value=""
                             control={<Radio />}
-                            label={`Tất cả (${count.countTotal || 0})`}
+                            label={`Tất cả (${count.countTotal})`}
                             sx={{
                                 color: selectedStatus === "" ? "darkViolet" : "inherit"
                             }}
