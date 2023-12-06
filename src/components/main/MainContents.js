@@ -11,7 +11,7 @@ import { useLocation } from 'react-router-dom';
 import mainSlice from '../reducers/mainSlice';
 import { blue, purple } from '@mui/material/colors';
 import API_URL_PRODUCT from '../../constant/constURL/URLProduct';
-import Bill from '../pay/Bill';
+import Bill from '../bill/Bill';
 import { NEW, STOCK_OUT, BARISTA } from '../../constant/AppConstant';
 import { ToastifySuccess, ToastifyWarning } from '../toastify/Toastify';
 

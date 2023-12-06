@@ -4,7 +4,7 @@ import { blue, red } from '@mui/material/colors';
 import { MonetizationOn } from '@mui/icons-material';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import CancelIcon from '@mui/icons-material/Cancel';
-import ComponentToPrint from '../pay/ComponentToPrint';
+import ComponentToPrint from '../bill/ComponentToPrint';
 import { useReactToPrint } from 'react-to-print';
 import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
