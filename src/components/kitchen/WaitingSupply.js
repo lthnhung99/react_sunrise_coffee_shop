@@ -11,8 +11,8 @@ import { changeStatusFromWaitingToDoneAllProductOfOrder, changeStatusFromWaiting
 import Loading from '../loading/Loading';
 import LAYOUT, { CASHIER, STAFF_ORDER, URL_SOCKET } from '../../constant/AppConstant';
 import CustomTypography from '../../constant/CustomTypography';
-import Swal from 'sweetalert';
 import ReactHowler from 'react-howler';
+import { ToastifySuccess, ToastifyWarning } from '../toastify/Toastify';
 
 export default function WaitingSupply() {
     const dispatch = useDispatch();
@@ -56,30 +56,19 @@ export default function WaitingSupply() {
     useEffect(() => {
         if (showAlert) {
             setPlay(true);
-            Swal({
-                title: "Thông báo!",
-                text: message,
-                icon: "warning",
-                timer: 1500
-            }).then(() => {
-                dispatch(getAll());
-            }
-            ).then(() => {
-                setMessage('');
-                setPlay(false);
-            });
+            ToastifySuccess(message);
+            dispatch(getAll())
+                .then(() => {
+                    setMessage('');
+                    setPlay(false);
+                });
             setShowAlert(false);
         }
     }, [showAlert, message]);
 
     const handleStatusChangeOneProduct = async (orderDetailId) => {
         if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền!",
-                icon: "warning",
-                timer: 1500
-            });
+            ToastifyWarning('Bạn không có quyền!');
         } else {
             await dispatch(changeStatusFromWaitingToDoneOfProduct(orderDetailId));
             dispatch(getAll());
@@ -88,12 +77,7 @@ export default function WaitingSupply() {
 
     const handleStatusChangeAllProduct = async (orderDetailId) => {
         if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền!",
-                icon: "warning",
-                timer: 1500
-            });
+            ToastifyWarning('Bạn không có quyền!');
         } else {
             await dispatch(changeStatusFromWaitingToDoneAllProductOfOrder(orderDetailId));
             dispatch(getAll());

@@ -10,8 +10,8 @@ import CallMergeIcon from '@mui/icons-material/CallMerge';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import CombineTables from './CombineTables';
 import SeparateTables from './SeparateTables';
-import { BARISTA } from '../constant/AppConstant';
-import Swal from 'sweetalert';
+import { BARISTA } from '../../constant/AppConstant';
+import { ToastifyWarning } from '../toastify/Toastify';
 
 export default function MenuSimple() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -26,12 +26,7 @@ export default function MenuSimple() {
     const [openSwitchTable, setOpenSwitchTable] = useState(false);
     const handleOpenSwitchModal = () => {
         if (localStorage.getItem('roles') === BARISTA) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền chuyển bàn!",
-                icon: "warning",
-                timer: 1500
-            });
+            ToastifyWarning("Bạn không có quyền chuyển bàn!");
         } else {
             setOpenSwitchTable(true);
             handleClose();
@@ -44,12 +39,7 @@ export default function MenuSimple() {
     const [openCombineTable, setOpenCombineTable] = useState(false);
     const handleOpenCombineModal = () => {
         if (localStorage.getItem('roles') === BARISTA) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền gộp bàn!",
-                icon: "warning",
-                timer: 1500
-            });
+            ToastifyWarning("Bạn không có quyền gộp bàn!");
         } else {
             setOpenCombineTable(true);
             handleClose();
@@ -61,8 +51,12 @@ export default function MenuSimple() {
 
     const [openSeparateTable, setOpenSeparateTable] = useState(false);
     const handleOpenSeparateModal = () => {
-        setOpenSeparateTable(true);
-        handleClose();
+        if (localStorage.getItem('roles') === BARISTA) {
+            ToastifyWarning("Bạn không có quyền tách bàn!");
+        } else {
+            setOpenSeparateTable(true);
+            handleClose();
+        };
     };
     const handleCloseSeparateModal = () => {
         setOpenSeparateTable(false);

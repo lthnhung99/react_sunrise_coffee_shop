@@ -2,16 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { combineProducts, combineTables, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from './reducers/mainSlice';
+import { combineProducts, combineTables, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from '../reducers/mainSlice';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CallMergeIcon from '@mui/icons-material/CallMerge';
 import { purple, red } from '@mui/material/colors';
 import Swal from 'sweetalert';
-import mainSlice from './reducers/mainSlice';
-import CustomTypography from '../constant/CustomTypography';
+import mainSlice from '../reducers/mainSlice';
+import CustomTypography from '../../constant/CustomTypography';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
-import Pageable from './pageable/Pageable';
-import { TAKE_AWAY } from '../constant/AppConstant';
+import Pageable from '../pageable/Pageable';
+import { BUSY, TAKE_AWAY } from '../../constant/AppConstant';
+import { ToastifySuccess } from '../toastify/Toastify';
 
 const CombineTables = ({ open, closeModal }) => {
     const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const CombineTables = ({ open, closeModal }) => {
     const mainFilters = useSelector(state => state.main.filters);
     const currentTableId = mainFilters.tableSelected;
     const listTable = useSelector(state => state.main.data.allTables);
-    const listTableBusy = listTable.filter(table => table.status === "BUSY" && table.id !== currentTableId);
+    const listTableBusy = listTable.filter(table => table.status === BUSY && table.id !== currentTableId);
     const zoneTitles = selectedCheckbox
         ? [...new Set(listTable?.map((item) => item.zone.title))].filter((title) => title !== TAKE_AWAY)
         : [...new Set(listTableBusy?.map((item) => item.zone.title))].filter((title) => title !== TAKE_AWAY);
@@ -122,12 +123,7 @@ const CombineTables = ({ open, closeModal }) => {
                     search: mainFilters.search,
                     totalPages: mainFilters.tableOrders.totalPages
                 }));
-                Swal({
-                    title: "Thành công!",
-                    text: "Gộp bàn thành công!",
-                    icon: "success",
-                    timer: 1500
-                });
+                ToastifySuccess('Gộp bàn thành công!');
             }
         });
     };

@@ -75,8 +75,8 @@ export const getAllProducts = createAsyncThunk(
     }
 );
 
-export const loadCategory = createAsyncThunk(
-    'main/loadCategory',
+export const getAllCategory = createAsyncThunk(
+    'main/getAllCategory',
     async () => {
         try {
             const response = await instance.get(API_URL_CATEGORY);
@@ -402,7 +402,7 @@ export default createSlice({
                     state.data.allProducts = action.payload;
                 })
             builder
-                .addCase(loadCategory.fulfilled, (state, action) => {
+                .addCase(getAllCategory.fulfilled, (state, action) => {
                     state.data.categories = action.payload;
                 })
             builder //show table

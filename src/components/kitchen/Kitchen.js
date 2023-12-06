@@ -1,11 +1,21 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
 import { Box, Grid } from '@mui/material';
 import Waiting from './Waiting';
-import WaitingSupply from './bodyRight/WaitingSupply';
-import MyDropdown from './headerRight/MyDropdown';
+import WaitingSupply from './WaitingSupply';
+import MyDropdown from '../headerRight/MyDropdown';
 import { purple } from '@mui/material/colors';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { getAll } from '../reducers/kitchenSlice';
 
 const Kitchen = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getAll())
+    }, []);
+
     return (
         <Box sx={{ backgroundColor: purple[500], height: "100%" }}
             className="background-container"

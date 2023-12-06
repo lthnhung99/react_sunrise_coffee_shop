@@ -18,6 +18,7 @@ import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import ReactHowler from "react-howler";
 import { Link } from "react-router-dom";
+import { ToastifyError, ToastifySuccess } from "../toastify/Toastify";
 
 const ItemOrder = () => {
   const dispatch = useDispatch();
@@ -62,18 +63,12 @@ const ItemOrder = () => {
   useEffect(() => {
     if (showAlert) {
       setPlay(true);
-      Swal({
-        title: "Thông báo!",
-        text: message,
-        icon: "success",
-        timer: 1500
-      }).then(() => {
-        mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected));
-        setPlay(false);
-      }
-      ).then(() => {
-        setMessage('');
-      });
+      ToastifySuccess(message);
+      mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected))
+        .then(() => {
+          setPlay(false);
+          setMessage('');
+        });
       setShowAlert(false);
     }
   }, [showAlert, message]);
@@ -99,29 +94,14 @@ const ItemOrder = () => {
         if (willDelete) {
           dispatch(deleteOrderItem(product.orderDetailId))
             .then(() => {
-              Swal({
-                title: "Thành công!",
-                text: "Sản phẩm đã được xóa!",
-                icon: "success",
-                timer: 1500
-              });
+              ToastifySuccess("Sản phẩm đã được xóa!");
             })
         }
       });
     } else if (product.status === COOKING || product.status === WAITING) {
-      Swal({
-        title: "Thông báo!",
-        text: "Món này đang được làm, không thể xoá!",
-        icon: "error",
-        timer: 1500
-      });
+      ToastifyError("Món này đang được làm, không thể xoá!");
     } else {
-      Swal({
-        title: "Thông báo!",
-        text: "Món này đã được làm xong, không thể xoá!",
-        icon: "error",
-        timer: 1500
-      });
+      ToastifyError("Món này đã được làm xong, không thể xoá!");
     };
   };
 

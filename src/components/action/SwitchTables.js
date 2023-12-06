@@ -2,16 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeAllProductToNewTable, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from './reducers/mainSlice';
+import { changeAllProductToNewTable, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from '../reducers/mainSlice';
 import { purple, red } from '@mui/material/colors';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import Swal from 'sweetalert';
-import CustomTypography from '../constant/CustomTypography';
+import CustomTypography from '../../constant/CustomTypography';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
-import mainSlice from './reducers/mainSlice';
-import Pageable from './pageable/Pageable';
-import { EMPTY, TAKE_AWAY } from '../constant/AppConstant';
+import mainSlice from '../reducers/mainSlice';
+import Pageable from '../pageable/Pageable';
+import { EMPTY, TAKE_AWAY } from '../../constant/AppConstant';
+import { ToastifySuccess } from '../toastify/Toastify';
 
 const SwitchTables = ({ open, closeModal }) => {
     const dispatch = useDispatch();
@@ -91,12 +92,7 @@ const SwitchTables = ({ open, closeModal }) => {
                             search: mainFilters.search,
                             totalPages: mainFilters.tableOrders.totalPages
                         }));
-                        Swal({
-                            title: "Thành công!",
-                            text: "Chuyển bàn thành công!",
-                            icon: "success",
-                            timer: 1500
-                        });
+                        ToastifySuccess('Chuyển bàn thành công!');
                     })
             }
         });

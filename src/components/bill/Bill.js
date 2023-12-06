@@ -10,8 +10,8 @@ import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createBill } from '../reducers/mainSlice';
 import formatPrice from '../bodyRight/FormatPrice';
-import Swal from 'sweetalert';
 import { BARISTA, STAFF_ORDER } from '../../constant/AppConstant';
+import { ToastifySuccess, ToastifyWarning } from '../toastify/Toastify';
 
 const Bill = ({ billItems, open, closeModal }) => {
     const dispatch = useDispatch();
@@ -29,22 +29,12 @@ const Bill = ({ billItems, open, closeModal }) => {
 
     const pay = () => {
         if (roles === STAFF_ORDER || roles === BARISTA) {
-            Swal({
-                title: "Thông báo!",
-                text: "Bạn không có quyền thanh toán!",
-                icon: "warning",
-                timer: 1000
-            });
+            ToastifyWarning('Bạn không có quyền thanh toán!');
         } else {
             dispatch(createBill(table.tableSelected))
                 .then(closeModal)
                 .then(() => {
-                    Swal({
-                        title: "Thành công!",
-                        text: "Thanh toán thành công!",
-                        icon: "success",
-                        timer: 1000
-                    });
+                    ToastifySuccess('Thanh toán thành công!');
                 })
         }
     }

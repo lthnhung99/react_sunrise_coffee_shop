@@ -3,25 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import LiquorIcon from '@mui/icons-material/Liquor';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeStatusAllProductFromCookingToWaitingOfGroupProduct, changeStatusFromCookingToStockOutOfProduct, changeStatusOneProductFromCookingToWaitingOfGroupProduct, getAll } from './reducers/kitchenSlice';
+import { changeStatusAllProductFromCookingToWaitingOfGroupProduct, changeStatusFromCookingToStockOutOfProduct, changeStatusOneProductFromCookingToWaitingOfGroupProduct, getAll } from '../reducers/kitchenSlice';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import BlockIcon from '@mui/icons-material/Block';
-import Loading from "./loading/Loading";
-import LAYOUT, { CASHIER, STAFF_ORDER, URL_SOCKET } from '../constant/AppConstant';
-import CustomTypography from '../constant/CustomTypography';
-import Swal from 'sweetalert';
+import Loading from "../loading/Loading";
+import LAYOUT, { CASHIER, STAFF_ORDER, URL_SOCKET } from '../../constant/AppConstant';
+import CustomTypography from '../../constant/CustomTypography';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import ReactHowler from 'react-howler';
+import { ToastifySuccess, ToastifyWarning } from '../toastify/Toastify';
 
 const Waiting = () => {
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(getAll())
-    }, [])
-
     const listOrderWaiting = useSelector((state) => state.kitchen.listOrderItem);
     const isLoading = useSelector(state => state.kitchen.loading);
     const [message, setMessage] = useState('');
@@ -62,30 +57,19 @@ const Waiting = () => {
     useEffect(() => {
         if (showAlert) {
             setPlay(true);
-            Swal({
-                title: "Thông báo!",
-                text: message,
-                icon: "warning",
-                timer: 2000
-            }).then(() => {
-                dispatch(getAll());
-            }
-            ).then(() => {
-                setMessage('');
-                setPlay(false);
-            });
+            ToastifySuccess(message);
+            dispatch(getAll())
+                .then(() => {
+                    setMessage('');
+                    setPlay(false);
+                });
             setShowAlert(false);
         }
     }, [showAlert, message]);
 
     const handleStatusChangeOneProduct = async (productId, note) => {
         if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền!",
-                icon: "warning",
-                timer: 1500
-            });
+            ToastifyWarning('Bạn không có quyền!');
         } else {
             await dispatch(changeStatusOneProductFromCookingToWaitingOfGroupProduct({ productId, note }));
             dispatch(getAll());
@@ -94,12 +78,7 @@ const Waiting = () => {
 
     const handleStatusChangeAllProduct = async (productId, note) => {
         if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền!",
-                icon: "warning",
-                timer: 1500
-            });
+            ToastifyWarning('Bạn không có quyền!');
         } else {
             await dispatch(changeStatusAllProductFromCookingToWaitingOfGroupProduct({ productId, note }));
             dispatch(getAll());
@@ -108,21 +87,11 @@ const Waiting = () => {
 
     const handleStatusChangeStockOut = async (productId, note) => {
         if (localStorage.getItem('roles') === CASHIER || localStorage.getItem('roles') === STAFF_ORDER) {
-            Swal({
-                title: "Cảnh báo!",
-                text: "Bạn không có quyền!",
-                icon: "warning",
-                timer: 1500
-            });
+            ToastifyWarning('Bạn không có quyền!');
         } else {
             await dispatch(changeStatusFromCookingToStockOutOfProduct({ productId, note }));
             dispatch(getAll()).then(() => {
-                Swal({
-                    title: "Thành công!",
-                    text: "Sản phẩm đã được thông báo hết!",
-                    icon: "success",
-                    timer: 1500
-                });
+                ToastifySuccess("Sản phẩm đã được thông báo hết!");
             });
         };
     };
@@ -188,7 +157,6 @@ const Waiting = () => {
                                     ))}
                                 </TableBody>
                             }
-
                         </Table>
                     </TableContainer>
                 ) : (
