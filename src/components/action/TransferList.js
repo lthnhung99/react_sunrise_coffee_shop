@@ -6,31 +6,24 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import DoneIcon from '@mui/icons-material/Done';
-import Swal from 'sweetalert';
+import { ToastifyError } from '../toastify/Toastify';
 
 export default function TransferList({ open, closeModal, setProductSplit, currentTableTitle, targetTableTitle }) {
     const listOrderItem = useSelector(state => state.main.data.order.orderItems);
     const [quantitySeparated, setQuantitySeparated] = React.useState([]);
+    const [quantityOriginal, setQuantityOriginal] = React.useState(0);
 
     const handleQuantityChange = (productId, orderDetailId, quantity) => {
         const quantities = listOrderItem.find(e => e.orderDetailId === orderDetailId).quantity;
+        console.log();
+        setQuantityOriginal(quantities);
         const data = JSON.parse(JSON.stringify(quantitySeparated));
         const index = quantitySeparated.findIndex((e) => e.orderDetailId === orderDetailId);
         if (index !== -1) {
             if (quantity > 0 && quantitySeparated[index].quantity >= quantities) {
-                Swal({
-                    title: "Thông báo!",
-                    text: "Số lượng tách không được lớn hơn số lượng gốc!",
-                    icon: "warning",
-                    timer: 1500
-                });
+                ToastifyError('Số lượng tách không được lớn hơn số lượng gốc!');
             } else if (quantity < 0 && quantitySeparated[index].quantity <= 0) {
-                Swal({
-                    title: "Thông báo!",
-                    text: "Số lượng tách không được nhỏ hơn 0!",
-                    icon: "warning",
-                    timer: 1500
-                });
+                ToastifyError('Số lượng tách không được nhỏ hơn 0!');
             } else {
                 data[index].quantity += quantity;
                 setQuantitySeparated(data);
@@ -61,7 +54,7 @@ export default function TransferList({ open, closeModal, setProductSplit, curren
             <DialogTitle variant='h5'>
                 Vui lòng chọn số lượng để tách bàn
             </DialogTitle>
-            <DialogContent sx={{ width: "700px", height: "500px" }}>
+            <DialogContent sx={{ width: "750px", height: "100%" }}>
                 <Box>
                     <Table sx={{ marginLeft: "10%", width: "80%" }} size="small" aria-label="simple table">
                         <TableHead>
@@ -80,15 +73,15 @@ export default function TransferList({ open, closeModal, setProductSplit, curren
                                     <TableCell className='textCenter'>{item.quantity}</TableCell>
                                     <TableCell className='textCenter'>
                                         <IconButton
-                                            onClick={() => handleQuantityChange(item?.productId, item?.orderDetailId, - 1)
-                                            }
+                                            onClick={() => handleQuantityChange(item?.productId, item?.orderDetailId, - 1)}
+                                            disabled={!quantitySeparated.find(e => e.orderDetailId === item.orderDetailId)?.quantity}
                                         >
                                             <RemoveCircleOutlineIcon />
                                         </IconButton>
-                                        {quantitySeparated[index]?.quantity || 0}
+                                        {quantitySeparated.find(e => e.orderDetailId === item.orderDetailId)?.quantity || 0}
                                         <IconButton
-                                            onClick={() => handleQuantityChange(item?.productId, item?.orderDetailId, 1)
-                                            }
+                                            onClick={() => handleQuantityChange(item?.productId, item?.orderDetailId, 1)}
+                                            disabled={quantitySeparated.find(e => e.orderDetailId === item.orderDetailId)?.quantity === quantityOriginal}
                                         >
                                             <AddCircleOutlineIcon />
                                         </IconButton>

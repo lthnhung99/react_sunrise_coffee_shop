@@ -101,6 +101,7 @@
 
 .cssScroll::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 .cssScroll::-webkit-scrollbar-track {
@@ -157,4 +158,9 @@
 
 .blackColor {
   color: black;
+}
+
+.justifyCenter {
+  display: flex;
+  justify-content: center;
 }

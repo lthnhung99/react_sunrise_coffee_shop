@@ -2,12 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 import API_URL_KITCHEN from "../../constant/constURL/URLKitchen";
 
-// const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJraG9hM0BnbWFpbC5jb20iLCJpYXQiOjE2OTg5ODAyMjksImV4cCI6MTcwMTU3MjIyOX0.TRdTaaZX_2W5hBXHuU7Tgh1lW2b-YA8_00ynhLgp7Vg"
-// const headers = {
-//     Authorization: token,
-//     "Content-Type": "application/json"
-// };
-
 export const getAll = createAsyncThunk(
     'kitchen/getAll',
     async () => {

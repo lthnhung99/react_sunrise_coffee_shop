@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import Products from '../bodyLeft/Products';
 import TableOrder from '../bodyLeft/TableOrder';
 import { Box } from '@mui/material';
@@ -47,6 +47,7 @@ const TabPanel = ({ value, index, search }) => {
                     <Routes>
                         <Route path='/' element={<TableOrder />} />
                         <Route path="products" element={<Products />} />
+                        <Route path="*" element={<Navigate to="/404" replace />} />
                     </Routes>
                 </Box>
             )}

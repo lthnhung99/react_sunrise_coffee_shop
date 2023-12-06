@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { DialogContentText, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
-import MenuOrderContext from "../MenuOrderContext";
+import MenuOrderContext from "../main/MenuOrderContext";
 import { useDispatch } from "react-redux";
 import mainSlice from '../reducers/mainSlice';
 import formatPrice from "../bodyRight/FormatPrice";

@@ -9,28 +9,19 @@ import Loading from "../loading/Loading";
 import { useState } from "react";
 import ProductModal from "./ProductModal";
 import Pageable from "../pageable/Pageable";
-import MenuOrderContext from "../MenuOrderContext";
+import MenuOrderContext from "../main/MenuOrderContext";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts, loadCategory, loadProduct } from '../reducers/mainSlice';
+import { loadProduct } from '../reducers/mainSlice';
 import { useNavigate } from 'react-router-dom';
 import formatPrice from "../bodyRight/FormatPrice";
 import CustomTypography from "../../constant/CustomTypography";
 import NoDrinksIcon from '@mui/icons-material/NoDrinks';
-import swal from 'sweetalert';
-import { useEffect } from "react";
+import { ToastifyError } from "../toastify/Toastify";
 
 export default function Products() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    dispatch(loadCategory());
-  }, []);
-
-  useEffect(() => {
-    dispatch(getAllProducts());
-  }, []);
 
   const [selectedCate, setSelectedCate] = React.useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,12 +39,8 @@ export default function Products() {
 
   const openModal = (product) => {
     if (mainFilters.tableSelected === "") {
-      swal({
-        title: "Vui lòng chọn bàn trước!",
-        icon: "error",
-      }).then(() => {
-        navigate('/');
-      });
+      ToastifyError("Vui lòng chọn bàn trước!")
+      navigate('/');
     } else {
       setSelectedProduct(product);
       setIsModalOpen(true);
@@ -86,7 +73,7 @@ export default function Products() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-      <Box sx={{ marginBottom: "10px", overflowX: "auto" }}>
+      <Box sx={{ marginBottom: "10px", overflowX: "auto" }} >
         <FormControl component="fieldset">
           <ButtonGroup
             aria-label="floor"

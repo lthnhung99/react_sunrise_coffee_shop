@@ -3,16 +3,17 @@ import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, Dialog, Di
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { EMPTY, TAKE_AWAY } from '../constant/AppConstant';
-import CustomTypography from '../constant/CustomTypography';
-import Pageable from './pageable/Pageable';
+import { EMPTY, TAKE_AWAY } from '../../constant/AppConstant';
+import CustomTypography from '../../constant/CustomTypography';
+import Pageable from '../pageable/Pageable';
 import { purple, red } from '@mui/material/colors';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import Swal from 'sweetalert';
-import mainSlice, { getAllTableOrder, getListOrderDetailByTableId, loadTableOrder, splitProduct } from './reducers/mainSlice';
+import mainSlice, { getAllTableOrder, getListOrderDetailByTableId, loadTableOrder, splitProduct } from '../reducers/mainSlice';
 import TransferList from './TransferList';
+import { ToastifyError, ToastifyInfo, ToastifySuccess } from '../toastify/Toastify';
 
 const SeparateTables = ({ open, closeModal }) => {
     const dispatch = useDispatch();
@@ -85,6 +86,7 @@ const SeparateTables = ({ open, closeModal }) => {
                 if (willSplit) {
                     closeModal();
                     dispatch(splitProduct({ sourceTableId, targetTableId, products }))
+                        .unwrap()
                         .then(() => {
                             dispatch(mainSlice.actions.setTableTitle(targetTable.title));
                             dispatch(mainSlice.actions.setZoneTitle(targetTable.zone.title));
@@ -97,24 +99,16 @@ const SeparateTables = ({ open, closeModal }) => {
                                 search: mainFilters.search,
                                 totalPages: mainFilters.tableOrders.totalPages
                             }));
-                            Swal({
-                                title: "Thành công!",
-                                text: "Tách bàn thành công!",
-                                icon: "success",
-                                timer: 1500
-                            });
+                            ToastifySuccess('Tách bàn thành công!');
+                        })
+                        .catch(() => {
+                            ToastifyInfo("Vui lòng chọn chức năng chuyển bàn!");
                         })
                 }
             });
         } else {
-            Swal({
-                title: "Thông báo!",
-                text: "Bạn chưa chọn số lượng để tách!",
-                icon: "error",
-                timer: 1500
-            });
+            ToastifyError('Bạn chưa chọn số lượng để tách!');
         }
-
     };
 
     const handleOpenTransferList = () => {

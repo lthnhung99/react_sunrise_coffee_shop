@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 
 // project import
-import MainCard from '../../MainCard';
+import MainCard from '../../main/MainCard';
 import Transitions from '../../@extended/Transitions';
 import ProfileTab from './ProfileTab';
 
