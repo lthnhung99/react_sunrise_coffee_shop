@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeAllProductToNewTable, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from '../reducers/mainSlice';
+import { changeAllProductToNewTable, getListOrderDetailByTableId, loadTableOrder } from '../reducers/mainSlice';
 import { purple, red } from '@mui/material/colors';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
@@ -31,12 +31,6 @@ const SwitchTables = ({ open, closeModal }) => {
     const zoneTitles = [...new Set(listTableEmpty?.map((item) => item.zone.title))].filter((title) => title !== TAKE_AWAY);
     const table = listTable.find(table => table.id === currentTableId);
     const currentTableTitle = table ? table.title : '';
-
-    useEffect(() => {
-        if (open) {
-            dispatch(getAllTableOrder());
-        }
-    }, [open]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber + 1);
