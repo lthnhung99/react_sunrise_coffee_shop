@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, ButtonGroup, Card, CardActionArea, CardContent, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, FormGroup, Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { combineProducts, combineTables, getAllTableOrder, getListOrderDetailByTableId, loadTableOrder } from '../reducers/mainSlice';
+import { combineProducts, combineTables, getListOrderDetailByTableId, loadTableOrder } from '../reducers/mainSlice';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CallMergeIcon from '@mui/icons-material/CallMerge';
 import { purple, red } from '@mui/material/colors';
@@ -33,12 +33,6 @@ const CombineTables = ({ open, closeModal }) => {
         : [...new Set(listTableBusy?.map((item) => item.zone.title))].filter((title) => title !== TAKE_AWAY);
     const table = listTable.find(table => table.id === currentTableId);
     const currentTableTitle = table ? table.title : '';
-
-    useEffect(() => {
-        if (open) {
-            dispatch(getAllTableOrder());
-        }
-    }, [open]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber + 1);
@@ -94,10 +88,6 @@ const CombineTables = ({ open, closeModal }) => {
         setTotalPages(Math.ceil(totalItems / pageSize));
     }, [selectedZone, currentPage, selectedCheckbox]);
 
-    useEffect(() => {
-        console.log(selectedCheckbox);
-    }, [selectedCheckbox])
-
     const handleCombineTables = (currentTableIds, targetTableId) => {
         Swal({
             title: `Bạn chắc chắn muốn gộp ${selectedTableIds.length} bàn với ${currentTableTitle}?`,
@@ -108,23 +98,24 @@ const CombineTables = ({ open, closeModal }) => {
         }).then((willCombine) => {
             if (willCombine) {
                 closeModal();
-
                 if (selectedCheckbox) {
                     dispatch(combineTables({ currentTableIds, targetTableId }));
                 } else {
                     dispatch(combineProducts({ currentTableIds, targetTableId }));
                 };
 
-                dispatch(mainSlice.actions.setTableSelected(targetTableId))
-                mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(targetTableId));
-                dispatch(loadTableOrder({
-                    page: mainFilters.tableOrders.page,
-                    size: mainFilters.tableOrders.size,
-                    search: mainFilters.search,
-                    totalPages: mainFilters.tableOrders.totalPages
-                }));
-                ToastifySuccess('Gộp bàn thành công!');
-            }
+                dispatch(mainSlice.actions.setTableSelected(targetTableId));
+                dispatch(getListOrderDetailByTableId(targetTableId))
+                    .then(() => {
+                        dispatch(loadTableOrder({
+                            page: mainFilters.tableOrders.page,
+                            size: mainFilters.tableOrders.size,
+                            search: mainFilters.search,
+                            totalPages: mainFilters.tableOrders.totalPages
+                        }));
+                        ToastifySuccess('Gộp bàn thành công!');
+                    })
+            };
         });
     };
 

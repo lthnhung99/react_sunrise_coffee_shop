@@ -52,15 +52,6 @@ class ComponentToPrint extends React.PureComponent {
                             <h2>Tổng thanh toán</h2>
                             <h2>{formatPrice(getTotalAmount())}</h2>
                         </div>
-                        <hr />
-                        <div className='p-order-row-sumary'>
-                            <p>Tiền mặt</p>
-                            <p>{formatPrice(getTotalAmount())}</p>
-                        </div>
-                        <div className='p-order-row-sumary'>
-                            <h2>Trả lại khách</h2>
-                            <h2>{formatPrice(0)}</h2>
-                        </div>
                     </div>
                 </div>
 

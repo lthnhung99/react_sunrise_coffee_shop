@@ -11,7 +11,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import LocalCafeIcon from '@mui/icons-material/LocalCafe';
 import Swal from 'sweetalert';
-import mainSlice, { getAllTableOrder, getListOrderDetailByTableId, loadTableOrder, splitProduct } from '../reducers/mainSlice';
+import mainSlice, { getListOrderDetailByTableId, loadTableOrder, splitProduct } from '../reducers/mainSlice';
 import TransferList from './TransferList';
 import { ToastifyError, ToastifyInfo, ToastifySuccess } from '../toastify/Toastify';
 
@@ -34,12 +34,6 @@ const SeparateTables = ({ open, closeModal }) => {
     const zoneTitles = [...new Set(listTableEmpty?.map((item) => item.zone.title))].filter((title) => title !== TAKE_AWAY);
     const table = listTable.find(table => table.id === currentTableId);
     const currentTableTitle = table ? table.title : '';
-
-    useEffect(() => {
-        if (open) {
-            dispatch(getAllTableOrder());
-        }
-    }, [open]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber + 1);

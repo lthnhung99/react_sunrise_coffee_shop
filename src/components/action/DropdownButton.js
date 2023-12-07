@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -12,9 +13,12 @@ import CombineTables from './CombineTables';
 import SeparateTables from './SeparateTables';
 import { BARISTA } from '../../constant/AppConstant';
 import { ToastifyWarning } from '../toastify/Toastify';
+import { getAllTableOrder } from '../reducers/mainSlice';
+import { useDispatch } from 'react-redux';
 
 export default function MenuSimple() {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const dispatch = useDispatch();
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -61,6 +65,10 @@ export default function MenuSimple() {
     const handleCloseSeparateModal = () => {
         setOpenSeparateTable(false);
     };
+
+    React.useEffect(() => {
+        dispatch(getAllTableOrder());
+    }, [open, openSwitchTable, openCombineTable, openSeparateTable]);
 
     return (
         <div>
