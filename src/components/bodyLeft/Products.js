@@ -144,7 +144,7 @@ export default function Products() {
           ) : (
             <CustomTypography variant="body2" sx={{ marginTop: "20%", textAlign: "center", width: "100%" }}>
               <NoDrinksIcon />
-              <Typography variant="h3">Không tìm thấy đồ uống phù hợp</Typography>
+              <Typography variant="h3">Không tìm thấy sản phẩm phù hợp</Typography>
             </CustomTypography>
           )}
           <Pageable page={mainFilters.products.page + 1} setPage={setPage} totalPage={mainFilters.products.totalPages} />

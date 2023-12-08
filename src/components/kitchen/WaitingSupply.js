@@ -71,7 +71,7 @@ export default function WaitingSupply() {
             ToastifyWarning('Bạn không có quyền!');
         } else {
             await dispatch(changeStatusFromWaitingToDoneOfProduct(orderDetailId));
-            dispatch(getAll());
+            dispatch(getAll()).then(() => ToastifySuccess("Đã làm xong"));
         };
     };
 
@@ -80,7 +80,7 @@ export default function WaitingSupply() {
             ToastifyWarning('Bạn không có quyền!');
         } else {
             await dispatch(changeStatusFromWaitingToDoneAllProductOfOrder(orderDetailId));
-            dispatch(getAll());
+            dispatch(getAll()).then(() => ToastifySuccess("Đã làm xong"));
         };
     };
 
