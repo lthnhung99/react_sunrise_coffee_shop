@@ -8,10 +8,8 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import BlockIcon from '@mui/icons-material/Block';
 import Loading from "../loading/Loading";
-import LAYOUT, { CASHIER, STAFF_ORDER, URL_SOCKET } from '../../constant/AppConstant';
+import LAYOUT, { CASHIER, STAFF_ORDER } from '../../constant/AppConstant';
 import CustomTypography from '../../constant/CustomTypography';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
 import ReactHowler from 'react-howler';
 import { ToastifySuccess, ToastifyWarning } from '../toastify/Toastify';
 
@@ -22,31 +20,6 @@ const Waiting = () => {
     const [message, setMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [play, setPlay] = useState(false);
-
-    useEffect(() => {
-        const connectToWebSocket = async () => {
-            const socket = new SockJS(URL_SOCKET);
-            const stompClient = Stomp.over(socket);
-
-            stompClient.connect({}, (frame) => {
-                // console.log('Connected: ' + frame);
-                stompClient.subscribe('/topic/kitchen', (mess) => {
-                    // console.log('Received: ' + mess.body);
-                    let obj = JSON.parse(mess.body);
-                    setMessage(obj.data.message);
-                });
-            }, (error) => {
-                console.log('Error: ' + error);
-                // Xử lý các trường hợp lỗi kết nối ở đây
-            });
-
-            return () => {
-                stompClient.disconnect();
-            };
-        };
-
-        connectToWebSocket();
-    }, []);
 
     useEffect(() => {
         if (message) {

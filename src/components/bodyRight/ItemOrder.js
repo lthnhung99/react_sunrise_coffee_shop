@@ -64,7 +64,7 @@ const ItemOrder = () => {
     if (showAlert) {
       setPlay(true);
       ToastifySuccess(message);
-      mainFilters.tableSelected && dispatch(getListOrderDetailByTableId(mainFilters.tableSelected))
+      dispatch(getListOrderDetailByTableId(mainFilters.tableSelected))
         .then(() => {
           setPlay(false);
           setMessage('');
